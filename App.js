@@ -6,20 +6,19 @@
  * @flow strict-local
  */
 
+import ButtonComponent from '@components/button/ButtonComponent';
 import React from 'react';
 import {
   SafeAreaView,
   StatusBar,
   StyleSheet,
 } from 'react-native';
-import AvatarComponent from '@components/avatar/AvatarComponent';
-import BadgeComponent from '@components/badge/BadgeComponent';
 
 const App = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <BadgeComponent />
+      <ButtonComponent title="Hello World"/>
     </SafeAreaView>
   );
 };
