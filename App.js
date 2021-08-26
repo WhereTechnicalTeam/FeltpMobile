@@ -9,24 +9,26 @@
 import React from 'react';
 import {
   SafeAreaView,
+  StatusBar,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
+import AvatarComponent from '@components/avatar/AvatarComponent';
 
 const App = () => {
 
   return (
-    <SafeAreaView style={styles.sectionContainer}>
-      <Text style={styles.sectionTitle}>Hello World</Text>
+    <SafeAreaView style={styles.container}>
+      <AvatarComponent src={require('@assets/man.jpg')} icon="camera" />
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+  container: {
+    flex: 1,
+    paddingTop: StatusBar.currentHeight || 30
   },
   sectionTitle: {
     fontSize: 24,
