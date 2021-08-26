@@ -16,7 +16,6 @@ import {
 } from 'react-native';
 
 const App = () => {
-
   return (
     <SafeAreaView style={styles.container}>
       <ProfileTextComponent label="Hello" text="pencil"/>

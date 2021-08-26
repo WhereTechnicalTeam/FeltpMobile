@@ -17,7 +17,7 @@
               "@theme": "./src/theme",
               "@utils": "./src/utils",
               "@screens": "./src/screens",
-              "@assets": "./src/assets"
+              "@assets": "./assets"
             },
             "extensions": [".ios.js", ".android.js", ".js", ".json"]
           }
