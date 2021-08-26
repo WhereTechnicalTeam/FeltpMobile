@@ -6,8 +6,8 @@
  * @flow strict-local
  */
 
-import LinkTextComponent from '@components/link-text/LinkTextComponent';
-import ListItemComponent from '@components/list-item/ListItemComponent';
+import LogoComponent from '@components/logo/LogoComponent';
+import MapPreviewComponent from '@components/map-preview/MapPreviewComponent';
 import React from 'react';
 import {
   SafeAreaView,
@@ -19,8 +19,8 @@ const App = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ListItemComponent rightIcon="arrow-back-sharp" text="Hello" leftIcon="pencil"/>
-      <LinkTextComponent preText="Name" actionText="World"/>
+      <LogoComponent logoText="Hello" leftIcon="pencil"/>
+      <MapPreviewComponent selected preText="Name" actionText="World"/>
     </SafeAreaView>
   );
 };
