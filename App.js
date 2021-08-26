@@ -6,7 +6,7 @@
  * @flow strict-local
  */
 
-import ButtonComponent from '@components/button/ButtonComponent';
+import DatePickerComponent from '@components/date-picker/DatePickerComponent';
 import React from 'react';
 import {
   SafeAreaView,
@@ -18,7 +18,7 @@ const App = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ButtonComponent title="Hello World"/>
+      <DatePickerComponent showPicker onDateChange={() => {}} label="Date" />
     </SafeAreaView>
   );
 };
