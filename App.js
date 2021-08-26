@@ -6,9 +6,8 @@
  * @flow strict-local
  */
 
-import MemberCardComponent from '@components/member-card/MemberCardComponent';
-import NewsPreviewComponent from '@components/news-preview/NewsPreviewComponent';
-import SummaryCardComponent from '@components/summary-card/SummaryCardComponent';
+import ProfileTextComponent from '@components/profile-text/ProfileTextComponent';
+import SearchBarComponent from '@components/search-bar/SearchBarComponent';
 import React from 'react';
 import {
   SafeAreaView,
@@ -20,9 +19,8 @@ const App = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <NewsPreviewComponent title="Hello" summary="pencil"/>
-      <SummaryCardComponent mainText="Hello" subText="pencil"/>
-      <MemberCardComponent {...{route: {params: {member: {}}}}}/>
+      <ProfileTextComponent label="Hello" text="pencil"/>
+      <SearchBarComponent placeholder="Hello" />
     </SafeAreaView>
   );
 };
