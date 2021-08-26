@@ -6,8 +6,8 @@
  * @flow strict-local
  */
 
-import IconButtonComponent from '@components/icon-button/IconButtonComponent';
-import FormInputComponent from '@components/input/FormInputComponent';
+import LinkTextComponent from '@components/link-text/LinkTextComponent';
+import ListItemComponent from '@components/list-item/ListItemComponent';
 import React from 'react';
 import {
   SafeAreaView,
@@ -19,8 +19,8 @@ const App = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <IconButtonComponent icon="arrow-back-sharp"/>
-      <FormInputComponent label="Name"/>
+      <ListItemComponent rightIcon="arrow-back-sharp" text="Hello" leftIcon="pencil"/>
+      <LinkTextComponent preText="Name" actionText="World"/>
     </SafeAreaView>
   );
 };
