@@ -6,8 +6,8 @@
  * @flow strict-local
  */
 
-import HelperTextComponent from 'components/helper-text/HelperTextComponent';
-import HorizontalLineComponent from 'components/horizontal-line/HorizontalLine';
+import IconButtonComponent from '@components/icon-button/IconButtonComponent';
+import FormInputComponent from '@components/input/FormInputComponent';
 import React from 'react';
 import {
   SafeAreaView,
@@ -19,8 +19,8 @@ const App = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <HelperTextComponent text="Hello world"/>
-      <HorizontalLineComponent hrWidth={100}/>
+      <IconButtonComponent icon="arrow-back-sharp"/>
+      <FormInputComponent label="Name"/>
     </SafeAreaView>
   );
 };
