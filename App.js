@@ -11,16 +11,15 @@ import {
   SafeAreaView,
   StatusBar,
   StyleSheet,
-  Text,
-  View,
 } from 'react-native';
 import AvatarComponent from '@components/avatar/AvatarComponent';
+import BadgeComponent from '@components/badge/BadgeComponent';
 
 const App = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <AvatarComponent src={require('@assets/man.jpg')} icon="camera" />
+      <BadgeComponent />
     </SafeAreaView>
   );
 };
