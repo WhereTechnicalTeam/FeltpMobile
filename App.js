@@ -6,7 +6,7 @@
  * @flow strict-local
  */
 
-import DatePickerComponent from '@components/date-picker/DatePickerComponent';
+import DropdownComponent from '@components/dropdown/DropdownComponent';
 import React from 'react';
 import {
   SafeAreaView,
@@ -18,7 +18,7 @@ const App = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <DatePickerComponent showPicker onDateChange={() => {}} label="Date" />
+      <DropdownComponent single selectedItems={[]} onSelectedItemsChange={() => {}} items={[]}/>
     </SafeAreaView>
   );
 };
