@@ -6,7 +6,8 @@
  * @flow strict-local
  */
 
-import DropdownComponent from '@components/dropdown/DropdownComponent';
+import HelperTextComponent from 'components/helper-text/HelperTextComponent';
+import HorizontalLineComponent from 'components/horizontal-line/HorizontalLine';
 import React from 'react';
 import {
   SafeAreaView,
@@ -18,7 +19,8 @@ const App = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <DropdownComponent single selectedItems={[]} onSelectedItemsChange={() => {}} items={[]}/>
+      <HelperTextComponent text="Hello world"/>
+      <HorizontalLineComponent hrWidth={100}/>
     </SafeAreaView>
   );
 };
