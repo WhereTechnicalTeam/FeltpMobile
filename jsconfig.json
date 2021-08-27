@@ -8,8 +8,7 @@
             "@navigators": ["./src/navigators/*"],
             "@theme": ["./src/theme/*"],
             "@utils": ["./src/utils/*"],
-            "@screens": ["./src/screens/*"],
-            "@assets": ["./assets/*"]
+            "@screens": ["./src/screens/*"]
         },
     },
     "exclude": ["node_modules"]

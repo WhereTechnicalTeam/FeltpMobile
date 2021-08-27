@@ -14,14 +14,17 @@ import {
 } from 'react-native';
 import ToastComponent from '@components/toast/ToastComponent';
 import ButtonComponent from '@components/button/ButtonComponent';
+import { NavigationContainer } from '@react-navigation/native';
 
 const App = () => {
   
   return (
+    <NavigationContainer>
     <SafeAreaView style={styles.container}>
       <ToastComponent />
       <ButtonComponent title="Say Hello" onPress={() => ToastComponent.show("Hello there!!", {timeout: 5000, level: "success"})}/>
     </SafeAreaView>
+    </NavigationContainer>
   );
 };
 
