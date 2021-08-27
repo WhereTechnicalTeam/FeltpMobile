@@ -15,9 +15,13 @@ import {
 import ToastComponent from '@components/toast/ToastComponent';
 import ButtonComponent from '@components/button/ButtonComponent';
 import { NavigationContainer } from '@react-navigation/native';
+import SplashScreen from 'react-native-splash-screen';
 
 const App = () => {
-  
+  useEffect(() => {
+    SplashScreen.hide();
+  })
+
   return (
     <NavigationContainer>
     <SafeAreaView style={styles.container}>
