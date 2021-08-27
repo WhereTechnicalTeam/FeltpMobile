@@ -9,6 +9,8 @@ import SearchBarComponent from '@components/search-bar/SearchBarComponent';
 import { colors } from '@theme/colors';
 
 const MapViewScreen = (props) => {
+    const {callingScreen="SignupWithMap"} = props;
+
     const [region, setRegion] = useState({
         latitude: 5.6890625,
         longitude: -0.2556875,
@@ -21,22 +23,21 @@ const MapViewScreen = (props) => {
     });
     const [officeMarkerPosition, setOfficeMarkerPosition] = useState(null);
     const [officeSearchText, setOfficeSearchText] = useState('');
-    const [hasLocationPermission, setHasLocationPermission] = useState(false);
+    const [hasLocationPermission, setHasLocationPermission] = useState(true);
     const mapRef = useRef(null);
 
     const saveOfficeLocation = () => {
-        navigateSignUpWithMap();
+        navigateCallingScreen();
     }
 
-    const navigateSignUpWithMap = () => {
+    const navigateCallingScreen = () => {
         try {
-            props.navigation.setParams({
+            props.navigation.navigate(callingScreen, {
                 officeMarkerPosition: {
                     latitude: officeMarkerPosition.latitude.toString(),
                     longitude: officeMarkerPosition.longitude.toString()
                 }
             });
-            props.navigation.goBack(null);
         } catch(err) {
             console.warn("Error navigating back from map:", err);
         }
@@ -48,6 +49,7 @@ const MapViewScreen = (props) => {
                 PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION)
                 .then(async(granted) => {
                     if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+                        setHasLocationPermission(false);
                         await requestUserLocationPermission();
                     } else setHasLocationPermission(true);
                 }).then(() => {

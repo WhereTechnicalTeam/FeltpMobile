@@ -15,7 +15,7 @@ const registerUser = async(user) => {
     })
     .catch((error) => {
         console.error("Registration error:", error);
-        return null;
+        return {status: 500};
     });
 }
 
@@ -28,18 +28,14 @@ const login = async(user) => {
         },
         body: JSON.stringify(user)
     })
-    .then((response) => {
-        // if(response.ok) return response.json();
-        // else return {status: response.status, msg: 'Not verified'};
-       return response.json()
-    })    
+    .then((response) => response.json())    
     .then(json => {
         console.log(json);
         return json;
     })
     .catch((error) => {
         console.error(error);
-        return null;
+        return {status: 500};
     });
 }
 
