@@ -6,20 +6,18 @@
  * @flow strict-local
  */
 
-import ProfileTextComponent from '@components/profile-text/ProfileTextComponent';
-import SearchBarComponent from '@components/search-bar/SearchBarComponent';
 import React from 'react';
 import {
   SafeAreaView,
   StatusBar,
   StyleSheet,
 } from 'react-native';
+import SettingsHeader from '@components/settings-header/SettingsHeader';
 
 const App = () => {
   return (
     <SafeAreaView style={styles.container}>
-      <ProfileTextComponent label="Hello" text="pencil"/>
-      <SearchBarComponent placeholder="Hello" />
+      <SettingsHeader />
     </SafeAreaView>
   );
 };
