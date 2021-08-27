@@ -103,7 +103,7 @@ const verifyEmail = async(code) => {
     })
     .catch((error) => {
         console.error("Email verification error:", error);
-        return null;
+        return {status: 500};
     });
 }
 

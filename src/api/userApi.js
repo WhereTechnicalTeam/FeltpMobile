@@ -48,17 +48,14 @@ const findAllUsers = async(token) => {
             'Authorization': `Token ${token}`
         }
     })
-    .then((response) => {
-        if(response.ok) return response.json();
-        else return null;
-    })
+    .then((response) => response.json())
     .then(json => {
         console.log(json);
         return json;
     })
     .catch((error) => {
-        console.error(error);
-        return null;
+        console.warn("Error fetching all users:", error);
+        return {status: 500};
     });
 }
 

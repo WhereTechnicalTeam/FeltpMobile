@@ -10,6 +10,10 @@ import SignInScreen from '@screens/Signin';
 import SignUpScreen from '@screens/Signup';
 import SignUpWithMapScreen from '@screens/SignUpWithMap';
 import IntermediateSignUpScreen from '@screens/IntermediateSignUp';
+import VerifyEmailScreen from '@screens/VerifyEmail';
+import DashboardScreen from '@screens/Dashboard';
+import MemberListScreen from '@screens/MemberList';
+import UserProfileScreen from '@screens/UserProfile';
 
 const MainStack = createNativeStackNavigator();
 const AuthStack = createNativeStackNavigator();
@@ -28,7 +32,26 @@ const AuthNavigator = () => (
         <AuthStack.Screen name="IntermediateSignup" component={IntermediateSignUpScreen} />
         <AuthStack.Screen name="SignupWithMap" component={SignUpWithMapScreen} />
         <AuthStack.Screen name="MapView" component={MapViewScreen} />
+        <AuthStack.Screen name="VerifyEmail" component={VerifyEmailScreen} />
     </AuthStack.Navigator>
+);
+
+const DashboardNavigator = () => (
+    <DashboardStack.Navigator initialRouteName="Dashboard" screenOptions={{headerShown: false}}>
+        <DashboardStack.Screen name="Dashboard" component={DashboardScreen}/>
+    </DashboardStack.Navigator>
+);
+
+const MemberListNavigator = () => (
+    <MemberStack.Navigator initialRouteName="MemberList" screenOptions={{headerShown: false}}>
+        <MemberStack.Screen name="MemberList" component={MemberListScreen}/>
+    </MemberStack.Navigator>
+);
+
+const UserProfileNavigator = () => (
+    <ProfileStack.Navigator initialRouteName="UserProfile" screenOptions={{headerShown: false}}>
+        <ProfileStack.Screen name="UserProfile" component={UserProfileScreen}/>
+    </ProfileStack.Navigator>
 )
 
 const AuthLoadingWrapper = (props) => {
@@ -68,7 +91,7 @@ const AuthLoadingWrapper = (props) => {
         <View style={{flex: 1}}>
            {
                isAuthenticated ? 
-               <MapViewScreen />
+               <UserProfileNavigator />
                :
                <AuthLoadingScreen 
                     onCreateAccountPress={navigateSignup} 
@@ -84,6 +107,7 @@ const AuthLoadingWrapper = (props) => {
 const AppContainer = () => (
     <MainStack.Navigator initialRouteName="Auth" screenOptions={{headerShown: false}}>
         <MainStack.Screen name="Auth" component={AuthNavigator}/>
+        <MainStack.Screen name="Tabs" component={DashboardNavigator} />
     </MainStack.Navigator>
 );
 
