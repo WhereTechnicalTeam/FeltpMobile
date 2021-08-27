@@ -1,7 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {View} from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import SplashScreen from 'react-native-splash-screen';
+import Icon from 'react-native-vector-icons/Ionicons';
+
 import AuthLoadingScreen from '@screens/AuthLoading';
 import MapViewScreen from '@screens/MapView';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -14,8 +17,10 @@ import VerifyEmailScreen from '@screens/VerifyEmail';
 import DashboardScreen from '@screens/Dashboard';
 import MemberListScreen from '@screens/MemberList';
 import UserProfileScreen from '@screens/UserProfile';
+import SettingsHeader from '@components/settings-header/SettingsHeader';
 
 const MainStack = createNativeStackNavigator();
+const MainTabStack = createBottomTabNavigator();
 const AuthStack = createNativeStackNavigator();
 const DashboardStack = createNativeStackNavigator();
 const MemberStack = createNativeStackNavigator();
@@ -52,6 +57,42 @@ const UserProfileNavigator = () => (
     <ProfileStack.Navigator initialRouteName="UserProfile" screenOptions={{headerShown: false}}>
         <ProfileStack.Screen name="UserProfile" component={UserProfileScreen}/>
     </ProfileStack.Navigator>
+);
+
+const MainTabNavigator = () => (
+    <MainTabStack.Navigator initialRouteName="DashboardNavigator" >
+        <MainTabStack.Screen 
+        name="DashboardNavigator" 
+        component={DashboardNavigator}
+        options={{
+            title: 'Dashboard',
+            tabBarIcon: () => <Icon name="grid" size={24}/>,
+            headerShown: false
+        }}    
+        />
+        <MainTabStack.Screen 
+        name="MemberListNavigator" 
+        component={MemberListNavigator}
+        options={{
+            title: 'Members',
+            tabBarIcon: () => <Icon name="people" size={24}/>,
+            headerShown: false
+        }} 
+        />
+        <MainTabStack.Screen 
+        name="UserProfileNavigator" 
+        component={UserProfileNavigator}
+        options={{
+            title: 'Manage Profile',
+            tabBarIcon: () => <Icon name="settings" size={24}/>,
+            header: (props) => (
+                <SettingsHeader {...props}/>
+            ),
+            headerStyle: {height: 100},
+            headerMode: 'screen'
+        }} 
+        />
+    </MainTabStack.Navigator>
 )
 
 const AuthLoadingWrapper = (props) => {
@@ -70,7 +111,7 @@ const AuthLoadingWrapper = (props) => {
         setLoading(true);
         try {
         (async() => {
-            //             await AsyncStorage.removeItem('authToken');
+            // await AsyncStorage.removeItem('authToken');
             // await AsyncStorage.removeItem('userDetails');
 
             const token = await AsyncStorage.getItem('authToken');            
@@ -91,7 +132,7 @@ const AuthLoadingWrapper = (props) => {
         <View style={{flex: 1}}>
            {
                isAuthenticated ? 
-               <UserProfileNavigator />
+               <MainTabNavigator />
                :
                <AuthLoadingScreen 
                     onCreateAccountPress={navigateSignup} 
@@ -107,7 +148,7 @@ const AuthLoadingWrapper = (props) => {
 const AppContainer = () => (
     <MainStack.Navigator initialRouteName="Auth" screenOptions={{headerShown: false}}>
         <MainStack.Screen name="Auth" component={AuthNavigator}/>
-        <MainStack.Screen name="Tabs" component={DashboardNavigator} />
+        <MainStack.Screen name="Tabs" component={MainTabNavigator} />
     </MainStack.Navigator>
 );
 
