@@ -138,7 +138,7 @@ export default SettingsHeader;
 
 const styles = StyleSheet.create({
     headerContainer: {
-        paddingTop: 40,
+        paddingTop: 30,
         paddingHorizontal: 20,
         paddingBottom: 30,
         backgroundColor: colors.primary,
