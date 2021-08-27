@@ -266,9 +266,7 @@ const SignUpWithMapScreen = (props) => {
             </View>
             <View style={styles.formInputView}>
             <Text style={styles.pickerText}>Current District</Text>
-                <View style={styles.pickerView}>
                 <DropdownComponent items={getDistrictListByRegion(selectedRegion)} selectText="" selectedItems={[user.job_to_user[0].district]} onSelectedItemsChange={(selectedItems) => setCurrentDistrict(selectedItems[0])} single searchPlaceholderText="Select a district" />
-                </View>
             </View>
             <View style={styles.formInputView}>
                 <Text style={styles.pickerText}>Level of Health System</Text>
@@ -336,7 +334,7 @@ const styles = StyleSheet.create({
     pickerView: {
         borderRadius: 5,
         borderColor: colors.secondaryBlack,
-        borderWidth: 0.8,       
+        borderWidth: 1,       
         height: 50,
         justifyContent: 'center' 
     },
@@ -344,4 +342,5 @@ const styles = StyleSheet.create({
         fontSize: 15,
         marginBottom: 5
     },
+    
 });
