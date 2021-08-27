@@ -16,6 +16,7 @@ import ToastComponent from '@components/toast/ToastComponent';
 import ButtonComponent from '@components/button/ButtonComponent';
 import { NavigationContainer } from '@react-navigation/native';
 import SplashScreen from 'react-native-splash-screen';
+import MapViewScreen from '@screens/MapView';
 
 const App = () => {
   useEffect(() => {
@@ -26,7 +27,7 @@ const App = () => {
     <NavigationContainer>
     <SafeAreaView style={styles.container}>
       <ToastComponent />
-      <ButtonComponent title="Say Hello" onPress={() => ToastComponent.show("Hello there!!", {timeout: 5000, level: "success"})}/>
+      <MapViewScreen />
     </SafeAreaView>
     </NavigationContainer>
   );
@@ -35,7 +36,6 @@ const App = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: StatusBar.currentHeight || 30,
     position: 'relative'
   },
   sectionTitle: {
