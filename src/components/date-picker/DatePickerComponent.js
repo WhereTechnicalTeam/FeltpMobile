@@ -11,13 +11,17 @@ const DatePickerComponent = (props) => {
 
     const handleChange = (event, newDate) => {
         setShow(false);
-        onDateChange(newDate ? formatDate(newDate) : value ? value : newDate);
+        onDateChange(newDate ? formatDate(newDate) : value);
     }
 
     const formatDate = (date) => {
-        let month = date.getMonth() + 1;
-        let day = date.getDate()
-        return [date.getFullYear(), month > 9 ? month : '0' + month, day > 9 ? day : '0'+day].join("-")
+        try {
+            let month = date.getMonth() + 1;
+            let day = date.getDate()
+            return [date.getFullYear(), month > 9 ? month : '0' + month, day > 9 ? day : '0'+day].join("-");    
+        } catch (err) {
+            console.warn("Failed to format date from date picker:", err);
+        }
     }
 
     return (

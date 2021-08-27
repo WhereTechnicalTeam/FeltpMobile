@@ -6,7 +6,7 @@
  * @flow strict-local
  */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   SafeAreaView,
   StatusBar,
@@ -15,6 +15,7 @@ import {
 import SettingsHeader from '@components/settings-header/SettingsHeader';
 
 const App = () => {
+
   return (
     <SafeAreaView style={styles.container}>
       <SettingsHeader />

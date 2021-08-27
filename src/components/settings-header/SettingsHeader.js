@@ -1,4 +1,4 @@
-// import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {useState, useEffect} from 'react';
 import { StyleSheet, Text, View, Alert, Platform, PermissionsAndroid } from 'react-native';
 import { launchImageLibrary } from 'react-native-image-picker';
@@ -25,8 +25,13 @@ const SettingsHeader = (props) => {
 
     useEffect(() => {
         (async () => {
-            // const storedUser = await AsyncStorage.getItem('userDetails');
-            // setUser(JSON.parse(storedUser));
+            try{
+                const storedUser = await AsyncStorage.getItem('userDetails');
+                if(isDefined(storedUser))
+                setUser(JSON.parse(storedUser));    
+            } catch(err) {
+                console.warn("Failed to retrieve user details from storage:", err);
+            }
         })();
     }, []);
 
@@ -45,7 +50,7 @@ const SettingsHeader = (props) => {
                     style: 'cancel'
                 }, 
                 {
-                    text: "OK",
+                    text: "Yes",
                     onPress: changeUserAvatar
                 }
             ]);
@@ -55,13 +60,13 @@ const SettingsHeader = (props) => {
     const changeUserAvatar = async() => {
         launchImageLibrary({
             mediaType: 'photo',
-            maxWidth: '150',
+            maxWidth: 150,
             quality: 0.8
         }, ({assets}) => {
             //show option to launch camera
-            console.log("selected image:", assets[0]);
+            console.log("selected image:", assets ? assets[0] : '');
+            if(isDefined(assets))
             handleSelectedImage(assets[0]);
-
         });
     }
 
