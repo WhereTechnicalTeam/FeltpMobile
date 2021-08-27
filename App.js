@@ -13,21 +13,16 @@ import {
   StyleSheet,
 } from 'react-native';
 import ToastComponent from '@components/toast/ToastComponent';
-import ButtonComponent from '@components/button/ButtonComponent';
 import { NavigationContainer } from '@react-navigation/native';
-import SplashScreen from 'react-native-splash-screen';
-import MapViewScreen from '@screens/MapView';
+import AppContainer from '@navigators/app-container';
 
 const App = () => {
-  useEffect(() => {
-    SplashScreen.hide();
-  })
 
   return (
     <NavigationContainer>
     <SafeAreaView style={styles.container}>
       <ToastComponent />
-      <MapViewScreen />
+      <AppContainer />
     </SafeAreaView>
     </NavigationContainer>
   );
