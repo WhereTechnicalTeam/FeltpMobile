@@ -75,7 +75,7 @@ const findUserById = async(id, token) => {
     })
     .catch((error) => {
         console.error(error);
-        return null;
+        return {status: 500};
     });
 }
 
@@ -98,8 +98,49 @@ const fetchUserStats = async(token) => {
     })
     .catch((error) => {
         console.error(error);
-        return null;
+        return {status: 500};
     });
 }
 
-export {findUserByEmail, findAllUsers, updateUser, findUserById, fetchUserStats};
+const fetchUserJobHistory = async(token, id) => {
+    return fetch(`${BASE_URL}/jobdetail/${id}`, {
+        method: 'GET',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: `Token ${token}`
+        }
+    })
+    .then((response) => response.json())
+    .then(json => {
+        console.log(json);
+        return json;
+    })
+    .catch((error) => {
+        console.error(error);
+        return {status: 500};
+    });
+}
+
+const updateJobHistory = async(token, id, joblist) => {
+    return fetch(`${BASE_URL}/jobdetail/${id}/edit`, {
+        method: 'PUT',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: `Token ${token}`
+        },
+        body: JSON.stringify(joblist)
+    })
+    .then((response) => response.json())
+    .then(json => {
+        console.log(json);
+        return json;
+    })
+    .catch((error) => {
+        console.error(error);
+        return {status: 500};
+    });
+}
+
+export {findUserByEmail, findAllUsers, updateUser, findUserById, fetchUserStats, fetchUserJobHistory};
