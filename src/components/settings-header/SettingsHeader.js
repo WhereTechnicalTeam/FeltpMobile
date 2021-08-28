@@ -112,7 +112,7 @@ const SettingsHeader = (props) => {
     }
 
     const navigateSettings = () => {
-        // props.navigation.navigate('SettingsNavigator');
+        props.navigation.navigate('SettingsNavigator');
     }
 
     return (

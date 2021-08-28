@@ -20,6 +20,8 @@ import UserProfileScreen from '@screens/UserProfile';
 import SettingsHeader from '@components/settings-header/SettingsHeader';
 import NewsDisplayScreen from '@screens/NewsDisplay';
 import MemberProfileScreen from '@screens/MemberProfile';
+import ChangePasswordScreen from '@screens/ChangePassword';
+import SettingsScreen from '@screens/Settings';
 
 const MainStack = createNativeStackNavigator();
 const MainTabStack = createBottomTabNavigator();
@@ -61,6 +63,13 @@ const UserProfileNavigator = () => (
     <ProfileStack.Navigator initialRouteName="UserProfile" screenOptions={{headerShown: false}}>
         <ProfileStack.Screen name="UserProfile" component={UserProfileScreen}/>
     </ProfileStack.Navigator>
+);
+
+const SettingsNavigator = () => (
+    <SettingsStack.Navigator initialRouteName="Settings" screenOptions={{headerShown: false}}>
+        <SettingsStack.Screen name="Settings" component={SettingsScreen} />
+        <SettingsStack.Screen name="ChangePassword" component={ChangePasswordScreen} />
+    </SettingsStack.Navigator>
 );
 
 const MainTabNavigator = () => (
@@ -153,6 +162,7 @@ const AppContainer = () => (
     <MainStack.Navigator initialRouteName="Auth" screenOptions={{headerShown: false}}>
         <MainStack.Screen name="Auth" component={AuthNavigator}/>
         <MainStack.Screen name="Tabs" component={MainTabNavigator} />
+        <MainStack.Screen name="SettingsNavigator" component={SettingsNavigator} />
     </MainStack.Navigator>
 );
 
