@@ -46,7 +46,8 @@ const styles = StyleSheet.create({
     textInput: {
         height: '100%',
         paddingHorizontal: 8,
-        fontSize: 17
+        fontSize: 17,
+        color: colors.primaryBlack
     },
     disabled: {
         opacity: 0.35

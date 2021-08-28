@@ -37,7 +37,7 @@ const JobHistoryScreen = (props) => {
                         console.log("Job History response:", response);
                     } else ToastComponent.show("Failed to fetch job history", {timeOut: 3500, level: 'failure'})
                 } else {
-                    ToastComponent.show("Failed to fetch user details", {timeOut: 3500, level: 'failure'})
+                    ToastComponent.show("Failed to fetch user job details", {timeOut: 3500, level: 'failure'})
                 }
             })();
         } catch(err) {

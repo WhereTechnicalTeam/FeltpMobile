@@ -162,7 +162,7 @@ const AuthLoadingWrapper = (props) => {
             if(response.status == 200) {
                 setIsAuthenticated(true);
             } 
-            SplashScreen.hide();
+            // SplashScreen.hide();
         })();
     } catch(error) {
         console.error("Error loading app:", error);
@@ -171,19 +171,19 @@ const AuthLoadingWrapper = (props) => {
     });
 
     return (
-        loading ? null :
+        // loading ? null :
         <View style={{flex: 1}}>
            {
                isAuthenticated ? 
                <MainTabNavigator />
                :
-               <AuthLoadingScreen 
+                <AuthLoadingScreen 
                     onCreateAccountPress={navigateSignup} 
                     onRedirectTextPress={navigateSignin}
                     appName="FELTP ALUMNI"
                     subTitle="Connect with your peers anywhere"
                />
-           }
+            }
         </View>            
     );
 }
@@ -197,3 +197,5 @@ const AppContainer = () => (
 );
 
 export default AppContainer;
+
+export {DashboardNavigator, MemberListNavigator};

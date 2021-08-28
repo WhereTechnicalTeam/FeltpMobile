@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {ActivityIndicator, ScrollView, StyleSheet, Text, View} from 'react-native';
-import { useEffect, useState } from 'react/cjs/react.development';
 import { findNewsById } from '@api/newsApi';
 import IconButtonComponent from '@components/icon-button/IconButtonComponent';
 import { colors } from '@theme/colors';

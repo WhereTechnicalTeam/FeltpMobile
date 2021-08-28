@@ -15,8 +15,12 @@ import {
 import ToastComponent from '@components/toast/ToastComponent';
 import { NavigationContainer } from '@react-navigation/native';
 import AppContainer from '@navigators/app-container';
+import SplashScreen from 'react-native-splash-screen';
 
 const App = () => {
+  useEffect(() => {
+    SplashScreen.hide();
+  }, []);
 
   return (
     <NavigationContainer>

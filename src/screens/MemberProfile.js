@@ -1,6 +1,5 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {StyleSheet, View, Image, Text, ScrollView, StatusBar} from 'react-native';
-import { useEffect, useState } from 'react/cjs/react.development';
 
 import IconButtonComponent from '@components/icon-button/IconButtonComponent';
 import ProfileTextComponent from '@components/profile-text/ProfileTextComponent';

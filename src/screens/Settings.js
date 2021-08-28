@@ -1,7 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { View, Text, StyleSheet, ScrollView, Alert } from 'react-native';
-import { useEffect, useState } from 'react/cjs/react.development';
 import { logout } from '@api/authApi';
 import HorizontalLineComponent from '@components/horizontal-line/HorizontalLine';
 import IconButtonComponent from '@components/icon-button/IconButtonComponent';

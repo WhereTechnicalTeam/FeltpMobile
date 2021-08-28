@@ -1,9 +1,8 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { View, Text, StyleSheet, Image, FlatList, Alert, Pressable } from 'react-native';
 import SummaryCardComponent from '@components/summary-card/SummaryCardComponent';
 import NewsPreviewComponent from '@components/news-preview/NewsPreviewComponent';
 import { colors } from '@theme/colors';
-import { useEffect, useState } from 'react/cjs/react.development';
 import { findAllNews } from '@api/newsApi';
 import {fetchUserStats} from '@api/userApi';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -12,11 +11,11 @@ import ToastComponent from '@components/toast/ToastComponent';
 const DashboardScreen = (props) => {
 
     const [newsItems, setNewsItems] = useState([
-        // {
-        //     id: 0,
-        //     title: "Monthly cohort meetings!",
-        //     content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
-        // }
+        {
+            id: 0,
+            title: "Monthly cohort meetings!",
+            content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
+        }
     ]);
     const [memberStats, setMemberStats] = useState({
         numFrontline: 0,
