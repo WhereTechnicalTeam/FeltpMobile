@@ -24,6 +24,9 @@ import ChangePasswordScreen from '@screens/ChangePassword';
 import SettingsScreen from '@screens/Settings';
 import JobHistoryScreen from '@screens/JobHistory';
 import NotificationsListScreen from '@screens/NotificationsList';
+import EditProfileScreen from '@screens/EditProfile';
+import EditProfile2Screen from '@screens/EditProfile2';
+import EditProfile3Screen from '@screens/EditProfile3';
 
 const MainStack = createNativeStackNavigator();
 const MainTabStack = createBottomTabNavigator();
@@ -65,6 +68,9 @@ const MemberListNavigator = () => (
 const UserProfileNavigator = () => (
     <ProfileStack.Navigator initialRouteName="UserProfile" screenOptions={{headerShown: false}}>
         <ProfileStack.Screen name="UserProfile" component={UserProfileScreen}/>
+        <ProfileStack.Screen name="EditProfile" component={EditProfileScreen} />
+        <ProfileStack.Screen name="EditProfile2" component={EditProfile2Screen} />
+        <ProfileStack.Screen name="EditProfile3" component={EditProfile3Screen} />
     </ProfileStack.Navigator>
 );
 

@@ -9,7 +9,6 @@ import SearchBarComponent from '@components/search-bar/SearchBarComponent';
 import { colors } from '@theme/colors';
 
 const MapViewScreen = (props) => {
-    const {callingScreen="SignupWithMap"} = props;
 
     const [region, setRegion] = useState({
         latitude: 5.6890625,
@@ -32,6 +31,7 @@ const MapViewScreen = (props) => {
 
     const navigateCallingScreen = () => {
         try {
+            const callingScreen = props.route.params?.callingScreen || "SignupWithMap";
             props.navigation.navigate(callingScreen, {
                 officeMarkerPosition: {
                     latitude: officeMarkerPosition.latitude.toString(),

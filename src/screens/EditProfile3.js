@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Text, ScrollView } from 'react-native';
-import {Picker} from '@react-native-picker/picker';
 
 import IconButtonComponent from '@components/icon-button/IconButtonComponent';
 import FormInputComponent from '@components/input/FormInputComponent';
@@ -10,17 +9,17 @@ import LinkTextComponent from '@components/link-text/LinkTextComponent';
 
 import { colors } from '@theme/colors';
 import MapPreviewComponent from '@components/map-preview/MapPreviewComponent';
-import { registerUser } from '@api/authApi';
 import { updateUser } from '@api/userApi';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ToastComponent from '@components/toast/ToastComponent';
-import { isAlphaTextValid, isDefined, isTextValid, isEmpty } from '@utils/validation';
-import HelperTextComponent from '@components/helper-text/HelperTextComponent';
-import { getDistrictListByRegion, safeConvertToString } from '@utils/helperFunctions';
-import DropdownComponent from '@components/dropdown/DropdownComponent';
 import { levelOfHSList, RegionList } from '@utils/constants';
+import HelperTextComponent from '@components/helper-text/HelperTextComponent';
+import { Picker } from '@react-native-picker/picker';
+import DropdownComponent from '@components/dropdown/DropdownComponent';
+import { getDistrictListByRegion, safeConvertToString } from '@utils/helperFunctions';
+import { isDefined, isEmpty } from '@utils/validation';
 
-const SignUpWithMapScreen = (props) => {
+const EditProfile3Screen = (props) => {
 
     const [user, setUser] = useState({
         job_to_user: [{
@@ -53,14 +52,13 @@ const SignUpWithMapScreen = (props) => {
                 let {job_to_user} = prevUser;
                 job_to_user = [...job_to_user, ...incoming_job_to_user]; //merge job_to_user
                 return {...previousUserDetails, job_to_user}; 
-            });        
+            });
         } catch(err) {
-            console.warn("Error setting up sign up with map:", err);
+            console.warn("Error fetching prev screen edit user details:", err)
         }
     }, []);
 
     useEffect(() => {
-        console.log("office marker", props.route.params.officeMarkerPosition);
         if(props.route.params?.officeMarkerPosition) {
             console.log("office marker", props.route.params.officeMarkerPosition);
             setOfficePosition(props.route.params.officeMarkerPosition);
@@ -72,57 +70,41 @@ const SignUpWithMapScreen = (props) => {
     }
 
     const navigateMapView = () => {
-        props.navigation.navigate('MapView');
-    }
-
-    const navigateVerifyEmail = () => {
-        props.navigation.navigate('VerifyEmail',
-        {
-            email: user.email
+        props.navigation.navigate('Auth', {
+            screen: 'MapView',
+            params: {
+                callingScreen: 'EditProfile3'
+            }
         });
     }
 
+    const navigateUserProfile = () => {
+        props.navigation.navigate('UserProfile');
+    }
+
     const handleSubmit = async() => {
-        console.log(user);
+        console.log("user update", user);
         try {
-        if(validateUserDetails()) {
-            let response = null;
-            if(user.main_user.status === 'pending approval' || user.main_user.status === 'approved') response = await updateUser(user, user.id)
-            else response = await registerUser(user)
-            console.log("response: ", response);
-
-            if(response.status == 200) {
-                // let authUser = response.user;
-                await AsyncStorage.setItem('userDetails', JSON.stringify(user));
-
-                if(user.main_user.status !== 'approved') {
-                    ToastComponent.show("Registered! Please contact the admin for approval to login", {timeOut: 3500, level: 'success'});
-                }
-                if(user.main_user.email_status == 'verified') {
-                    // navigateDashboard();
-                    // await AsyncStorage.setItem('authToken', response.token);
-                    navigateSignin();
+            if(validateUserDetails()) {
+                let response = await updateUser(user, user.main_user.id);
+                if(response.status === 200) {
+                    ToastComponent.show("Profile updated", {timeOut: 3500, level: 'success'});
+                    await AsyncStorage.setItem("userDetails", JSON.stringify(user));
+                    navigateUserProfile();
                 } else {
-                    navigateVerifyEmail();           
-               }
+                    ToastComponent.show("Profile update failed", {timeOut: 3500, level: 'failure'});
+                }
             } else {
-                ToastComponent.show("Registration failed", {timeOut: 3500, level: 'failure'});
+                ToastComponent.show("Invalid Details", {timeOut: 3500, level: 'failure'});
             }
-        } else {
-            ToastComponent.show("Validation failed", {timeOut: 3500, level: 'failure'});                
-        }
         } catch(error) {
-            console.warn("Error during registration:", error);
+            console.error("Error updating user:", error);
         }
     }
 
     const isUserOfficeLocationSet = () => {
         const {is_current, latitude, longitude} = user.job_to_user[0];
         return is_current == 'Yes' && (isDefined(latitude) && !isEmpty(latitude)) && (isDefined(longitude) && !isEmpty(longitude));
-    }
-
-    const navigateDashboard = () => {
-        props.navigation.navigate('Tabs');
     }
 
     const setCurrentInstitution = (current_institution) => {
@@ -168,64 +150,52 @@ const SignUpWithMapScreen = (props) => {
     }
 
     const validateUserDetails = () => {
-        // const currentInstitutionErrors = isTextValid(user.job_to_user[0].current_institution);
-        // const jobTitleErrors = isAlphaTextValid(user.job_to_user[0].job_title);
-        // const regionErrors = isTextValid(user.job_to_user[0].region);
-        // const districtErrors = isTextValid(user.job_to_user[0].district);
-        // const healthSystemErrors = isTextValid(user.job_to_user[0].level_of_health_system);
-        // const officePositionErrors = [...isTextValid(user.job_to_user[0].latitude, 1), ...isTextValid(user.job_to_user[0].longitude, 1)];
-        // setErrors({currentInstitutionErrors, jobTitleErrors, regionErrors, districtErrors, healthSystemErrors, officePositionErrors});
-        // console.log(errors);
-        // return ![currentInstitutionErrors, jobTitleErrors, regionErrors, districtErrors, healthSystemErrors, officePositionErrors]
-        // .some(arr => arr.length > 0);
+        //validate location details (if current institution is set, job title and location must be set)
+        //if region is set, district must be set
         return true;
     }
 
-    const navigateSignin = () => {
-        props.navigation.navigate('Signin');
-    }
-
     const parseUserDetails = () => {
+        let user = {...prevUserDetails, ...currentUserDetails};
         const userDetails = {
             "email": user.email,
             "password": user.password,
-            "cpassword": user.cpassword,
+            "cpassword": user.confirmPassword,
             "main_user": {
                 "title": "",
-                "surname": user.lastname,
+                "surname": user.surname,
                 "firstname": user.firstname,
-                "sex": user.sex,
-                "phone1": user.phone1,
-                "phone2": user.phone2,
-                "is_trained_frontline": user.is_trained_frontline,
-                "cohort_number_frontline": parseInt(user.cohort_number_frontline),
-                "yr_completed_frontline": user.yr_completed_frontline,
-                "institution_enrolled_at_frontline": user.institution_enrolled_at_frontline,
-                "job_title_at_enroll_frontline": user.job_title_at_enroll_frontline,
-                "is_trained_intermediate": user.is_trained_intermediate,
-                "cohort_number_intermediate": parseInt(user.cohort_number_intermediate),
-                "yr_completed_intermediate": isEmpty(user.yr_completed_intermediate) ? user.yr_completed_intermediate : '2020-08-31',
-                "institution_enrolled_at_intermediate": user.institution_enrolled_at_intermediate,
-                "job_title_at_enroll_intermediate": user.job_title_at_enroll_intermediate,
-                "is_trained_advanced": user.is_trained_advanced,
-                "cohort_number_advanced": parseInt(user.cohort_number_advanced),
-                "yr_completed_advanced": isEmpty(user.yr_completed_advanced) ? user.yr_completed_advanced : '2020-08-31',
-                "institution_enrolled_at_advanced": user.institution_enrolled_at_advanced,
+                "sex": user.gender,
+                "phone1": user.primaryPhone,
+                "is_trained_frontline": user.frontlineExpanded,
+                "cohort_number_frontline": "",
+                "yr_completed_frontline": user.frontlineDetails.yearCompleted,
+                "institution_enrolled_at_frontline": user.frontlineDetails.intitution,
+                "job_title_at_enroll_frontline": "",
+                "is_trained_intermediate": user.intermediateExpanded,
+                "cohort_number_intermediate": "",
+                "yr_completed_intermediate": user.intermediateDetails.yearCompleted,
+                "institution_enrolled_at_intermediate": user.intermediateDetails.intitution,
+                "job_title_at_enroll_intermediate": "",
+                "is_trained_advanced": null,
+                "cohort_number_advanced": user.advancedDetails.cohortNumber,
+                "yr_completed_advanced": null,
+                "institution_enrolled_at_advanced": "",
                 "image": null,
-                "email_status": user.email_status,
-                "job_title_at_enroll_advanced": user.job_title_at_enroll_advanced
+                "email_status": user.emailStatus,
+                "job_title_at_enroll_advanced": ""
             },
-            "job_to_user": [{
-                "current_institution": user.job_to_user.current_institution,
-                "job_title": user.job_to_user.job_title,
-                "region": 1,
-                "district": 1,
-                "level_of_health_system": 1,
+            "job_to_user": {
+                "current_institution": user.currentInstitution,
+                "job_title": user.currentJobTitle,
+                "region": user.currentRegion,
+                "district": user.currentDistrict,
+                "level_of_health_system": user.levelOfHealthSystem,
                 "employment_status": "",
-                "is_current": user.job_to_user.is_current,
-                "longitude": user.job_to_user.longitude,
-                "latitude": user.job_to_user.latitude
-            }]
+                "is_current": "true",
+                "longitude": officePosition.longitude,
+                "latitude": officePosition.latitude
+            }
         }
         return userDetails;
     }
@@ -234,7 +204,6 @@ const SignUpWithMapScreen = (props) => {
         <View style={styles.signupContainer}>
             <View style={styles.logoComponentView}>
                 <IconButtonComponent icon="arrow-back-sharp" size={24} color={colors.black} iconButtonStyle={styles.iconButtonComponent} onPress={navigateBack}/>
-                <LogoComponent logoText="Signup"/>
             </View>
             <ScrollView showsVerticalScrollIndicator={false}>
             <View style={styles.inputWithIconView}>
@@ -256,8 +225,8 @@ const SignUpWithMapScreen = (props) => {
             <View style={styles.formInputView}>
             <Text style={styles.pickerText}>Current Region</Text>
                 <View style={styles.pickerView}>
-                <Picker onValueChange={setCurrentRegion} selectedValue={user.job_to_user[0].region} mode="dialog">
-                    <Picker.Item label="" value={null}/>
+                <Picker onValueChange={setCurrentRegion} selectedValue={user.job_to_user[0].region} mode="dropdown">
+                    <Picker.Item label="" value={null} />
                     {
                         RegionList.map(reg => <Picker.Item key={reg.id} label={reg.name} value={reg.id}/>)
                     }                    
@@ -280,35 +249,21 @@ const SignUpWithMapScreen = (props) => {
                 </View>
             </View>
             <View>
-                <ButtonComponent title="Sign up" onPress={handleSubmit} buttonContainerStyle={styles.buttonComponent}/>
-                <LinkTextComponent preText="Already have an account?" actionText="Login" onPress={navigateSignin}/>
+                <ButtonComponent title="Update Profile" onPress={handleSubmit} buttonContainerStyle={styles.buttonComponent}/>
             </View>
             </ScrollView>
         </View>
     );
 }
-//TODO add validation for current job details
 
-export default SignUpWithMapScreen;
+export default EditProfile3Screen;
 
 const styles = StyleSheet.create({
     signupContainer: {
         flex: 1,
-        paddingVertical: 50,
         paddingHorizontal: 25,
+        paddingBottom: 20,
         backgroundColor: colors.white
-    },
-    logoComponentView: {
-        marginBottom: 35,
-        flexDirection: 'row',
-        justifyContent: 'flex-start'
-    },
-    subTitleView: {
-        marginBottom: 30
-    },
-    subTitle: {
-        fontSize: 15,
-        textAlign: 'center'
     },
     inputWithIconView: {
         flexDirection: 'row',
@@ -323,18 +278,15 @@ const styles = StyleSheet.create({
     },
     buttonComponent: {
         maxWidth: '100%',
-        marginTop: 30,
-        marginBottom: 10
+        marginTop: 30
     },
     iconButtonComponent: {
         backgroundColor: colors.white,
-        alignSelf: 'flex-start',
-        marginRight: '25%'
     },
     pickerView: {
         borderRadius: 5,
         borderColor: colors.secondaryBlack,
-        borderWidth: 1,       
+        borderWidth: 0.8,       
         height: 50,
         justifyContent: 'center' 
     },
@@ -342,5 +294,4 @@ const styles = StyleSheet.create({
         fontSize: 15,
         marginBottom: 5
     },
-    
 });
