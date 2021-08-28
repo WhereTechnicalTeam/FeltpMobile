@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {View} from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import SplashScreen from 'react-native-splash-screen';
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -28,12 +29,12 @@ import EditProfileScreen from '@screens/EditProfile';
 import EditProfile2Screen from '@screens/EditProfile2';
 import EditProfile3Screen from '@screens/EditProfile3';
 
-const MainStack = createNativeStackNavigator();
 const MainTabStack = createBottomTabNavigator();
+const ManageUserTabStack = createMaterialTopTabNavigator();
+const MainStack = createNativeStackNavigator();
 const AuthStack = createNativeStackNavigator();
 const DashboardStack = createNativeStackNavigator();
 const MemberStack = createNativeStackNavigator();
-const ManageUserStack = createNativeStackNavigator();
 const ProfileStack = createNativeStackNavigator();
 const JobStack = createNativeStackNavigator();
 const SettingsStack = createNativeStackNavigator();
@@ -115,7 +116,7 @@ const MainTabNavigator = () => (
         />
         <MainTabStack.Screen 
         name="ManageUser" 
-        component={UserProfileNavigator}
+        component={ManageUserNavigator}
         options={{
             title: 'Manage Profile',
             tabBarIcon: () => <Icon name="settings" size={24}/>,
@@ -127,6 +128,14 @@ const MainTabNavigator = () => (
         }} 
         />
     </MainTabStack.Navigator>
+);
+
+const ManageUserNavigator = () => (
+    <ManageUserTabStack.Navigator initialRouteName="UserProfileNavigator">
+        <ManageUserTabStack.Screen name="UserProfileNavigator" component={UserProfileNavigator} options={{ title: 'Profile' }}/>
+        <ManageUserTabStack.Screen name="JobNavigator" component={JobNavigator} options={{ title: 'Job History' }}/>
+        <ManageUserTabStack.Screen name="NotificationNavigator" component={NotificationNavigator} options={{ title: 'Notifications' }}/>
+    </ManageUserTabStack.Navigator>
 )
 
 const AuthLoadingWrapper = (props) => {
