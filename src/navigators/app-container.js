@@ -22,16 +22,19 @@ import NewsDisplayScreen from '@screens/NewsDisplay';
 import MemberProfileScreen from '@screens/MemberProfile';
 import ChangePasswordScreen from '@screens/ChangePassword';
 import SettingsScreen from '@screens/Settings';
+import JobHistoryScreen from '@screens/JobHistory';
+import NotificationsListScreen from '@screens/NotificationsList';
 
 const MainStack = createNativeStackNavigator();
 const MainTabStack = createBottomTabNavigator();
 const AuthStack = createNativeStackNavigator();
 const DashboardStack = createNativeStackNavigator();
 const MemberStack = createNativeStackNavigator();
-const ManageProfileStack = createNativeStackNavigator();
+const ManageUserStack = createNativeStackNavigator();
 const ProfileStack = createNativeStackNavigator();
 const JobStack = createNativeStackNavigator();
 const SettingsStack = createNativeStackNavigator();
+const NotificationStack = createNativeStackNavigator();
 
 const AuthNavigator = () => (
     <AuthStack.Navigator initialRouteName="AuthLoading" screenOptions={{headerShown: false}}>
@@ -72,6 +75,18 @@ const SettingsNavigator = () => (
     </SettingsStack.Navigator>
 );
 
+const JobNavigator = () => (
+    <JobStack.Navigator initialRouteName="JobHistory" screenOptions={{headerShown: false}}>
+        <JobStack.Screen name="JobHistory" component={JobHistoryScreen}/>
+    </JobStack.Navigator>
+);
+
+const NotificationNavigator = () => (
+    <NotificationStack.Navigator initialRouteName="Notifications" screenOptions={{headerShown: false}}>
+        <NotificationStack.Screen name="Notifications" component={NotificationsListScreen}/>
+    </NotificationStack.Navigator>
+)
+
 const MainTabNavigator = () => (
     <MainTabStack.Navigator initialRouteName="DashboardNavigator" >
         <MainTabStack.Screen 
@@ -93,7 +108,7 @@ const MainTabNavigator = () => (
         }} 
         />
         <MainTabStack.Screen 
-        name="UserProfileNavigator" 
+        name="ManageUser" 
         component={UserProfileNavigator}
         options={{
             title: 'Manage Profile',
