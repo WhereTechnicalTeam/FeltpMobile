@@ -81,7 +81,7 @@ const DashboardScreen = (props) => {
     }
 
     const navigateSettings = () => {
-        props.navigation.navigate('ManageUserTabNavigator');
+        props.navigation.navigate('ManageUser');
     }
     
     const renderNewsItem = ({item}) => <NewsPreviewComponent containerStyle={{marginBottom: 20}} title={item.title} summary={item.content} onPress={() => navigateNewsDisplay(item)}/>

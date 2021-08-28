@@ -46,7 +46,7 @@ const MemberListScreen = (props) => {
     }
 
     const navigateSettings = () => {
-        props.navigation.navigate('ManageUserTabNavigator');
+        props.navigation.navigate('ManageUser');
     }
 
     const renderMemberCard = ({item}) => {

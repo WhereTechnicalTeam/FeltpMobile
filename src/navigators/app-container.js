@@ -18,6 +18,8 @@ import DashboardScreen from '@screens/Dashboard';
 import MemberListScreen from '@screens/MemberList';
 import UserProfileScreen from '@screens/UserProfile';
 import SettingsHeader from '@components/settings-header/SettingsHeader';
+import NewsDisplayScreen from '@screens/NewsDisplay';
+import MemberProfileScreen from '@screens/MemberProfile';
 
 const MainStack = createNativeStackNavigator();
 const MainTabStack = createBottomTabNavigator();
@@ -44,12 +46,14 @@ const AuthNavigator = () => (
 const DashboardNavigator = () => (
     <DashboardStack.Navigator initialRouteName="Dashboard" screenOptions={{headerShown: false}}>
         <DashboardStack.Screen name="Dashboard" component={DashboardScreen}/>
+        <DashboardStack.Screen name="NewsDisplay" component={NewsDisplayScreen}/>
     </DashboardStack.Navigator>
 );
 
 const MemberListNavigator = () => (
     <MemberStack.Navigator initialRouteName="MemberList" screenOptions={{headerShown: false}}>
         <MemberStack.Screen name="MemberList" component={MemberListScreen}/>
+        <MemberStack.Screen name="MemberProfile" component={MemberProfileScreen}/>
     </MemberStack.Navigator>
 );
 
