@@ -15,9 +15,8 @@ import ToastComponent from '@components/toast/ToastComponent';
 import HelperTextComponent from '@components/helper-text/HelperTextComponent';
 
 const SignUpScreen = (props) => {
-
-    const [userSearchComplete, setUserSearchComplete] = useState(false);
-    const [user, setUser] = useState({
+    
+    const initUser = {
         email: '',
         password: '',
         cpassword: '',
@@ -28,7 +27,9 @@ const SignUpScreen = (props) => {
         sex: '',
         date_of_birth: ''
         }
-    });
+    };
+    const [userSearchComplete, setUserSearchComplete] = useState(false);
+    const [user, setUser] = useState(initUser);
     const [errors, setErrors] = useState({
         emailErrors: [],
         titleErrors: [],
@@ -70,6 +71,8 @@ const SignUpScreen = (props) => {
                         return {...prevUser, main_user};
                     }); 
                     ToastComponent.show("User does not exist", {timeOut: 3500, level: 'failure'});
+                    setShowPassword(true);
+                    setUser({...initUser, email: user.email});
                 } else {
                 let foundUser = response.alldata[0];
                 console.log("user", foundUser);

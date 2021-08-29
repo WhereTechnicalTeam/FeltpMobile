@@ -31,7 +31,8 @@ const SignUpWithMapScreen = (props) => {
             level_of_health_system: null,
             longitude: null,
             latitude: null,
-            is_current: 'Yes'
+            is_current: 'Yes',
+            employment_status: "full-time"
         }]
     });
     const [selectedRegion, setSelectedRegion] = useState('');
