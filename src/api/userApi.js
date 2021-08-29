@@ -143,4 +143,4 @@ const updateJobHistory = async(token, id, joblist) => {
     });
 }
 
-export {findUserByEmail, findAllUsers, updateUser, findUserById, fetchUserStats, fetchUserJobHistory};
+export {findUserByEmail, findAllUsers, updateUser, findUserById, fetchUserStats, fetchUserJobHistory, updateJobHistory};

@@ -4,25 +4,16 @@ import IconButtonComponent from '@components/icon-button/IconButtonComponent';
 import ProfileTextComponent from '@components/profile-text/ProfileTextComponent';
 import { colors } from '@theme/colors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { fetchUserJobHistory } from 'src/api/userApi';
-import { isDefined } from 'src/utils/validation';
-import ToastComponent from 'src/components/toast/ToastComponent';
+import { fetchUserJobHistory } from '@api/userApi';
+import { isDefined } from '@utils/validation';
+import ToastComponent from '@components/toast/ToastComponent';
+import AddJobScreen from '@screens/AddJob';
 
 const JobHistoryScreen = (props) => {
-    const [jobHistory, setJobHistory] = useState([
-        {
-            id: 0,
-            current_institution: "Ghana Health Service",
-            job_title: "Junior Leader",
-            region: "Bono",
-            district: "Ada West",
-            level_of_health_system: "Regional",
-            longitude: null,
-            latitude: null,
-            is_current: 'Yes'
-        }
-    ]);
     const [user, setUser] = useState();
+    const [token, setToken] = useState();
+    const [showAddJob, setShowAddJob] = useState(false);
+    const [jobHistory, setJobHistory] = useState([]);
 
     useEffect(() => {
         try {
@@ -30,12 +21,10 @@ const JobHistoryScreen = (props) => {
                 const storedUser = await AsyncStorage.getItem('userDetails');
                 const token = await AsyncStorage.getItem('authToken');
                 setUser(JSON.parse(storedUser));
-                if(isDefined(user)) {
-                    const response = await fetchUserJobHistory(token, user.main_user.id);
-                    if(response.status == 200) {
-                        setJobHistory(response.job_to_user);
-                        console.log("Job History response:", response);
-                    } else ToastComponent.show("Failed to fetch job history", {timeOut: 3500, level: 'failure'})
+                setToken(token);
+                console.log("job user:", user)
+                if(isDefined(storedUser)) {
+                    await fetchUserJobHistory();
                 } else {
                     ToastComponent.show("Failed to fetch user job details", {timeOut: 3500, level: 'failure'})
                 }
@@ -44,6 +33,15 @@ const JobHistoryScreen = (props) => {
             console.warn("Error setting up job history screen", err);
         }
     }, []);
+
+    const fetchJobHistory = async() => {
+        const response = await fetchUserJobHistory(token, storedUser.main_user.id);
+        console.log("job history:", response)
+        if(response.status  == 200) {
+            setJobHistory(response.job_to_user);
+            console.log("Job History response:", response);aa
+        } else ToastComponent.show("Failed to fetch job history", {timeOut: 3500, level: 'failure'})
+    }
 
     const renderJobDetails = ({item}) => (
         <View style={[styles.cardContainer, styles.shadow]}>
@@ -59,8 +57,9 @@ const JobHistoryScreen = (props) => {
     return (
         <View style={styles.containerView}>
             <FlatList renderItem={renderJobDetails} keyExtractor={item => item.id.toString()} data={jobHistory} showsVerticalScrollIndicator={false}/>
+            <AddJobScreen modalVisible={showAddJob} user={user} handleCancel={() => setShowAddJob(false)} token={token}/>
             <View style={styles.fabView}>
-                <IconButtonComponent icon="add" size={24} color={colors.white} iconButtonStyle={{...styles.shadow, ...styles.fab}}/>
+                <IconButtonComponent icon="add" size={24} color={colors.white} iconButtonStyle={{...styles.shadow, ...styles.fab}} onPress={() => setShowAddJob(true)} />
             </View>
         </View>
     );
@@ -70,7 +69,7 @@ export default JobHistoryScreen;
 
 const styles = StyleSheet.create({
     containerView: {
-        paddingVertical: 20,
+        paddingVertical: 10,
         position: 'relative',
         flex: 1
     },

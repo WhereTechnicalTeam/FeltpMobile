@@ -44,7 +44,7 @@ const UserProfileScreen = (props) => {
     useEffect(() => {
         (async () => {
             try {
-                AsyncStorage.getItem('userDetails')
+                await AsyncStorage.getItem('userDetails')
                 .then(storedUser => {
                     setUser(JSON.parse(storedUser));
                     console.log('user profile', user);

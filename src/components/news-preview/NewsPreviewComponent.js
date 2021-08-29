@@ -6,7 +6,7 @@ const NewsPreviewComponent = (props) => {
     const {summary, title, containerStyle, onPress} = props;
  
     return (
-        <View style={[styles.newsPreviewContainer, containerStyle, styles.shadow]}>
+        <View style={[styles.newsPreviewContainer, containerStyle, styles.shadow, {borderLeftColor: getRandomAccentColor()}]}>
             <Pressable onPress={onPress}>
             <View>
                 <Text style={styles.newsTitle}>{title}</Text>
@@ -19,12 +19,15 @@ const NewsPreviewComponent = (props) => {
     );
 }
 
+const getRandomAccentColor = () => {
+    return colors.accents[Math.floor(Math.random() * colors.accents.length)];
+}
+
 export default NewsPreviewComponent;
 
 const styles = StyleSheet.create({
     newsPreviewContainer: {
         borderLeftWidth: 5,
-        borderLeftColor: colors.primary,
         paddingLeft: 8
     },
     newsTitle: {

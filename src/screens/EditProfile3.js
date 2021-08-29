@@ -46,7 +46,7 @@ const EditProfile3Screen = (props) => {
 
     useEffect(() => {
         try {
-            const previousUserDetails = props.route.params.user;
+            const previousUserDetails = props.route.params?.user;
             let incoming_job_to_user = isDefined(previousUserDetails.job_to_user) ? previousUserDetails.job_to_user : []
             setUser(prevUser => {
                 let {job_to_user} = prevUser;

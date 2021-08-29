@@ -33,7 +33,7 @@ const login = async(user) => {
     })
     .then((response) => response.json())    
     .then(json => {
-        console.log(json);
+        console.log("login response:", json);
         return json;
     })
     .catch((error) => {
@@ -51,11 +51,7 @@ const logout = async(token) => {
         },
         body: JSON.stringify({token})
     })
-    .then((response) => {
-        console.log(response);
-        // if(response.ok) return response.json();
-         return response.json();
-    })
+    .then((response) => response.json())
     .then(json => {
         console.log(json);
         return json;

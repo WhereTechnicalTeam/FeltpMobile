@@ -39,7 +39,7 @@ export default NewsDisplayScreen;
 const styles = StyleSheet.create({
     newsContainer: {
         flex: 1,
-        paddingTop: 50,
+        paddingTop: 30,
         backgroundColor: colors.white,
         paddingHorizontal: 20
     },

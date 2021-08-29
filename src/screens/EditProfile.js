@@ -3,6 +3,7 @@ import { View, StyleSheet, Text, ScrollView } from 'react-native';
 
 import FormInputComponent from '@components/input/FormInputComponent';
 import ButtonComponent from '@components/button/ButtonComponent';
+
 import { colors } from '@theme/colors';
 import { isAlphaTextValid, isEmailValid, isDateValid } from '@utils/validation';
 import DatePickerComponent from '@components/date-picker/DatePickerComponent';
@@ -10,6 +11,7 @@ import { Picker } from '@react-native-picker/picker';
 import ToastComponent from '@components/toast/ToastComponent';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import HelperTextComponent from '@components/helper-text/HelperTextComponent';
+import IconButtonComponent from '@components/icon-button/IconButtonComponent';
 
 const EditProfileScreen = (props) => {
 
@@ -120,7 +122,8 @@ const EditProfileScreen = (props) => {
 
     return (
         <View style={styles.signupContainer}>
-                <Text style={styles.subTitle}>Edit your personal details</Text>
+                {/* <Text style={styles.subTitle}>Edit your personal details</Text> */}
+                <IconButtonComponent icon="arrow-back-sharp" size={24} color={colors.black} iconButtonStyle={styles.iconButtonComponent} onPress={navigateBack}/>
             <ScrollView showsVerticalScrollIndicator={false}>
             <View style={styles.formInputView}>
             <FormInputComponent label="Email Address" placeholder="Find your account" onChangeText={setEmail} value={user.email} invalid={errors.emailErrors.length > 0} keyboardType="email-address"/>
@@ -166,7 +169,7 @@ export default EditProfileScreen;
 const styles = StyleSheet.create({
     signupContainer: {
         flex: 1,
-        paddingTop: 20,
+        // paddingTop: 20,
         paddingHorizontal: 25,
         paddingBottom: 15,
         backgroundColor: colors.white
