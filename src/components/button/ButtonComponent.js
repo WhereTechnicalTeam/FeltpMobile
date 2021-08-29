@@ -8,6 +8,7 @@ const ButtonComponent = (props) => {
         <View style={[styles.buttonView, buttonContainerStyle, disabled ? styles.disabled : {}]}>
             <Pressable 
                 onPress={onPress}
+                android_ripple={{color: colors.ripple}}
                 disabled={disabled}
                 style={[styles.buttonPressable, buttonStyle]}
             >

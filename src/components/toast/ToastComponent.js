@@ -41,9 +41,7 @@ class ToastComponent extends Component {
                     <View style={{width: '85%'}}>
                     <Text style={styles.text} numberOfLines={2}>{text}</Text>
                     </View>
-                    <Pressable onPress={() => this.setState({visible: false})} style={{width: '10%'}}>
-                        <Text style={styles.icon}>X</Text>
-                    </Pressable>
+                    <Icon onPress={() => this.setState({visible: false})} name="close" color={colors.white} size={24}/>
                 </View>
             ) : null
         );

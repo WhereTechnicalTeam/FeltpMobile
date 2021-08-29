@@ -10,6 +10,7 @@ const colors = {
     lightPrimary: '#708BF4',
     pearl: '#F0EAD6',
     ivory: '#FFFFF0',
+    ripple: '#624C4C',
     accents: ['#F2994A', '#2F80ED', '#56CCF2', '#BB6BD9', '#EB5757']
 };
 

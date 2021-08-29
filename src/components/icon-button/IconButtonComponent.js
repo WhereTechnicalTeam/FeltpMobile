@@ -8,7 +8,7 @@ const IconButtonComponent = (props) => {
 
     return (
         <View style={[styles.iconButtonView, iconButtonStyle]}>
-            <Pressable onPress={onPress}>
+            <Pressable onPress={onPress} android_ripple={{color: colors.ripple}}>
                 <Icon name={icon} size={size} color={color} />
             </Pressable>
         </View>

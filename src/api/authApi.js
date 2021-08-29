@@ -9,7 +9,10 @@ const registerUser = async(user) => {
         },
         body: JSON.stringify(user)
     })
-    .then((response) => response.json())    
+    .then((response) => {
+        console.log("register" , response);
+        return response.json();
+    })    
     .then(json => {
         return json;
     })

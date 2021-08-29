@@ -6,7 +6,7 @@ const NewsPreviewComponent = (props) => {
     const {summary, title, containerStyle, onPress} = props;
  
     return (
-        <View style={[styles.newsPreviewContainer, containerStyle]}>
+        <View style={[styles.newsPreviewContainer, containerStyle, styles.shadow]}>
             <Pressable onPress={onPress}>
             <View>
                 <Text style={styles.newsTitle}>{title}</Text>
@@ -34,5 +34,16 @@ const styles = StyleSheet.create({
     },
     newsSummary: {
         fontSize: 15,
-    }
+    },
+    shadow: {
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.20,
+        shadowRadius: 1.41,        
+        elevation: 2,
+        backgroundColor: colors.white
+       }
 });
