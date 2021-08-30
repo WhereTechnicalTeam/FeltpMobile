@@ -58,7 +58,7 @@ const SettingsScreen = (props) => {
             await AsyncStorage.removeItem('authToken');
             await AsyncStorage.removeItem('userDetails');
             props.navigation.navigate('Auth', {
-                screen: 'Signin'
+                screen: 'AuthLoading'
             });
         } else {
             ToastComponent.show("User logout failed", {timeOut: 3500, level: 'failure'});

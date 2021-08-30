@@ -100,7 +100,7 @@ const SignUpWithMapScreen = (props) => {
                 await AsyncStorage.setItem('userDetails', JSON.stringify(user));
 
                 if(user.main_user.status !== 'approved') {
-                    ToastComponent.show("Registered! Please contact the admin for approval to login", {timeOut: 3500, level: 'success'});
+                    ToastComponent.show("Registration", {timeOut: 3500, level: 'success'});
                 }
                 if(user.main_user.email_status == 'verified') {
                     // navigateDashboard();

@@ -63,9 +63,9 @@ const SignUpScreen = (props) => {
         console.log(user.email);
         try {
             const emailErrors = isEmailValid(user.email);
-            setLoading(true);
             if(emailErrors.length == 0) {
                 setErrors(prevErrors => ({...prevErrors, emailErrors}));
+                setLoading(true);
                 const response = await findUserByEmail(user.email);
                 if(response.status == 400) {
                     setUser(prevUser => {

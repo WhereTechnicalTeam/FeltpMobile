@@ -19,6 +19,7 @@ const VerifyEmailScreen = (props) => {
     const [code, setCode] = useState('');
     const [error, setError] = useState(false);
     const [email, setEmail] = useState('');
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         const email = props.route.params?.email;
@@ -29,7 +30,9 @@ const VerifyEmailScreen = (props) => {
         console.log("validation code:", code);
         try {
             if(validateCode()) {
+                setLoading(true);
                 const response = await verifyEmail(code);
+                setLoading(false);
                 console.log("response:", response);
                 if(response.status == 200) {
                     ToastComponent.show("Account verified successfully", {timeOut: 3500, level: 'success'});                
@@ -113,7 +116,7 @@ const styles = StyleSheet.create({
     },
     iconButtonComponent: {
         backgroundColor: colors.white,
-        marginRight: '25%'
+        marginRight: '20%'
     },
     formInputView: {
         marginTop: 20

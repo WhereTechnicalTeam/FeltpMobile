@@ -7,6 +7,7 @@ import { colors } from '@theme/colors';
 import AvatarComponent from '@components/avatar/AvatarComponent';
 import { isDefined } from '@utils/validation';
 import { safeConvertToString } from '@utils/helperFunctions';
+import { getRegionById, getDistrictById } from '@utils/helperFunctions';
 
 const SettingsHeader = (props) => {
     const [selectedImage, setSelectedImage] = useState(require('@assets/man.jpg'));
@@ -76,14 +77,14 @@ const SettingsHeader = (props) => {
                 PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
                 {
                     title: "FELTP ALUMNI App Media Permission",
-                    message: "FELTP Alumni App needs access to your media library so you can change your user avatar",
+                    message: "FELTP Alumni App needs access to your media library",
                     buttonPositive: "OK",
                     buttonNegative: "Cancel",
                     buttonNeutral: "Not Now"
                 }
             );
             if(!granted === PermissionsAndroid.RESULTS.GRANTED) {
-                Alert.alert("FELTP Alumni App needs access to your media library to change user avatar!");
+                Alert.alert("FELTP Alumni App needs access to your media library to change your avatar!");
                 return false;
             }
             return true;
@@ -124,7 +125,7 @@ const SettingsHeader = (props) => {
                 <View style={styles.headerTextView}>
                 <Text style={styles.headerNameText}>{`${safeConvertToString(user.main_user.firstname)} ${safeConvertToString(user.main_user.surname)}`}</Text>
                 <Text style={styles.headerJobText}>{user.job_to_user[0].job_title}</Text>
-                <Text style={styles.headerLocationText}>{isDefined(user.job_to_user[0].district) ? `${user.job_to_user[0].region}, ${user.job_to_user[0].district}` : ''}</Text>
+                <Text style={styles.headerLocationText}>{isDefined(user.job_to_user[0].district) ? `${getRegionById(user.job_to_user[0].region)}, ${getDistrictById(user.job_to_user[0].district)}` : ''}</Text>
                 </View>
                 <View>
                 <Icon name="settings" size={24} color={colors.white} onPress={navigateSettings}/>
@@ -160,11 +161,12 @@ const styles = StyleSheet.create({
         color: colors.white
     },
     headerJobText: {
-        fontSize: 17,
-        color: colors.ivory
+        fontSize: 15,
+        color: colors.ivory,
+        fontWeight: '500'
     },
     headerLocationText: {
-        fontSize: 15,
+        fontSize: 12,
         color: colors.pearl
     }
 });

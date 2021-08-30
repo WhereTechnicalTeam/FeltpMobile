@@ -11,12 +11,17 @@ import ToastComponent from '@components/toast/ToastComponent';
 import HelperTextComponent from '@components/helper-text/HelperTextComponent';
 import { safeConvertToString } from '@utils/helperFunctions';
 import { isAlphaTextValid, isDateValid, isNumericTextValid, isPhoneNumberPresentValid, isPhoneNumberValid, isTextValid } from '@utils/validation';
+import { updateUser } from '@api/userApi';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Spinner from 'react-native-loading-spinner-overlay';
+import SpinnerComponent from '@components/spinner/SpinnerComponent';
 
 const EditProfile2Screen = (props) => {
 
     const [frontlineExpanded, setFrontlineExpanded] = useState(false);
     const [intermediateExpanded, setIntermediateExpanded] = useState(false);
     const [advancedExpanded, setAdvancedExpanded] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [user, setUser] = useState({
         main_user: {
             phone1: '',
@@ -79,12 +84,20 @@ const EditProfile2Screen = (props) => {
         }
     }, []);
 
-    const handleSubmit = () => {
+    const handleSubmit = async() => {
+        console.log("Update user:", user);
         try{
             if(validateUserDetails()) {
-                props.navigation.navigate('EditProfile3', {
-                    user
-                });
+                setLoading(true);
+                let response = await updateUser(user, user.main_user.id);
+                setLoading(false);
+                if(response.status === 200) {
+                    ToastComponent.show("Profile updated", {timeOut: 3500, level: 'success'});
+                    await AsyncStorage.setItem("userDetails", JSON.stringify(user));
+                    navigateUserProfile();
+                } else {
+                    ToastComponent.show("Profile update failed", {timeOut: 3500, level: 'failure'});
+                }
             } else {
                 ToastComponent.show("Invalid details", {timeOut: 3500, level: 'failure'});
             }
@@ -242,6 +255,7 @@ const EditProfile2Screen = (props) => {
     
     return (
         <View style={styles.signupContainer}>
+                <Spinner visible={loading} customIndicator={<SpinnerComponent />}/> 
                 <IconButtonComponent icon="arrow-back-sharp" size={24} color={colors.black} iconButtonStyle={styles.iconButtonComponent} onPress={navigateBack}/>
             <ScrollView showsVerticalScrollIndicator={false}>
             <View>
@@ -350,7 +364,7 @@ const EditProfile2Screen = (props) => {
                 </View>)
             }
             <View>
-                <ButtonComponent title="Next" onPress={handleSubmit} buttonContainerStyle={styles.buttonComponent} />
+                <ButtonComponent title="Update" onPress={handleSubmit} buttonContainerStyle={styles.buttonComponent} />
             </View>
             </ScrollView>
         </View>
