@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { Wander } from 'react-native-animated-spinkit'
 
 import AuthLoadingScreen from '@screens/AuthLoading';
 import MapViewScreen from '@screens/MapView';
@@ -27,6 +28,7 @@ import NotificationsListScreen from '@screens/NotificationsList';
 import EditProfileScreen from '@screens/EditProfile';
 import EditProfile2Screen from '@screens/EditProfile2';
 import EditProfile3Screen from '@screens/EditProfile3';
+import { colors } from '@theme/colors';
 
 const MainTabStack = createBottomTabNavigator();
 const ManageUserTabStack = createMaterialTopTabNavigator();
@@ -150,14 +152,15 @@ const AuthLoadingWrapper = (props) => {
     }
 
     useEffect(() => {
-        setLoading(true);
-        try {
+    try {
         (async() => {
+            setLoading(true);
             // await AsyncStorage.removeItem('authToken');
             // await AsyncStorage.removeItem('userDetails');
 
             const token = await AsyncStorage.getItem('authToken');            
             const response = await validateToken(token);
+            setLoading(false);
             if(response.status == 200) {
                 setIsAuthenticated(true);
             } 
@@ -165,14 +168,16 @@ const AuthLoadingWrapper = (props) => {
     } catch(error) {
         console.error("Error loading app:", error);
     }
-        setLoading(false);
     }, []);
 
     return (
-        // loading ? null :
-        <View style={{flex: 1}}>
-           {
-               isAuthenticated ? 
+               loading ? 
+               <View style={{backgroundColor: colors.primary, flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                   <Wander color={colors.white}/>
+               </View>
+                :
+               (
+                   isAuthenticated ? 
                <MainTabNavigator />
                :
                 <AuthLoadingScreen 
@@ -181,8 +186,7 @@ const AuthLoadingWrapper = (props) => {
                     appName="FELTP ALUMNI"
                     subTitle="Connect with your peers anywhere"
                />
-            }
-        </View>            
+               )
     );
 }
 

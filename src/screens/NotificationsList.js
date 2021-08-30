@@ -15,7 +15,7 @@ export default NotificationsListScreen;
 
 const styles = StyleSheet.create({
     containerView: {
-        paddingVertical: 20
+        paddingVertical: 30
     },
     emtyListText: {
         textAlign: 'center',
