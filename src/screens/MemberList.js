@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {useState, useEffect} from 'react';
 import { View, Text, StyleSheet, Image, FlatList, ActivityIndicator, Pressable } from 'react-native';
+import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import { findAllUsers } from '@api/userApi';
 import MemberCardComponent from '@components/member-card/MemberCardComponent';
 import ToastComponent from '@components/toast/ToastComponent';
@@ -11,10 +12,17 @@ const MemberListScreen = (props) => {
     const [userDetails, setUserDetails] = useState({});
     const [selectedFilter, setSelectedFilter] = useState('');
     const [loading, setLoading] = useState(false);
+    const [refresh, setRefresh] = useState(false);
 
     useEffect(() => {
-        setLoading(true);
         (async() => {
+            setLoading(true);
+            await fetchMembers();
+            setLoading(false);        
+        })();
+    }, []);
+
+    const fetchMembers = async() => {
         try {
             const token = await AsyncStorage.getItem('authToken');
             let response = await findAllUsers(token);
@@ -22,13 +30,26 @@ const MemberListScreen = (props) => {
                 setMemberList(response.alldata.filter(data => data.main_user !== null));
             } else {
                 ToastComponent.show("Failed to fetch member list", {timeOut: 3500, level: 'failure'});
-            }            
+            }    
         } catch(err) {
             console.warn("Error fetching member list:", err);
-        }
-        })();
-        setLoading(false);
-    }, []);
+        }                  
+    }
+
+    const SkeletonLoader = () => {
+        return (
+        <SkeletonPlaceholder>
+            {
+                [1, 2, 3].map(e => (
+                    <SkeletonPlaceholder.Item key={e} marginVertical={20} flexDirection="row" justifyContent="space-around">
+                    <SkeletonPlaceholder.Item width={120} height={120} borderRadius={5} />
+                    <SkeletonPlaceholder.Item width={120} height={120} borderRadius={5} />
+                    </SkeletonPlaceholder.Item>
+                ))
+            }
+        </SkeletonPlaceholder>
+        )
+    }
 
     const getFinalLevel = (member) => {
         let finalLevel = {};
@@ -66,6 +87,12 @@ const MemberListScreen = (props) => {
         props.navigation.navigate('MemberProfile', {member});
     }
 
+    const handleRefresh = async() => {
+        setRefresh(true);
+        await fetchMembers();
+        setRefresh(false);
+    }
+
     return (
             <View style={styles.membersContainer}>
             <View style={styles.headerView}>
@@ -75,18 +102,16 @@ const MemberListScreen = (props) => {
                 </Pressable>
             </View>
             <View>
-            {
-                loading ?
-                <ActivityIndicator color={colors.primary} size="large" />
-                : 
-                <FlatList showsVerticalScrollIndicator={false} 
+                {
+                    loading ? <SkeletonLoader /> :
+                    <FlatList showsVerticalScrollIndicator={false} 
                 contentContainerStyle={{flexDirection: 'column'}}
                 numColumns={2}
                 data={getFilteredMemberList()}
                 renderItem={renderMemberCard}
                 keyExtractor={(item) => item.id.toString()}
             />
-            }
+                }
             </View>
         </View>
     );

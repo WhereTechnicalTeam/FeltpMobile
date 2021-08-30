@@ -20,6 +20,7 @@ import HelperTextComponent from '@components/helper-text/HelperTextComponent';
 import { getDistrictListByRegion, safeConvertToString } from '@utils/helperFunctions';
 import DropdownComponent from '@components/dropdown/DropdownComponent';
 import { levelOfHSList, RegionList } from '@utils/constants';
+import SpinnerComponent from '@components/spinner/SpinnerComponent';
 
 const SignUpWithMapScreen = (props) => {
 
@@ -235,7 +236,7 @@ const SignUpWithMapScreen = (props) => {
 
     return (
         <View style={styles.signupContainer}>
-            <Spinner visible={loading} textContent="Registering user..." textStyle={{color: colors.white}} color={colors.primary}/>
+            <Spinner visible={loading} customIndicator={<SpinnerComponent />}/>
             <View style={styles.logoComponentView}>
                 <IconButtonComponent icon="arrow-back-sharp" size={24} color={colors.black} iconButtonStyle={styles.iconButtonComponent} onPress={navigateBack}/>
                 <LogoComponent logoText="Signup"/>

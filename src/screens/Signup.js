@@ -14,6 +14,7 @@ import DatePickerComponent from '@components/date-picker/DatePickerComponent';
 import { Picker } from '@react-native-picker/picker';
 import ToastComponent from '@components/toast/ToastComponent';
 import HelperTextComponent from '@components/helper-text/HelperTextComponent';
+import SpinnerComponent from '@components/spinner/SpinnerComponent';
 
 const SignUpScreen = (props) => {
     
@@ -169,7 +170,7 @@ const SignUpScreen = (props) => {
 
     return (
         <View style={styles.signupContainer}>
-            <Spinner visible={loading} textContent="Searching for user..." textStyle={{color: colors.white}} color={colors.primary}/>
+            <Spinner visible={loading} customIndicator={<SpinnerComponent />}/>
             <View style={styles.logoComponentView}>
                 <IconButtonComponent icon="arrow-back-sharp" size={24} color={colors.black} iconButtonStyle={styles.iconButtonComponent} onPress={navigateBack}/>
                 <LogoComponent logoText="Sign Up" logoStyle={styles.logoStyle}/>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, FlatList, Text } from 'react-native';
+import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import IconButtonComponent from '@components/icon-button/IconButtonComponent';
 import ProfileTextComponent from '@components/profile-text/ProfileTextComponent';
 import { colors } from '@theme/colors';
@@ -17,10 +18,12 @@ const JobHistoryScreen = (props) => {
     const [jobHistory, setJobHistory] = useState([]);
     const [refresh, setRefresh] = useState(false);
     const [currentJobEdit, setCurrentJobEdit] = useState();
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         try {
             (async() => {
+                setLoading(true);
                 AsyncStorage.getItem('userDetails').then(storedUser => {
                     AsyncStorage.getItem('authToken').then(async(authToken) => {
                         setUser(JSON.parse(storedUser));
@@ -28,6 +31,7 @@ const JobHistoryScreen = (props) => {
                         if(isDefined(user)) await fetchJobHistory();
                     });
                 });
+                setLoading(false);
             })();
         } catch(err) {
             console.warn("Error setting up job history screen", err);
@@ -46,10 +50,19 @@ const JobHistoryScreen = (props) => {
     //     }
     // }, [props.route.params?.currentJobProps]);
 
+    const SkeletonLoader = () => {
+        return (
+        <SkeletonPlaceholder>
+            <SkeletonPlaceholder.Item height={150} />
+        </SkeletonPlaceholder>
+        )
+    }
+
+
     const fetchJobHistory = async() => {
         const response = await fetchUserJobHistory(token, user.main_user.id);
         console.log("job history:", response)
-        if(response.status  == 200 || isDefined(response.email)) {
+        if(response.status  == 200) {
             setJobHistory(response.job_to_user);
             console.log("Job History response:", response);
         } else ToastComponent.show("Failed to fetch job history", {timeOut: 3500, level: 'failure'});
@@ -94,15 +107,19 @@ const JobHistoryScreen = (props) => {
 
     return (
         <View style={styles.containerView}>
-            <FlatList 
-            renderItem={renderJobDetails} 
-            keyExtractor={item => item.id.toString()} 
-            data={jobHistory} 
-            showsVerticalScrollIndicator={false}
-            ListEmptyComponent={renderListEmpty}
-            refreshing={refresh}
-            onRefresh={handleRefresh}
-            />
+            {
+                loading ?
+                <SkeletonLoader /> :
+                <FlatList 
+                    renderItem={renderJobDetails} 
+                    keyExtractor={item => item.id.toString()} 
+                    data={jobHistory} 
+                    showsVerticalScrollIndicator={false}
+                    ListEmptyComponent={renderListEmpty}
+                    refreshing={refresh}
+                    onRefresh={handleRefresh}
+                />
+            }
             <AddJobScreen 
             modalVisible={showAddJob} 
             user={user} 

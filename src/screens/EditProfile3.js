@@ -3,9 +3,9 @@ import { View, StyleSheet, Text, ScrollView } from 'react-native';
 
 import IconButtonComponent from '@components/icon-button/IconButtonComponent';
 import FormInputComponent from '@components/input/FormInputComponent';
-import LogoComponent from '@components/logo/LogoComponent';
+import SpinnerComponent from '@components/spinner/SpinnerComponent';
 import ButtonComponent from '@components/button/ButtonComponent';
-import LinkTextComponent from '@components/link-text/LinkTextComponent';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 import { colors } from '@theme/colors';
 import MapPreviewComponent from '@components/map-preview/MapPreviewComponent';
@@ -34,7 +34,7 @@ const EditProfile3Screen = (props) => {
         }]
     });
     const [selectedRegion, setSelectedRegion] = useState('');
-
+    const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState({
         officePositionErrors: [],
         currentInstitutionErrors: [],
@@ -86,7 +86,9 @@ const EditProfile3Screen = (props) => {
         console.log("user update", user);
         try {
             if(validateUserDetails()) {
+                setLoading(true);
                 let response = await updateUser(user, user.main_user.id);
+                setLoading(false);
                 if(response.status === 200) {
                     ToastComponent.show("Profile updated", {timeOut: 3500, level: 'success'});
                     await AsyncStorage.setItem("userDetails", JSON.stringify(user));
@@ -202,6 +204,7 @@ const EditProfile3Screen = (props) => {
 
     return (
         <View style={styles.signupContainer}>
+            <Spinner visible={loading} customIndicator={<SpinnerComponent />}/>
             <View style={styles.logoComponentView}>
                 <IconButtonComponent icon="arrow-back-sharp" size={24} color={colors.black} iconButtonStyle={styles.iconButtonComponent} onPress={navigateBack}/>
             </View>

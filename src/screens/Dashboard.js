@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import { View, Text, StyleSheet, Image, FlatList, Alert, Pressable } from 'react-native';
 import SummaryCardComponent from '@components/summary-card/SummaryCardComponent';
 import NewsPreviewComponent from '@components/news-preview/NewsPreviewComponent';
+import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import { colors } from '@theme/colors';
 import { findAllNews } from '@api/newsApi';
 import {fetchUserStats} from '@api/userApi';
@@ -18,13 +19,16 @@ const DashboardScreen = (props) => {
         numAlumni: 0
     });
     const [userDetails, setUserDetails] = useState({});
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         try{
         (async() => {
+            setLoading(true);
             const token = await AsyncStorage.getItem("authToken");
             await getNews(token);
             await getMemberStats(token);
+            setLoading(false);
             const user = await AsyncStorage.getItem('userDetails');
             if(user == null) ToastComponent.show("User not found", {timeOut: 3500, level: 'warning'});
             setUserDetails(JSON.parse(user));
@@ -62,7 +66,6 @@ const DashboardScreen = (props) => {
     const getNews = async(token) => {
         try {
             let response = await findAllNews(token);
-
             if(response.status == 200) {
                 setNewsItems(response.news);
             } else {
@@ -78,6 +81,18 @@ const DashboardScreen = (props) => {
     }
     
     const renderNewsItem = ({item}) => <NewsPreviewComponent containerStyle={{marginBottom: 20}} title={item.title} summary={item.content} onPress={() => navigateNewsDisplay(item)}/>
+
+    const NewsSkeletonLoader = () => {
+        return (
+        <SkeletonPlaceholder>
+            {
+                [1, 2, 3, 3].map(e => (
+                    <SkeletonPlaceholder.Item key={e} height={60} borderRadius={5} marginBottom={20}/>
+                ))
+            }
+        </SkeletonPlaceholder>
+        )
+    }
 
     return (
         <View style={styles.dashboardContainer}>
@@ -101,7 +116,11 @@ const DashboardScreen = (props) => {
             <View style={styles.subtitleView}>
                 <Text style={[styles.subtitle, {fontWeight: '600'}]}>News Feed</Text>
             </View>
-            <FlatList contentContainerStyle={styles.newsView} showsVerticalScrollIndicator={false} data={newsItems} keyExtractor={(item) => item.id.toString()} renderItem={renderNewsItem}/>
+            {
+                loading ? 
+                <NewsSkeletonLoader />
+                : <FlatList contentContainerStyle={styles.newsView} showsVerticalScrollIndicator={false} data={newsItems} keyExtractor={(item) => item.id.toString()} renderItem={renderNewsItem}/>
+            }
         </View>
     );
 }

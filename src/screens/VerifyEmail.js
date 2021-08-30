@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {useEffect, useState} from 'react';
 import {ScrollView, StyleSheet, View, Text} from 'react-native';
+import Spinner from 'react-native-loading-spinner-overlay';
 import { verifyEmail } from '@api/authApi';
 import ButtonComponent from '@components/button/ButtonComponent';
 import HelperTextComponent from '@components/helper-text/HelperTextComponent';
@@ -11,6 +12,7 @@ import ToastComponent from '@components/toast/ToastComponent';
 import { colors } from '@theme/colors';
 import { isTextValid } from '@utils/validation';
 import { safeConvertToString } from '@utils/helperFunctions';
+import SpinnerComponent from '@components/spinner/SpinnerComponent';
 
 const VerifyEmailScreen = (props) => {
 
@@ -62,6 +64,7 @@ const VerifyEmailScreen = (props) => {
 
     return (
         <ScrollView contentContainerStyle={styles.signupContainer} showsVerticalScrollIndicator={false}>
+            <Spinner visible={loading} customIndicator={<SpinnerComponent />}/>
             <View style={styles.logoComponentView}>
                 <IconButtonComponent icon="arrow-back-sharp" size={24} color={colors.black} iconButtonStyle={styles.iconButtonComponent} onPress={navigateBack}/>
                 <LogoComponent logoText="Verify Email"/>

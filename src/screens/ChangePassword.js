@@ -10,6 +10,7 @@ import { isPasswordConfirmed, isPasswordValid } from '@utils/validation';
 import ToastComponent from '@components/toast/ToastComponent';
 import { changePassword, validateToken } from '@api/authApi';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import SpinnerComponent from '@components/spinner/SpinnerComponent';
 
 const ChangePasswordScreen = (props) => {
 
@@ -77,7 +78,7 @@ const ChangePasswordScreen = (props) => {
 
     return (
         <ScrollView contentContainerStyle={styles.signupContainer} showsVerticalScrollIndicator={false}>
-            <Spinner visible={loading} textContent="Updating password..." textStyle={{color: colors.white}} color={colors.primary}/>
+            <Spinner visible={loading} customIndicator={<SpinnerComponent />}/>
             <View style={styles.logoComponentView}>
                 <IconButtonComponent icon="arrow-back-sharp" size={24} color={colors.black} iconButtonStyle={styles.iconButtonComponent} onPress={navigateBack}/>
             </View>

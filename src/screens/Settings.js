@@ -9,6 +9,7 @@ import IconButtonComponent from '@components/icon-button/IconButtonComponent';
 import ListItemComponent from '@components/list-item/ListItemComponent';
 import ToastComponent from '@components/toast/ToastComponent';
 import { colors } from '@theme/colors';
+import SpinnerComponent from '@components/spinner/SpinnerComponent';
 
 const SettingsScreen = (props) => {
 
@@ -70,7 +71,7 @@ const SettingsScreen = (props) => {
 
     return (
         <View style={styles.settingsContainer}>
-            <Spinner visible={loading} textContent="Ending session..." textStyle={{color: colors.white}} color={colors.primary}/>
+            <Spinner visible={loading} customIndicator={<SpinnerComponent />}/>
             <View style={styles.headerView}>
                 <IconButtonComponent icon="close-outline" size={30} color={colors.black} iconButtonStyle={styles.iconButtonComponent} onPress={navigateBack}/>
                 <Text style={styles.screenTitle}>Settings</Text>

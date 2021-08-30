@@ -13,6 +13,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import ToastComponent from '@components/toast/ToastComponent';
 import { isEmailValid, isPasswordValid } from '@utils/validation';
 import HelperTextComponent from '@components/helper-text/HelperTextComponent';
+import SpinnerComponent from '@components/spinner/SpinnerComponent';
 
 const SignInScreen = (props) => {
 
@@ -88,7 +89,7 @@ const SignInScreen = (props) => {
 
     return (
         <View style={styles.signupContainer}>
-            <Spinner visible={loading} textContent="Logging in..." textStyle={{color: colors.white}} color={colors.primary}/>
+            <Spinner visible={loading} customIndicator={<SpinnerComponent />}/>
             <View style={styles.logoComponentView}>
                 <IconButtonComponent icon="arrow-back-sharp" size={24} color={colors.black} iconButtonStyle={styles.iconButtonComponent} onPress={navigateBack}/>
                 <LogoComponent logoText="Sign In"/>
