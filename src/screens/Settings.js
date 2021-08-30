@@ -1,6 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {useState, useEffect} from 'react';
 import { View, Text, StyleSheet, ScrollView, Alert } from 'react-native';
+import Spinner from 'react-native-loading-spinner-overlay';
+
 import { logout } from '@api/authApi';
 import HorizontalLineComponent from '@components/horizontal-line/HorizontalLine';
 import IconButtonComponent from '@components/icon-button/IconButtonComponent';
@@ -11,6 +13,7 @@ import { colors } from '@theme/colors';
 const SettingsScreen = (props) => {
 
     const [userDetails, setUserDetails] = useState();
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         (async() => {
@@ -44,10 +47,12 @@ const SettingsScreen = (props) => {
     const logoutUser = async() => {
         //make logout api call
         try{
+            setLoading(true);
         const token = await AsyncStorage.getItem('authToken');
         const response = await logout(token);
         // await AsyncStorage.removeItem('authToken');
         //     await AsyncStorage.removeItem('userDetails');
+        setLoading(false);
         if(response.status == 200) {
             await AsyncStorage.removeItem('authToken');
             await AsyncStorage.removeItem('userDetails');
@@ -65,6 +70,7 @@ const SettingsScreen = (props) => {
 
     return (
         <View style={styles.settingsContainer}>
+            <Spinner visible={loading} textContent="Ending session..." textStyle={{color: colors.white}} color={colors.primary}/>
             <View style={styles.headerView}>
                 <IconButtonComponent icon="close-outline" size={30} color={colors.black} iconButtonStyle={styles.iconButtonComponent} onPress={navigateBack}/>
                 <Text style={styles.screenTitle}>Settings</Text>

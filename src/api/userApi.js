@@ -21,7 +21,7 @@ const findUserByEmail = async (email) => {
 
 const updateUser = async(user, id) => {
     return fetch(`${BASE_URL}/useredit/${id}`, {
-        method: 'POST',
+        method: 'PUT',
         headers: {
             Accept: 'application/json',
             'Content-Type': 'application/json'

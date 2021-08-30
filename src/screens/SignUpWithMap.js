@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Text, ScrollView } from 'react-native';
 import {Picker} from '@react-native-picker/picker';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 import IconButtonComponent from '@components/icon-button/IconButtonComponent';
 import FormInputComponent from '@components/input/FormInputComponent';
@@ -36,7 +37,7 @@ const SignUpWithMapScreen = (props) => {
         }]
     });
     const [selectedRegion, setSelectedRegion] = useState('');
-
+    const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState({
         officePositionErrors: [],
         currentInstitutionErrors: [],
@@ -87,11 +88,12 @@ const SignUpWithMapScreen = (props) => {
         console.log(user);
         try {
         if(validateUserDetails()) {
+            setLoading(true);
             let response = null;
             if(user.main_user.status === 'pending approval' || user.main_user.status === 'approved') response = await updateUser(user, user.id)
             else response = await registerUser(user)
             console.log("response: ", response);
-
+            setLoading(false);
             if(response.status == 200) {
                 // let authUser = response.user;
                 await AsyncStorage.setItem('userDetails', JSON.stringify(user));
@@ -233,6 +235,7 @@ const SignUpWithMapScreen = (props) => {
 
     return (
         <View style={styles.signupContainer}>
+            <Spinner visible={loading} textContent="Registering user..." textStyle={{color: colors.white}} color={colors.primary}/>
             <View style={styles.logoComponentView}>
                 <IconButtonComponent icon="arrow-back-sharp" size={24} color={colors.black} iconButtonStyle={styles.iconButtonComponent} onPress={navigateBack}/>
                 <LogoComponent logoText="Signup"/>

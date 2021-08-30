@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text, Alert, ActivityIndicator } from 'react-native';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 import IconButtonComponent from '@components/icon-button/IconButtonComponent';
 import FormInputComponent from '@components/input/FormInputComponent';
@@ -87,12 +88,8 @@ const SignInScreen = (props) => {
 
     return (
         <View style={styles.signupContainer}>
-            {
-                loading ? 
-                <ActivityIndicator color={colors.primary} size="large" />
-                : (
-                    <>
-                    <View style={styles.logoComponentView}>
+            <Spinner visible={loading} textContent="Logging in..." textStyle={{color: colors.white}} color={colors.primary}/>
+            <View style={styles.logoComponentView}>
                 <IconButtonComponent icon="arrow-back-sharp" size={24} color={colors.black} iconButtonStyle={styles.iconButtonComponent} onPress={navigateBack}/>
                 <LogoComponent logoText="Sign In"/>
             </View>
@@ -112,9 +109,6 @@ const SignInScreen = (props) => {
                 <LinkTextComponent preText="" actionText="Forgot password?" onPress={() => {}}/>
                 <LinkTextComponent preText="Don't have an account yet?" actionText="Sign up" onPress={navigateSignup}/>
             </View>
-                    </>
-                )
-            }
         </View>
     );
 }

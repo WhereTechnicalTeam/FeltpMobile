@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {ScrollView, StyleSheet, View, Text} from 'react-native';
+import Spinner from 'react-native-loading-spinner-overlay';
 import IconButtonComponent from '@components/icon-button/IconButtonComponent';
 import FormInputComponent from '@components/input/FormInputComponent';
 import HelperTextComponent from '@components/helper-text/HelperTextComponent';
@@ -22,6 +23,7 @@ const ChangePasswordScreen = (props) => {
         passwordErrors: [],
         cpasswordErrors: []
     });
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         try {
@@ -37,6 +39,7 @@ const ChangePasswordScreen = (props) => {
     const handlePasswordChange = async() => {
         try{
         if(validatePasswords()) {
+            setLoading(true);
             const token = await AsyncStorage.getItem('authToken');
 
             //send to password reset api
@@ -45,6 +48,7 @@ const ChangePasswordScreen = (props) => {
                 ToastComponent.show("Password updated", {timeOut: 3500, level: 'success'})
             }
             const tokenResponse = await validateToken(token);
+            setLoading(false);
             if(tokenResponse.status !== 200) navigateSignin();
         } else {
             ToastComponent.show("Invalid details", {timeOut: 3500, level: 'failure'})
@@ -73,6 +77,7 @@ const ChangePasswordScreen = (props) => {
 
     return (
         <ScrollView contentContainerStyle={styles.signupContainer} showsVerticalScrollIndicator={false}>
+            <Spinner visible={loading} textContent="Updating password..." textStyle={{color: colors.white}} color={colors.primary}/>
             <View style={styles.logoComponentView}>
                 <IconButtonComponent icon="arrow-back-sharp" size={24} color={colors.black} iconButtonStyle={styles.iconButtonComponent} onPress={navigateBack}/>
             </View>

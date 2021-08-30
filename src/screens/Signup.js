@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text, ScrollView } from 'react-native';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 import IconButtonComponent from '@components/icon-button/IconButtonComponent';
 import FormInputComponent from '@components/input/FormInputComponent';
@@ -41,6 +42,7 @@ const SignUpScreen = (props) => {
         dobErrors: [],
     });
     const [showPassword, setShowPassword] = useState(true);
+    const [loading, setLoading] = useState(false);
 
     const navigateIntermediateSignup = () => {
         props.navigation.navigate('IntermediateSignup', {
@@ -60,7 +62,7 @@ const SignUpScreen = (props) => {
         console.log(user.email);
         try {
             const emailErrors = isEmailValid(user.email);
-
+            setLoading(true);
             if(emailErrors.length == 0) {
                 setErrors(prevErrors => ({...prevErrors, emailErrors}));
                 const response = await findUserByEmail(user.email);
@@ -80,6 +82,7 @@ const SignUpScreen = (props) => {
                 setShowPassword(false);
                 ToastComponent.show("User account found", {timeOut: 3500, level: 'success'});
                 }
+                setLoading(false);
                 setUserSearchComplete(true);
             } else {
                 ToastComponent.show("Email is invalid", {timeOut: 3500, level: 'failure'});
@@ -166,6 +169,7 @@ const SignUpScreen = (props) => {
 
     return (
         <View style={styles.signupContainer}>
+            <Spinner visible={loading} textContent="Searching for user..." textStyle={{color: colors.white}} color={colors.primary}/>
             <View style={styles.logoComponentView}>
                 <IconButtonComponent icon="arrow-back-sharp" size={24} color={colors.black} iconButtonStyle={styles.iconButtonComponent} onPress={navigateBack}/>
                 <LogoComponent logoText="Sign Up" logoStyle={styles.logoStyle}/>
