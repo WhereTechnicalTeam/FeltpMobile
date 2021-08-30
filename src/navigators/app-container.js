@@ -161,13 +161,12 @@ const AuthLoadingWrapper = (props) => {
             if(response.status == 200) {
                 setIsAuthenticated(true);
             } 
-            // SplashScreen.hide();
         })();
     } catch(error) {
         console.error("Error loading app:", error);
     }
         setLoading(false);
-    });
+    }, []);
 
     return (
         // loading ? null :

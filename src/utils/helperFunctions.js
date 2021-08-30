@@ -1,6 +1,5 @@
 import { isDefined, isEmpty } from "@utils/validation"
-import { RegionList } from "@utils/constants";
-import { levelOfHSList } from "./constants";
+import { RegionList, levelOfHSList } from "@utils/constants";
 
 const safeConvertToString = (value) => {
     return isDefined(value) ? value.toString() : '';
@@ -15,24 +14,18 @@ const getDistrictListByRegion = (region) => {
 }
 
 const getLevelofHSById = (id) => {
-    const level = levelOfHSList.map(l => {
-        if(l.id == id) return l.name
-    });
-    return level[0];
+    const level = levelOfHSList.filter(l => l.id == id);
+    return level.length > 0 ? level[0].name : "";
 }
 
 const getRegionById = (id) => {
-    const region = RegionList.filter(r => {
-        if(r.id == id) return r.name
-    });
-    return region[0];
+    const region = RegionList.filter(r => r.id == id);
+    return region.length > 0 ? region[0].name : "";
 }
 
 const getDistrictById = (id) => {
-    const district = RegionList.flatMap(r => r.districts.map(d => {
-        if(d.id == id) return d.name
-    }));
-    return district[0];
+    const district = RegionList.flatMap(r => r.districts.filter(d => d.id == id));
+    return district.length > 0 ? district[0].name : "";
 }
 
-export {safeConvertToString, getDistrictListByRegion}
+export {safeConvertToString, getDistrictListByRegion, getRegionById, getDistrictById, getLevelofHSById}

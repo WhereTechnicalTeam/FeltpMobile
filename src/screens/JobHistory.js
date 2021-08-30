@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, FlatList } from 'react-native';
+import { View, StyleSheet, FlatList, Text } from 'react-native';
 import IconButtonComponent from '@components/icon-button/IconButtonComponent';
 import ProfileTextComponent from '@components/profile-text/ProfileTextComponent';
 import { colors } from '@theme/colors';
@@ -8,58 +8,111 @@ import { fetchUserJobHistory } from '@api/userApi';
 import { isDefined } from '@utils/validation';
 import ToastComponent from '@components/toast/ToastComponent';
 import AddJobScreen from '@screens/AddJob';
+import { getDistrictById, getLevelofHSById, getRegionById } from 'src/utils/helperFunctions';
 
 const JobHistoryScreen = (props) => {
     const [user, setUser] = useState();
     const [token, setToken] = useState();
     const [showAddJob, setShowAddJob] = useState(false);
     const [jobHistory, setJobHistory] = useState([]);
+    const [refresh, setRefresh] = useState(false);
+    const [currentJobEdit, setCurrentJobEdit] = useState();
 
     useEffect(() => {
         try {
             (async() => {
-                const storedUser = await AsyncStorage.getItem('userDetails');
-                const token = await AsyncStorage.getItem('authToken');
-                setUser(JSON.parse(storedUser));
-                setToken(token);
-                console.log("job user:", user)
-                if(isDefined(storedUser)) {
-                    await fetchUserJobHistory();
-                } else {
-                    ToastComponent.show("Failed to fetch user job details", {timeOut: 3500, level: 'failure'})
-                }
+                AsyncStorage.getItem('userDetails').then(storedUser => {
+                    AsyncStorage.getItem('authToken').then(async(authToken) => {
+                        setUser(JSON.parse(storedUser));
+                        setToken(authToken);
+                        if(isDefined(user)) await fetchJobHistory();
+                    });
+                });
             })();
         } catch(err) {
             console.warn("Error setting up job history screen", err);
         }
     }, []);
 
+    // useEffect(() => {
+    //     console.log("job history route params:", props.route.params);
+    //     try{
+    //         if(props.route.params?.currentJobProps) {
+    //             setCurrentJobEdit(props.route.params?.currentJobProps);
+    //             // setShowAddJob(true);
+    //         }
+    //     } catch (err) {
+    //         console.warn("Error retrieving office position", err);
+    //     }
+    // }, [props.route.params?.currentJobProps]);
+
     const fetchJobHistory = async() => {
-        const response = await fetchUserJobHistory(token, storedUser.main_user.id);
+        const response = await fetchUserJobHistory(token, user.main_user.id);
         console.log("job history:", response)
-        if(response.status  == 200) {
+        if(response.status  == 200 || isDefined(response.email)) {
             setJobHistory(response.job_to_user);
-            console.log("Job History response:", response);aa
-        } else ToastComponent.show("Failed to fetch job history", {timeOut: 3500, level: 'failure'})
+            console.log("Job History response:", response);
+        } else ToastComponent.show("Failed to fetch job history", {timeOut: 3500, level: 'failure'});
     }
 
     const renderJobDetails = ({item}) => (
         <View style={[styles.cardContainer, styles.shadow]}>
             <ProfileTextComponent label="Current Institution" text={item.current_institution} />
             <ProfileTextComponent label="Job Title" text={item.job_title} />
-            <ProfileTextComponent label="Region" text={item.region} />
-            <ProfileTextComponent label="District" text={item.district} />
-            <ProfileTextComponent label="Level of Health System" text={item.level_of_health_system} />
+            <ProfileTextComponent label="Region" text={getRegionById(item.region)} />
+            <ProfileTextComponent label="District" text={getDistrictById(item.district)} />
+            <ProfileTextComponent label="Level of Health System" text={getLevelofHSById(item.level_of_health_system)} />
             <ProfileTextComponent label="Is Current Job" text={item.is_current} />
         </View>        
     );
 
+    const renderListEmpty = () => (
+        <View style={{marginTop: 20}}>
+            <Text style={styles.emtyListText}>Your job history goes here</Text>
+        </View>
+    );
+
+    const navigateMapView = (currentJobProps) => {
+        props.navigation.navigate('Auth', {
+            screen: 'MapView',
+            params: {
+                callingScreen: 'JobHistory',
+                currentJobProps
+            }
+        });
+    }
+
+    const handleRefresh = async() => {
+        try {
+            setRefresh(true);
+            await fetchJobHistory();
+            setRefresh(false);
+        } catch (err) {
+            console.warn("Error refreshing job details:", err);
+        }
+    }
+
     return (
         <View style={styles.containerView}>
-            <FlatList renderItem={renderJobDetails} keyExtractor={item => item.id.toString()} data={jobHistory} showsVerticalScrollIndicator={false}/>
-            <AddJobScreen modalVisible={showAddJob} user={user} handleCancel={() => setShowAddJob(false)} token={token}/>
+            <FlatList 
+            renderItem={renderJobDetails} 
+            keyExtractor={item => item.id.toString()} 
+            data={jobHistory} 
+            showsVerticalScrollIndicator={false}
+            ListEmptyComponent={renderListEmpty}
+            refreshing={refresh}
+            onRefresh={handleRefresh}
+            />
+            <AddJobScreen 
+            modalVisible={showAddJob} 
+            user={user} 
+            handleCancel={() => setShowAddJob(false)} 
+            token={token}
+            // navigateMapView={navigateMapView}
+            // currentJobProps={currentJobEdit}
+            />
             <View style={styles.fabView}>
-                <IconButtonComponent icon="add" size={24} color={colors.white} iconButtonStyle={{...styles.shadow, ...styles.fab}} onPress={() => setShowAddJob(true)} />
+                <IconButtonComponent icon="add" size={24} color={colors.white} iconButtonStyle={{...styles.shadow, ...styles.fab}} onPress={() => {setShowAddJob(true)}} />
             </View>
         </View>
     );
@@ -98,5 +151,11 @@ const styles = StyleSheet.create({
     fab: {
         backgroundColor: colors.primary,
         borderRadius: 25,
+    },
+    emtyListText: {
+        textAlign: 'center',
+        color: colors.primary,
+        fontSize: 15,
+        fontWeight: '600'
     }
 });

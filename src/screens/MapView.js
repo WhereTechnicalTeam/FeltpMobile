@@ -32,12 +32,19 @@ const MapViewScreen = (props) => {
     const navigateCallingScreen = () => {
         try {
             const callingScreen = props.route.params?.callingScreen || "SignupWithMap";
+            if(callingScreen === 'JobHistory') {
+                const currentJobProps = props.route.params?.currentJobProps;
+                props.navigation.navigate(callingScreen, {
+                    currentJobProps: {...currentJobProps, latitude: officeMarkerPosition.latitude.toString(), longitude: officeMarkerPosition.longitude.toString()}
+                });
+            } else {
             props.navigation.navigate(callingScreen, {
                 officeMarkerPosition: {
                     latitude: officeMarkerPosition.latitude.toString(),
                     longitude: officeMarkerPosition.longitude.toString()
                 }
             });
+            }
         } catch(err) {
             console.warn("Error navigating back from map:", err);
         }

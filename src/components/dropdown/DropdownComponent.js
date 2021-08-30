@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
     dropdownView: {
         borderRadius: 5,
         borderColor: colors.secondaryBlack,
-        borderWidth: 1,  
+        borderWidth: 0.8,  
     },
     dropdownContainer: {
         height: 50,

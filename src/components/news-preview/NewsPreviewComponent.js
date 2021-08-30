@@ -6,8 +6,7 @@ const NewsPreviewComponent = (props) => {
     const {summary, title, containerStyle, onPress} = props;
  
     return (
-        <View style={[styles.newsPreviewContainer, containerStyle, styles.shadow, {borderLeftColor: getRandomAccentColor()}]}>
-            <Pressable onPress={onPress}>
+            <Pressable onPress={onPress} android_ripple={{color: colors.pearl}} style={[styles.newsPreviewContainer, containerStyle, styles.shadow, {borderLeftColor: getRandomAccentColor()}]}>
             <View>
                 <Text style={styles.newsTitle}>{title}</Text>
             </View>
@@ -15,7 +14,6 @@ const NewsPreviewComponent = (props) => {
                 <Text style={styles.newsSummary} numberOfLines={1}>{summary}</Text>
             </View>
             </Pressable>
-        </View>
     );
 }
 

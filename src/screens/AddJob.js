@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
-import { Modal, StyleSheet, View, Text } from 'react-native';
+import { Modal, StyleSheet, View, Text, ScrollView } from 'react-native';
 import FormInputComponent from '@components/input/FormInputComponent';
 import MapPreviewComponent from '@components/map-preview/MapPreviewComponent';
 import { Picker } from '@react-native-picker/picker';
@@ -8,15 +8,15 @@ import { levelOfHSList, RegionList } from '@utils/constants';
 import DropdownComponent from '@components/dropdown/DropdownComponent';
 import ButtonComponent from '@components/button/ButtonComponent';
 import { colors } from '@theme/colors';
-import { isAlphaTextValid, isDefined, isTextValid, isEmpty } from '@utils/validation';
+import { isAlphaTextValid, isDefined, isTextValid, isEmpty, isNumericTextValid } from '@utils/validation';
 import { safeConvertToString } from '@utils/helperFunctions';
-import ToastComponent from 'src/components/toast/ToastComponent';
-import HelperTextComponent from 'src/components/helper-text/HelperTextComponent';
-import { getDistrictListByRegion } from 'src/utils/helperFunctions';
-import { updateJobHistory } from 'src/api/userApi';
+import ToastComponent from '@components/toast/ToastComponent';
+import HelperTextComponent from '@components/helper-text/HelperTextComponent';
+import { getDistrictListByRegion } from '@utils/helperFunctions';
+import { updateJobHistory } from '@api/userApi';
 
 const AddJobScreen = (props) => {
-    const {user, modalVisible, handleCancel, token} = props;
+    const {user, modalVisible, handleCancel, token, navigateMapView, currentJobProps} = props;
     const [currentJob, setCurrentJob] = useState({
             current_institution: null,
             job_title: null,
@@ -38,22 +38,20 @@ const AddJobScreen = (props) => {
         healthSystemErrors: []
     }); 
 
-    useEffect(() => {
-        try{
-            if(props.route.params?.officeMarkerPosition) {
-                console.log("office marker", props.route.params.officeMarkerPosition);
-                setOfficePosition(props.route.params.officeMarkerPosition);
-            }
-        } catch (err) {
-            console.warn("Error retrieving user details:", err);
-        }
-    }, [props.route.params?.officeMarkerPosition]);
+    // useEffect(() => {
+    //     if(isDefined(currentJobProps)) {
+    //         setCurrentJob(currentJobProps);
+    //         setSelectedRegion(currentJobProps.region);
+    //     }
+    //     console.log(currentJobProps);
+    // }, [currentJobProps]);
 
     const updateIsCurrent = (jobToUser) => {
         return jobToUser.map(job => ({...job, is_current: 'No'}));
     }
 
     const handleSubmit = async() => {
+        console.log(currentJob);
         try {
             if(validateUserDetails()) {
                 const jobUpdate = {
@@ -82,13 +80,13 @@ const AddJobScreen = (props) => {
     const validateUserDetails = () => {
         const currentInstitutionErrors = isTextValid(currentJob.current_institution);
         const jobTitleErrors = isAlphaTextValid(currentJob.job_title);
-        const regionErrors = isTextValid(currentJob.region);
-        const districtErrors = isTextValid(currentJob.district);
-        const healthSystemErrors = isTextValid(currentJob.level_of_health_system);
-        const officePositionErrors = [...isTextValid(currentJob.latitude, 1), ...isTextValid(currentJob.longitude, 1)];
-        setErrors({currentInstitutionErrors, jobTitleErrors, regionErrors, districtErrors, healthSystemErrors, officePositionErrors});
+        const regionErrors = isNumericTextValid(currentJob.region);
+        const districtErrors = isNumericTextValid(currentJob.district);
+        const healthSystemErrors = isNumericTextValid(currentJob.level_of_health_system);
+        // const officePositionErrors = [...isTextValid(currentJob.latitude, 1), ...isTextValid(currentJob.longitude, 1)];
+        setErrors({currentInstitutionErrors, jobTitleErrors, regionErrors, districtErrors, healthSystemErrors, officePositionErrors: []});
         console.log(errors);
-        return ![currentInstitutionErrors, jobTitleErrors, regionErrors, districtErrors, healthSystemErrors, officePositionErrors]
+        return ![currentInstitutionErrors, jobTitleErrors, regionErrors, districtErrors, healthSystemErrors]
         .some(arr => arr.length > 0);
     }
 
@@ -122,12 +120,6 @@ const AddJobScreen = (props) => {
         setCurrentJob(prevJob => ({...prevJob, longitude: officePosition.longitude, latitude: officePosition.latitude}));
     }
 
-    const navigateMapView = () => {
-        props.navigation.navigate('Auth', {
-            screen: 'MapView'
-        });
-    }
-
     const isUserOfficeLocationSet = () => {
         const {is_current, latitude, longitude} = currentJob;
         return is_current == 'Yes' && (isDefined(latitude) && !isEmpty(latitude)) && (isDefined(longitude) && !isEmpty(longitude));
@@ -137,7 +129,7 @@ const AddJobScreen = (props) => {
             <Modal animationType="slide"
             visible={modalVisible}
         transparent={true}>
-                <View style={[styles.container, styles.shadow]}> 
+                <ScrollView contentContainerStyle={[styles.container, styles.shadow]} showsVerticalScrollIndicator={false}> 
                     <View>
                         <Text style={styles.modalTitle}>Current Job Details</Text>
                     </View>
@@ -148,9 +140,9 @@ const AddJobScreen = (props) => {
                         </View>
                         <MapPreviewComponent
                             selected={isUserOfficeLocationSet()}
-                            onPress={navigateMapView}
+                            // onPress={() => navigateMapView(currentJob)}
                             invalid={errors.officePositionErrors.length > 0}
-                            mapPreviewStyle={errors.officePositionErrors.length > 0 ? {marginBottom: '8%'} : {}}
+                            mapPreviewStyle={errors.currentInstitutionErrors.length > 0 ? {marginBottom: '8%'} : {}}
                         />
                     </View>
                     <View style={styles.inputView}>
@@ -158,7 +150,7 @@ const AddJobScreen = (props) => {
                         {errors.jobTitleErrors.length > 0 && <HelperTextComponent text={errors.jobTitleErrors[0]} invalid/>}
                     </View>
                     <View style={styles.inputView}>
-                        <Text>Region</Text>
+                        <Text style={styles.pickerText}>Region</Text>
                         <View style={styles.pickerView}>
                         <Picker onValueChange={setCurrentRegion} selectedValue={currentJob.region} mode="dialog">
                             <Picker.Item label="" value={null} />
@@ -170,12 +162,12 @@ const AddJobScreen = (props) => {
                         {errors.regionErrors.length > 0 && <HelperTextComponent text={errors.regionErrors[0]} invalid/>}
                     </View>
                     <View style={styles.inputView}>
-                        <Text>District</Text>
+                        <Text style={styles.pickerText}>District</Text>
                         <DropdownComponent items={getDistrictListByRegion(selectedRegion)} selectedItems={[currentJob.district]} selectedText="" onSelectedItemsChange={(selectedItems) => setCurrentDistrict(selectedItems[0])} single searchPlaceholderText="Select a district" />
                         {errors.districtErrors.length > 0 && <HelperTextComponent text={errors.districtErrors[0]} invalid/>}
                     </View>
                     <View style={styles.inputView}>
-                        <Text>Level of Health System</Text>
+                        <Text style={styles.pickerText}>Level of Health System</Text>
                         <View style={styles.pickerView}>
                             <Picker onValueChange={setLevelOfHealthSystem} selectedValue={currentJob.level_of_health_system} mode="dropdown">
                                 <Picker.Item value={null} label="" />
@@ -190,7 +182,7 @@ const AddJobScreen = (props) => {
                         <ButtonComponent title="Cancel" buttonContainerStyle={styles.button} onPress={handleCancel}/>
                         <ButtonComponent title="Save" buttonContainerStyle={[styles.button, {backgroundColor: colors.primaryGreen}]} onPress={handleSubmit}/>
                     </View>
-                </View>
+                </ScrollView>
             </Modal>
     )
 }
@@ -199,11 +191,14 @@ export default AddJobScreen;
 
 const styles = StyleSheet.create({
     container: {
-        padding: 20,
+        paddingHorizontal: 20,
+        paddingTop: 20,
+        paddingBottom: 40,
         backgroundColor: colors.white,
         alignSelf: 'center',
         width: '90%',
-        marginTop: 30
+        marginTop: 25,
+        position: 'relative',
     },
     modalTitle: {
         fontSize: 17,
@@ -213,7 +208,8 @@ const styles = StyleSheet.create({
     },
     buttonView: {
         flexDirection: 'row',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        marginTop: 5
     },
     button: {
         width: '30%'
@@ -227,13 +223,14 @@ const styles = StyleSheet.create({
         width: '80%'
     },
     inputView: {
-        marginBottom: 20
+        marginBottom: 15
     },
     pickerView: {
-        borderWidth: 1,
+        borderWidth: 0.8,
         borderColor: colors.secondaryBlack,
         borderRadius: 5,
-        height: 50
+        height: 50,
+        justifyContent: 'center' 
     },
     shadow: {
         shadowColor: "#000",
@@ -245,5 +242,9 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         elevation: 5,
         backgroundColor: colors.white
-       }
+   },
+    pickerText: {
+        fontSize: 15,
+        marginBottom: 5
+    }
 });

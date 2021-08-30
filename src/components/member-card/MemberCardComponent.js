@@ -8,8 +8,7 @@ const MemberCardComponent = (props) => {
     const {name, memberImage, level, monthComp, yearComp, onPress} = props;
     
     return (
-        <View style={[styles.memberCardView, styles.shadow]}>
-            <Pressable onPress={onPress} style={styles.pressable}>
+            <Pressable onPress={onPress} style={[styles.memberCardView, styles.shadow]} android_ripple={{color: colors.pearl}}>
             <View style={styles.cardImageView}>
                 <Image style={styles.memberImage} source={require("@assets/man.jpg")}/>
             </View>
@@ -24,7 +23,6 @@ const MemberCardComponent = (props) => {
                 </View> */}
             </View>
             </Pressable>
-        </View>
     );
 }
 
@@ -59,10 +57,6 @@ const styles = StyleSheet.create({
        flexDirection: 'row',
        alignItems: 'center',
        marginLeft: 5
-   },
-   pressable: {
-       justifyContent: 'center',
-       alignItems: 'center',
    },
    shadow: {
     shadowColor: "#000",

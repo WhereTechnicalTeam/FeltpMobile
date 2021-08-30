@@ -6,7 +6,7 @@ const NotificationsListScreen = () => {
 
     return (
         <ScrollView contentContainerStyle={styles.containerView} showsVerticalScrollIndicator={false}>
-            <Text style={{color: colors.primary, marginLeft: 20}}>Notifications will be displayed here</Text>
+            <Text style={styles.emtyListText}>Notifications will be displayed here</Text>
         </ScrollView>
     );
 }
@@ -17,4 +17,10 @@ const styles = StyleSheet.create({
     containerView: {
         paddingVertical: 20
     },
+    emtyListText: {
+        textAlign: 'center',
+        color: colors.primary,
+        fontSize: 15,
+        fontWeight: '600'
+    }
 });

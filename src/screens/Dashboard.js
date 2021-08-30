@@ -10,13 +10,7 @@ import ToastComponent from '@components/toast/ToastComponent';
 
 const DashboardScreen = (props) => {
 
-    const [newsItems, setNewsItems] = useState([
-        {
-            id: 0,
-            title: "Monthly cohort meetings!",
-            content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
-        }
-    ]);
+    const [newsItems, setNewsItems] = useState([]);
     const [memberStats, setMemberStats] = useState({
         numFrontline: 0,
         numIntermediate: 0,
@@ -105,7 +99,7 @@ const DashboardScreen = (props) => {
                 <SummaryCardComponent mainText={memberStats.numFrontline} subText="frontline" summaryContainerStyle={{backgroundColor: colors.accents[3]}}/>
             </View>
             <View style={styles.subtitleView}>
-                <Text style={styles.subtitle}>News Feed</Text>
+                <Text style={[styles.subtitle, {fontWeight: '600'}]}>News Feed</Text>
             </View>
             <FlatList contentContainerStyle={styles.newsView} showsVerticalScrollIndicator={false} data={newsItems} keyExtractor={(item) => item.id.toString()} renderItem={renderNewsItem}/>
         </View>
@@ -147,7 +141,8 @@ const styles = StyleSheet.create({
     summaryView: {
         justifyContent: 'space-between',
         flexDirection: 'row',
-        marginBottom: 20
+        marginBottom: 20,
+        marginHorizontal: 20
     },
     newsView: {
         justifyContent: 'space-between'

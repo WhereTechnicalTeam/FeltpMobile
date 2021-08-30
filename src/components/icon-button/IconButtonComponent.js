@@ -8,7 +8,7 @@ const IconButtonComponent = (props) => {
 
     return (
         <View style={[styles.iconButtonView, iconButtonStyle]}>
-            <Pressable onPress={onPress} android_ripple={{color: colors.ripple}}>
+            <Pressable onPress={onPress} android_ripple={{color: colors.ripple, radius: 25}} style={[styles.pressable]}>
                 <Icon name={icon} size={size} color={color} />
             </Pressable>
         </View>
@@ -20,11 +20,15 @@ export default IconButtonComponent;
 const styles = StyleSheet.create({
     iconButtonView: {
         backgroundColor: colors.primary,
-        opacity: 0.8,
+        // opacity: 0.8,
         borderRadius: 5,
         width: 50,
         height: 50,
+    }, 
+    pressable: {
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        width: '100%', 
+        height: '100%',
     }
 })

@@ -16,14 +16,14 @@ export default SummaryCardComponent;
 
 const styles = StyleSheet.create({
     cardView: {
-        width: Dimensions.get("screen").width/3,
-        height: 100,
+        width: 120,
+        height: 90,
         backgroundColor: colors.primary,
         borderRadius: 7,
         justifyContent: 'center'
     },
     mainText: {
-        fontSize:  30,
+        fontSize:  25,
         fontWeight: '900',
         color: colors.white,
         textAlign: 'center'

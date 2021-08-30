@@ -138,7 +138,7 @@ const updateJobHistory = async(token, id, joblist) => {
         return json;
     })
     .catch((error) => {
-        console.error(error);
+        console.warn("Error updating job details:", error);
         return {status: 500};
     });
 }

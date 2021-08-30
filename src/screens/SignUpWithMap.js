@@ -247,7 +247,7 @@ const SignUpWithMapScreen = (props) => {
                     selected={isUserOfficeLocationSet()} 
                     onPress={navigateMapView} 
                     invalid={errors.officePositionErrors.length > 0}
-                    mapPreviewStyle={errors.officePositionErrors.length > 0 ? {marginBottom: '8%'} : {}}
+                    mapPreviewStyle={errors.currentInstitutionErrors.length > 0 ? {marginBottom: '8%'} : {}}
                 />
             </View> 
             <View style={styles.formInputView}>

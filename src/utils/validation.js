@@ -56,7 +56,7 @@ const isAlphaTextValid = (text, min=1, max=1000, required=true) => {
 const isNumericTextValid = (text, min=1, max) => {
     let textErrors = [];
     if(!isDefined(text) || isEmpty(text)) return ['Input is required'];
-    if(!isRequiredLength(text, min, max)) textErrors.push("Input length is incorrect");
+    if(!isRequiredLength(text.toString(), min, max)) textErrors.push("Input length is incorrect");
     if(!matchNumericRegex(text)) textErrors.push("Input must contain only [0-9]");
     return textErrors;
 }
