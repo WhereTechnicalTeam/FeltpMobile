@@ -13,38 +13,43 @@ import { safeConvertToString } from '@utils/helperFunctions';
 import ToastComponent from '@components/toast/ToastComponent';
 import HelperTextComponent from '@components/helper-text/HelperTextComponent';
 import { getDistrictListByRegion } from '@utils/helperFunctions';
-import { updateJobHistory } from '@api/userApi';
+import { updateUser } from '@api/userApi';
+import SpinnerComponent from '@components/spinner/SpinnerComponent';
+import { getRegionById } from '@utils/helperFunctions';
 
 const AddJobScreen = (props) => {
-    const {user, modalVisible, handleCancel, token, navigateMapView, currentJobProps} = props;
-    const [currentJob, setCurrentJob] = useState({
-            current_institution: null,
-            job_title: null,
-            region: null,
-            district: null,
-            level_of_health_system: null,
-            longitude: null,
-            latitude: null,
-            is_current: 'Yes',
-            employment_status: "full-time"
-    });
-    const [selectedRegion, setSelectedRegion] = useState('');
-    const [errors, setErrors] = useState({
+    const {user, modalVisible, onCancel, token, navigateMapView, currentJobProps, onSubmit} = props;
+    const initCurrentJob = {
+        current_institution: null,
+        job_title: null,
+        region: null,
+        district: null,
+        level_of_health_system: null,
+        longitude: null,
+        latitude: null,
+        is_current: 'Yes',
+        employment_status: "full-time"
+    };
+    const initErrors = {
         officePositionErrors: [],
         currentInstitutionErrors: [],
         jobTitleErrors: [],
         regionErrors: [],
         districtErrors: [],
         healthSystemErrors: []
-    }); 
+    };
+    const [currentJob, setCurrentJob] = useState(initCurrentJob);
+    const [selectedRegion, setSelectedRegion] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [errors, setErrors] = useState(initErrors); 
 
-    // useEffect(() => {
-    //     if(isDefined(currentJobProps)) {
-    //         setCurrentJob(currentJobProps);
-    //         setSelectedRegion(currentJobProps.region);
-    //     }
-    //     console.log(currentJobProps);
-    // }, [currentJobProps]);
+    useEffect(() => {
+        if(isDefined(currentJobProps)) {
+            setCurrentJob(currentJobProps);
+            console.log(currentJobProps.region);
+            setSelectedRegion(getRegionById(currentJobProps.region));
+        }
+    }, [modalVisible]);
 
     const updateIsCurrent = (jobToUser) => {
         return jobToUser.map(job => ({...job, is_current: 'No'}));
@@ -52,20 +57,18 @@ const AddJobScreen = (props) => {
 
     const handleSubmit = async() => {
         console.log(currentJob);
+        const updatedUser = {...user, job_to_user: [currentJob]};
         try {
-            if(validateUserDetails()) {
-                const jobUpdate = {
-                    id: user.main_user.id, 
-                    email: user.email, 
-                    job_to_user: [
-                        ...updateIsCurrent(user.job_to_user),
-                        currentJob
-                ]};
-                console.log("jobUpdate:", jobUpdate);
-            const response = await updateJobHistory(token, user.main_user.id, jobUpdate);
-            if(response.status == 200) {
+            if(validateUserDetails()) {               
+                console.log("updated User:", updatedUser);
+                setLoading(true);
+            const response = await updateUser(updatedUser, user.main_user.id);
+            setLoading(false);
+            console.log("job update response: ", response);
+            if(response.status == 200 || isDefined(response.email)) {
                 ToastComponent.show("Job details updated!", {timeOut: 3500, level: "success"});
-                handleCancel();
+                onSubmit();
+                onCancel();
             } else {
                 ToastComponent.show("Job details update failed", {timeOut: 3500, level: "failure"});
             }
@@ -83,10 +86,10 @@ const AddJobScreen = (props) => {
         const regionErrors = isNumericTextValid(currentJob.region);
         const districtErrors = isNumericTextValid(currentJob.district);
         const healthSystemErrors = isNumericTextValid(currentJob.level_of_health_system);
-        // const officePositionErrors = [...isTextValid(currentJob.latitude, 1), ...isTextValid(currentJob.longitude, 1)];
-        setErrors({currentInstitutionErrors, jobTitleErrors, regionErrors, districtErrors, healthSystemErrors, officePositionErrors: []});
+        const officePositionErrors = [...isTextValid(currentJob.latitude, 1), ...isTextValid(currentJob.longitude, 1)];
+        setErrors({currentInstitutionErrors, jobTitleErrors, regionErrors, districtErrors, healthSystemErrors, officePositionErrors});
         console.log(errors);
-        return ![currentInstitutionErrors, jobTitleErrors, regionErrors, districtErrors, healthSystemErrors]
+        return ![currentInstitutionErrors, jobTitleErrors, regionErrors, districtErrors, healthSystemErrors, officePositionErrors]
         .some(arr => arr.length > 0);
     }
 
@@ -125,6 +128,12 @@ const AddJobScreen = (props) => {
         return is_current == 'Yes' && (isDefined(latitude) && !isEmpty(latitude)) && (isDefined(longitude) && !isEmpty(longitude));
     }
 
+    const handleCancel = () => { 
+        setErrors(initErrors);
+        setCurrentJob(initCurrentJob); 
+        onCancel();
+    }
+
     return (
             <Modal animationType="slide"
             visible={modalVisible}
@@ -133,14 +142,22 @@ const AddJobScreen = (props) => {
                     <View>
                         <Text style={styles.modalTitle}>Current Job Details</Text>
                     </View>
-                    <View style={[styles.inputWithIconView, styles.inputView]}>
+                    {
+                        loading ?
+                        <View style={{marginHorizontal: '30%', height: 500, justifyContent: 'center', alignItems: 'center'}}>
+                            <SpinnerComponent />
+                        </View>
+                        : 
+                        (
+                            <>
+                        <View style={[styles.inputWithIconView, styles.inputView]}>
                         <View style={styles.inputWithIcon}>
                         <FormInputComponent label="Name of Institution" onChangeText={setCurrentInstitution} value={currentJob.current_institution} invalid={errors.currentInstitutionErrors.length > 0}/>
                         {errors.currentInstitutionErrors.length > 0 && <HelperTextComponent text={errors.currentInstitutionErrors[0]} invalid />}
                         </View>
                         <MapPreviewComponent
                             selected={isUserOfficeLocationSet()}
-                            // onPress={() => navigateMapView(currentJob)}
+                            onPress={() => navigateMapView(currentJob)}
                             invalid={errors.officePositionErrors.length > 0}
                             mapPreviewStyle={errors.currentInstitutionErrors.length > 0 ? {marginBottom: '8%'} : {}}
                         />
@@ -181,7 +198,10 @@ const AddJobScreen = (props) => {
                     <View style={styles.buttonView}>
                         <ButtonComponent title="Cancel" buttonContainerStyle={styles.button} onPress={handleCancel}/>
                         <ButtonComponent title="Save" buttonContainerStyle={[styles.button, {backgroundColor: colors.primaryGreen}]} onPress={handleSubmit}/>
-                    </View>
+                    </View>                            
+                            </>
+                        )
+                    }
                 </ScrollView>
             </Modal>
     )

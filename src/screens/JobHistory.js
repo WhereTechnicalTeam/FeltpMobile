@@ -29,42 +29,40 @@ const JobHistoryScreen = (props) => {
                         setUser(JSON.parse(storedUser));
                         setToken(authToken);
                         if(isDefined(user)) await fetchJobHistory();
+                        setLoading(false);
                     });
                 });
-                setLoading(false);
             })();
         } catch(err) {
             console.warn("Error setting up job history screen", err);
         }
     }, []);
 
-    // useEffect(() => {
-    //     console.log("job history route params:", props.route.params);
-    //     try{
-    //         if(props.route.params?.currentJobProps) {
-    //             setCurrentJobEdit(props.route.params?.currentJobProps);
-    //             // setShowAddJob(true);
-    //         }
-    //     } catch (err) {
-    //         console.warn("Error retrieving office position", err);
-    //     }
-    // }, [props.route.params?.currentJobProps]);
+    useEffect(() => {
+        console.log("job history route params:", props.route.params);
+        try{
+            if(props.route.params?.currentJobProps) {
+                setCurrentJobEdit(props.route.params?.currentJobProps);
+                setShowAddJob(true);
+            }
+        } catch (err) {
+            console.warn("Error retrieving office position", err);
+        }
+    }, [props.route.params?.currentJobProps]);
 
-    const SkeletonLoader = () => {
-        return (
+    const SkeletonLoader = () => (
         <SkeletonPlaceholder>
-            <SkeletonPlaceholder.Item height={150} />
+            <SkeletonPlaceholder.Item height={250} width='100%' marginTop={20}/>
+            <SkeletonPlaceholder.Item height={250} width='100%' marginTop={20}/>
         </SkeletonPlaceholder>
         )
-    }
+    
 
 
     const fetchJobHistory = async() => {
         const response = await fetchUserJobHistory(token, user.main_user.id);
-        console.log("job history:", response)
         if(response.status  == 200) {
-            setJobHistory(response.job_to_user);
-            console.log("Job History response:", response);
+            setJobHistory(response.alldata.job_to_user);
         } else ToastComponent.show("Failed to fetch job history", {timeOut: 3500, level: 'failure'});
     }
 
@@ -86,13 +84,13 @@ const JobHistoryScreen = (props) => {
     );
 
     const navigateMapView = (currentJobProps) => {
-        props.navigation.navigate('Auth', {
-            screen: 'MapView',
-            params: {
+        setShowAddJob(false);
+        props.navigation.navigate('MapView',
+            {
                 callingScreen: 'JobHistory',
                 currentJobProps
             }
-        });
+        );
     }
 
     const handleRefresh = async() => {
@@ -123,10 +121,11 @@ const JobHistoryScreen = (props) => {
             <AddJobScreen 
             modalVisible={showAddJob} 
             user={user} 
-            handleCancel={() => setShowAddJob(false)} 
+            onCancel={() => setShowAddJob(false)} 
             token={token}
-            // navigateMapView={navigateMapView}
-            // currentJobProps={currentJobEdit}
+            onSubmit={() => setCurrentJobEdit(undefined)}
+            navigateMapView={navigateMapView}
+            currentJobProps={currentJobEdit}
             />
             <View style={styles.fabView}>
                 <IconButtonComponent icon="add" size={24} color={colors.white} iconButtonStyle={{...styles.shadow, ...styles.fab}} onPress={() => {setShowAddJob(true)}} />

@@ -48,7 +48,6 @@ const AuthNavigator = () => (
         <AuthStack.Screen name="Signup" component={SignUpScreen}/>
         <AuthStack.Screen name="IntermediateSignup" component={IntermediateSignUpScreen} />
         <AuthStack.Screen name="SignupWithMap" component={SignUpWithMapScreen} />
-        <AuthStack.Screen name="MapView" component={MapViewScreen} />
         <AuthStack.Screen name="VerifyEmail" component={VerifyEmailScreen} />
     </AuthStack.Navigator>
 );
@@ -195,6 +194,7 @@ const AppContainer = () => (
         <MainStack.Screen name="Auth" component={AuthNavigator}/>
         <MainStack.Screen name="Tabs" component={MainTabNavigator} />
         <MainStack.Screen name="SettingsNavigator" component={SettingsNavigator} />
+        <MainStack.Screen name="MapView" component={MapViewScreen} />
     </MainStack.Navigator>
 );
 

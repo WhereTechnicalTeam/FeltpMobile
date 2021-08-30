@@ -71,10 +71,10 @@ const SignInScreen = (props) => {
                 await AsyncStorage.setItem('userDetails', JSON.stringify(response.alldata[0]));
                 navigateDashboard();
             } else if(response.status == 400 && response.msg == "not verified.") {
-                ToastComponent.show("Please verify your account before you can login", {timeOut: 3500, level: 'failure'});
+                ToastComponent.show("Please verify your account before you can login", {timeOut: 3500, level: 'warning'});
                 navigateVerifyEmail();
             } else if(response.status == 400 && response.msg == 'pending approval.') {
-                ToastComponent.show("Login failed. Please contact the admin for approval", {timeOut: 3500, level: 'failure'});
+                ToastComponent.show("Login failed. Please contact the admin for approval", {timeOut: 3500, level: 'warning'});
             } else {
                 ToastComponent.show("Login failed", {timeOut: 3500, level: 'failure'});
             }

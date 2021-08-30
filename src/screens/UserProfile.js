@@ -1,9 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, RefreshControl } from 'react-native';
 import IconButtonComponent from '@components/icon-button/IconButtonComponent';
 import ProfileTextComponent from '@components/profile-text/ProfileTextComponent';
 import { colors } from '@theme/colors';
+import { findUserByEmail } from 'src/api/userApi';
+import ToastComponent from 'src/components/toast/ToastComponent';
 
 const UserProfileScreen = (props) => {
     const [user, setUser] = useState({
@@ -40,6 +42,7 @@ const UserProfileScreen = (props) => {
             }
         ]
     });
+    const [refresh, setRefresh] = useState(false);
     
     useEffect(() => {
         (async () => {
@@ -59,9 +62,31 @@ const UserProfileScreen = (props) => {
         props.navigation.navigate('EditProfile');
     }
 
+    const handleRefresh = async() => {
+        setRefresh(true);
+        await fetchUserDetails();
+        setRefresh(false);
+    }
+
+    const fetchUserDetails = async() => {
+        try {
+            const response = await findUserByEmail(user.email);
+            if(response.status === 200) {
+                console.log("user details", response.alldata[0]);
+                const fetchedUser = {...response.alldata[0], job_to_user: [response.alldata[0].job_to_user]}
+                setUser(fetchedUser);
+                await AsyncStorage.setItem("userDetails", JSON.stringify(fetchedUser));
+            } else {
+                ToastComponent.show("Failed to fetch user details", {timeOut: 3500, level: 'failure'})
+            }
+        } catch(err) {
+            console.log("Error fetching user details:", err);
+        }
+    }
+
     return (
         <View style={styles.profileContainer}>
-        <ScrollView showsVerticalScrollIndicator={false}>
+        <ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl onRefresh={handleRefresh} refreshing={refresh}/>}>
             <View style={[styles.cardContainer, styles.shadow]}>
                 <ProfileTextComponent label="Email" text={user.email} />
                 <ProfileTextComponent label="Gender" text={user.main_user.sex} />

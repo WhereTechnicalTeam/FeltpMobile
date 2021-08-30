@@ -91,17 +91,15 @@ const SignUpWithMapScreen = (props) => {
         if(validateUserDetails()) {
             setLoading(true);
             let response = null;
-            if(user.main_user.status === 'pending approval' || user.main_user.status === 'approved') response = await updateUser(user, user.id)
+            if(user.main_user.status === 'pending approval' || user.main_user.status === 'approved') response = await updateUser({...user, job_to_user: [user.job_to_user[0]]}, user.id)
             else response = await registerUser(user)
-            console.log("response: ", response);
+            console.log("register response: ", response);
             setLoading(false);
-            if(response.status == 200) {
+            if(response.status == 200 || isDefined(response.email)) {
                 // let authUser = response.user;
                 await AsyncStorage.setItem('userDetails', JSON.stringify(user));
 
-                if(user.main_user.status !== 'approved') {
-                    ToastComponent.show("Registration", {timeOut: 3500, level: 'success'});
-                }
+                ToastComponent.show("Registration successful!", {timeOut: 3500, level: 'success'});
                 if(user.main_user.email_status == 'verified') {
                     // navigateDashboard();
                     // await AsyncStorage.setItem('authToken', response.token);

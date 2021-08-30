@@ -13,6 +13,7 @@ import { colors } from '@theme/colors';
 import { isTextValid } from '@utils/validation';
 import { safeConvertToString } from '@utils/helperFunctions';
 import SpinnerComponent from '@components/spinner/SpinnerComponent';
+import LinkTextComponent from '@components/link-text/LinkTextComponent';
 
 const VerifyEmailScreen = (props) => {
 
@@ -50,10 +51,6 @@ const VerifyEmailScreen = (props) => {
         }  
     }
 
-    const navigateSignin = () => {
-        props.navigation.navigate('Signin');
-    }
-
     const navigateBack = () => {
         if(props.navigation)
         props.navigation.goBack();
@@ -63,6 +60,10 @@ const VerifyEmailScreen = (props) => {
         const codeErrors = isTextValid(code, 1);
         setError(codeErrors);
         return codeErrors.length == 0;
+    }
+
+    const navigateSignin = () => {
+        props.navigation.navigate('Signin');
     }
 
     return (
@@ -85,6 +86,7 @@ const VerifyEmailScreen = (props) => {
             </View>
             <View>
                 <ButtonComponent title="Resend Code" onPress={() => console.log("Resending token to ", email)} buttonContainerStyle={{...styles.buttonComponent, backgroundColor: colors.primaryGreen}}/>
+                <LinkTextComponent preText="Already have an account?" actionText="Login" onPress={navigateSignin}/>
             </View>
         </ScrollView>
     );

@@ -70,12 +70,11 @@ const EditProfile3Screen = (props) => {
     }
 
     const navigateMapView = () => {
-        props.navigation.navigate('Auth', {
-            screen: 'MapView',
-            params: {
+        props.navigation.navigate('MapView',
+            {
                 callingScreen: 'EditProfile3'
             }
-        });
+        );
     }
 
     const navigateUserProfile = () => {

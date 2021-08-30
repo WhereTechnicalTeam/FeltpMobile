@@ -15,6 +15,7 @@ import { updateUser } from '@api/userApi';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Spinner from 'react-native-loading-spinner-overlay';
 import SpinnerComponent from '@components/spinner/SpinnerComponent';
+import { isDefined } from '@utils/validation';
 
 const EditProfile2Screen = (props) => {
 
@@ -89,9 +90,11 @@ const EditProfile2Screen = (props) => {
         try{
             if(validateUserDetails()) {
                 setLoading(true);
-                let response = await updateUser(user, user.main_user.id);
+                let response = await updateUser({...user, job_to_user: [user.job_to_user[0]]}, user.main_user.id);
+                console.log("update response: ", response);
+
                 setLoading(false);
-                if(response.status === 200) {
+                if(response.status === 200 || isDefined(response.email)) {
                     ToastComponent.show("Profile updated", {timeOut: 3500, level: 'success'});
                     await AsyncStorage.setItem("userDetails", JSON.stringify(user));
                     navigateUserProfile();
@@ -102,12 +105,16 @@ const EditProfile2Screen = (props) => {
                 ToastComponent.show("Invalid details", {timeOut: 3500, level: 'failure'});
             }
         } catch(err) {
-            console.warn("Error submitting to edit profile 3:", err)
+            console.warn("Error updating user details:", err)
         }
     }
 
     const navigateBack = () => {
         props.navigation.goBack();
+    }
+
+    const navigateUserProfile = () => {
+        props.navigation.navigate("UserProfile")
     }
 
     const validateUserDetails = () => {   

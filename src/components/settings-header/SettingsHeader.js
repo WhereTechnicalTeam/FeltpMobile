@@ -142,15 +142,15 @@ const styles = StyleSheet.create({
         paddingTop: 30,
         paddingHorizontal: 20,
         paddingBottom: 30,
-        backgroundColor: colors.primary,
+        backgroundColor: colors.lightPrimary,
         flexDirection: 'row',
-        justifyContent: 'space-between',
         alignContent: 'center'
     },
     headerContentView: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         width: '50%',
+        marginLeft: '15%'
     },
     headerTextView: {
         alignSelf: 'center',
@@ -167,6 +167,6 @@ const styles = StyleSheet.create({
     },
     headerLocationText: {
         fontSize: 12,
-        color: colors.pearl
+        color: colors.primaryBlack
     }
 });

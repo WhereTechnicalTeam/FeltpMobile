@@ -20,7 +20,7 @@ const findUserByEmail = async (email) => {
 }
 
 const updateUser = async(user, id) => {
-    return fetch(`${BASE_URL}/useredit/${id}`, {
+    return fetch(`${BASE_URL}/useredit/${id}/`, {
         method: 'PUT',
         headers: {
             Accept: 'application/json',
@@ -28,7 +28,10 @@ const updateUser = async(user, id) => {
         },
         body: JSON.stringify(user)
     })
-    .then((response) => response.json())
+    .then((response) => {
+        console.log(response);
+        return response.json()
+    })
     .then(json => {
         console.log("update response:", json);
         return json;
