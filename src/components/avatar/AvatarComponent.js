@@ -11,7 +11,10 @@ const AvatarComponent = (props) => {
             <Pressable onPress={onPress}>
                 <Image source={src} style={styles.image}/>
                 {
-                    icon && <Icon name={icon} size={30} color={colors.white} style={styles.icon}/>
+                    icon && 
+                    <View style={{backgroundColor: colors.primary, padding: 5, borderRadius: 50, ...styles.icon}}>
+                    <Icon name={icon} size={25} color={colors.white} />
+                    </View>
                 }
             </Pressable>
         </View>

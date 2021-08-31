@@ -7,11 +7,11 @@ import ButtonComponent from '@components/button/ButtonComponent';
 import { colors } from '@theme/colors';
 import { isAlphaTextValid, isEmailValid, isDateValid } from '@utils/validation';
 import DatePickerComponent from '@components/date-picker/DatePickerComponent';
-import { Picker } from '@react-native-picker/picker';
 import ToastComponent from '@components/toast/ToastComponent';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import HelperTextComponent from '@components/helper-text/HelperTextComponent';
 import IconButtonComponent from '@components/icon-button/IconButtonComponent';
+import PickerComponent from '@components/picker/PickerComponent';
 
 const EditProfileScreen = (props) => {
 
@@ -142,14 +142,7 @@ const EditProfileScreen = (props) => {
                 {errors.surnameErrors.length > 0 && <HelperTextComponent text={errors.surnameErrors[0]} invalid/>}
             </View>
             <View style={styles.formInputView}>
-                <Text style={[styles.pickerText]}>Gender</Text>
-                <View style={[styles.pickerView, errors.genderErrors.length > 0 ? {borderColor: colors.red} : {}]} >
-                <Picker onValueChange={setGender} selectedValue={user.main_user.sex} mode="dropdown" >
-                    <Picker.Item label="" value="" />
-                    <Picker.Item label="Male" value="Male"/>
-                    <Picker.Item label="Female" value="Female"/>
-                </Picker>
-                </View>
+                <PickerComponent label="Gender" onValueChange={setGender} selectedValue={user.main_user.sex} mode="dropdown" items={[{name: "", id: null}, {name: "Male", id: "Male"}, {name: "Female", id: "Female"}]}/>
                 {errors.genderErrors.length > 0 && <HelperTextComponent text={errors.genderErrors[0]} invalid/>}
             </View>
             <View style={[styles.formInputView]}>

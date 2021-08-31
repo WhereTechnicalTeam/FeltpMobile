@@ -20,15 +20,20 @@ const styles = StyleSheet.create({
     mapPreviewContainer: {
         width: 50,
         height: 50,
-        borderRadius: 5
+        borderRadius: 25,
+        borderWidth: 1,
+        borderColor: colors.secondaryBlack,
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     selected: {
         borderColor: colors.primaryGreen,
-        borderWidth: 2,
+        borderWidth: 2
     },
     mapPreviewImage: {
         width: 45,
-        height: 45
+        height: 45,
+        borderRadius: 25
     }, 
     invalid: {
         borderColor: colors.red,

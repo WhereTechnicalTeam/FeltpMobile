@@ -16,6 +16,7 @@ import { getDistrictListByRegion } from '@utils/helperFunctions';
 import { updateUser } from '@api/userApi';
 import SpinnerComponent from '@components/spinner/SpinnerComponent';
 import { getRegionById } from '@utils/helperFunctions';
+import PickerComponent from '@components/picker/PickerComponent';
 
 const AddJobScreen = (props) => {
     const {user, modalVisible, onCancel, token, navigateMapView, currentJobProps, onSubmit} = props;
@@ -46,7 +47,7 @@ const AddJobScreen = (props) => {
     useEffect(() => {
         if(isDefined(currentJobProps)) {
             setCurrentJob(currentJobProps);
-            console.log(currentJobProps.region);
+            console.log("current job:", currentJobProps);
             setSelectedRegion(getRegionById(currentJobProps.region));
         }
     }, [modalVisible]);
@@ -62,7 +63,7 @@ const AddJobScreen = (props) => {
             if(validateUserDetails()) {               
                 console.log("updated User:", updatedUser);
                 setLoading(true);
-            const response = await updateUser(updatedUser, user.main_user.id);
+            const response = await updateUser(updatedUser, user.id);
             setLoading(false);
             console.log("job update response: ", response);
             if(response.status == 200 || isDefined(response.email)) {
@@ -167,15 +168,7 @@ const AddJobScreen = (props) => {
                         {errors.jobTitleErrors.length > 0 && <HelperTextComponent text={errors.jobTitleErrors[0]} invalid/>}
                     </View>
                     <View style={styles.inputView}>
-                        <Text style={styles.pickerText}>Region</Text>
-                        <View style={styles.pickerView}>
-                        <Picker onValueChange={setCurrentRegion} selectedValue={currentJob.region} mode="dialog">
-                            <Picker.Item label="" value={null} />
-                            {
-                                RegionList.map(r => <Picker.Item key={r.id} label={r.name} value={r.id}/>)
-                            }
-                        </Picker>                            
-                        </View>
+                        <PickerComponent items={RegionList} label="Region" onValueChange={setCurrentRegion} selectedValue={currentJob.region} mode="dialog"/>
                         {errors.regionErrors.length > 0 && <HelperTextComponent text={errors.regionErrors[0]} invalid/>}
                     </View>
                     <View style={styles.inputView}>
@@ -184,15 +177,7 @@ const AddJobScreen = (props) => {
                         {errors.districtErrors.length > 0 && <HelperTextComponent text={errors.districtErrors[0]} invalid/>}
                     </View>
                     <View style={styles.inputView}>
-                        <Text style={styles.pickerText}>Level of Health System</Text>
-                        <View style={styles.pickerView}>
-                            <Picker onValueChange={setLevelOfHealthSystem} selectedValue={currentJob.level_of_health_system} mode="dropdown">
-                                <Picker.Item value={null} label="" />
-                                {
-                                    levelOfHSList.map(hs => <Picker.Item value={hs.id} label={hs.name} key={hs.id} />)
-                                }
-                            </Picker>
-                        </View>
+                        <PickerComponent items={levelOfHSList} label="Level of Health System" onValueChange={setLevelOfHealthSystem} selectedValue={currentJob.level_of_health_system} mode="dropdown"/>
                         {errors.healthSystemErrors.length > 0 && <HelperTextComponent text={errors.healthSystemErrors[0]} invalid/>}
                     </View>   
                     <View style={styles.buttonView}>

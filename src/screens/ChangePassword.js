@@ -44,7 +44,7 @@ const ChangePasswordScreen = (props) => {
             const token = await AsyncStorage.getItem('authToken');
 
             //send to password reset api
-            const response = await changePassword({email: user.email, password, confirm: cpassword}, token, user.main_user.id);
+            const response = await changePassword({email: user.email, password, confirm: cpassword}, token, user.id);
             if(response.status == 200) {
                 ToastComponent.show("Password updated", {timeOut: 3500, level: 'success'})
             }

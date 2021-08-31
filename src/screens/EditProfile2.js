@@ -16,6 +16,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Spinner from 'react-native-loading-spinner-overlay';
 import SpinnerComponent from '@components/spinner/SpinnerComponent';
 import { isDefined } from '@utils/validation';
+import PickerComponent from 'src/components/picker/PickerComponent';
 
 const EditProfile2Screen = (props) => {
 
@@ -90,7 +91,7 @@ const EditProfile2Screen = (props) => {
         try{
             if(validateUserDetails()) {
                 setLoading(true);
-                let response = await updateUser({...user, job_to_user: [user.job_to_user[0]]}, user.main_user.id);
+                let response = await updateUser({...user, job_to_user: [user.job_to_user[0]]}, user.id);
                 console.log("update response: ", response);
 
                 setLoading(false);
@@ -260,6 +261,8 @@ const EditProfile2Screen = (props) => {
         setUser(prevUser => ({...prevUser, main_user}));
     }    
     
+    const pickerList = [{name: "No", id: "No"}, {name: "Yes", id: "Yes"}];
+
     return (
         <View style={styles.signupContainer}>
                 <Spinner visible={loading} customIndicator={<SpinnerComponent />}/> 
@@ -274,13 +277,7 @@ const EditProfile2Screen = (props) => {
                 {errors.secondaryPhoneErrors.length > 0 && <HelperTextComponent text={errors.secondaryPhoneErrors[0]} invalid/>}
             </View>
             <View style={[styles.formInputView]}>
-                <Text style={styles.pickerText}>Have you been trained in Frontline?</Text>
-                <View style={styles.pickerView}>
-                <Picker onValueChange={setIsTrainedFrontline} selectedValue={user.main_user.is_trained_frontline} mode="dropdown">
-                    <Picker.Item label="No" value={"No"}/>
-                    <Picker.Item label="Yes" value={"Yes"}/>
-                </Picker>
-                </View>
+                <PickerComponent label="Have you been trained in Frontline?" items={pickerList} selectedValue={user.main_user.is_trained_frontline} mode="dropdown" onValueChange={setIsTrainedFrontline}/>
             </View>
             {
                 frontlineExpanded &&
@@ -307,13 +304,7 @@ const EditProfile2Screen = (props) => {
                 </View>)
             }
             <View style={[styles.formInputView]}>
-                <Text style={styles.pickerText}>Have you been trained in Intermediate?</Text>
-                <View style={styles.pickerView}>
-                <Picker onValueChange={setIsTrainedIntermediate} selectedValue={user.main_user.is_trained_intermediate} mode="dropdown">
-                    <Picker.Item label="No" value={"No"}/>
-                    <Picker.Item label="Yes" value={"Yes"}/>
-                </Picker>
-                </View>
+                <PickerComponent items={pickerList} label="Have you been trained in Intermediate?" onValueChange={setIsTrainedIntermediate} selectedValue={user.main_user.is_trained_intermediate} mode="dropdown" />
             </View>
             {
                 intermediateExpanded &&
@@ -339,13 +330,7 @@ const EditProfile2Screen = (props) => {
                 </View>)
             }
             <View style={[styles.formInputView]}>
-                <Text style={styles.pickerText}>Have you been trained in Advanced?</Text>
-                <View style={styles.pickerView}>
-                <Picker onValueChange={setIsTrainedAdvanced} selectedValue={user.main_user.is_trained_advanced} mode="dropdown">
-                    <Picker.Item label="No" value={"No"}/>
-                    <Picker.Item label="Yes" value={"Yes"}/>
-                </Picker>
-                </View>
+                <PickerComponent items={pickerList} label="Have you been trained in Advanced?" onValueChange={setIsTrainedAdvanced} selectedValue={user.main_user.is_trained_advanced} mode="dropdown"/>
             </View>
             {
                 advancedExpanded &&

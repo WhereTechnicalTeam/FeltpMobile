@@ -15,6 +15,7 @@ import { Picker } from '@react-native-picker/picker';
 import ToastComponent from '@components/toast/ToastComponent';
 import HelperTextComponent from '@components/helper-text/HelperTextComponent';
 import SpinnerComponent from '@components/spinner/SpinnerComponent';
+import PickerComponent from '@components/picker/PickerComponent';
 
 const SignUpScreen = (props) => {
     
@@ -73,7 +74,7 @@ const SignUpScreen = (props) => {
                         main_user = {...main_user, status: 'registered', email_status: 'not verified'}
                         return {...prevUser, main_user};
                     }); 
-                    ToastComponent.show("User does not exist", {timeOut: 3500, level: 'failure'});
+                    ToastComponent.show("User does not exist", {timeOut: 3500, level: 'warning'});
                     setShowPassword(true);
                     setUser({...initUser, email: user.email});
                 } else {
@@ -206,14 +207,7 @@ const SignUpScreen = (props) => {
                 {errors.surnameErrors.length > 0 && <HelperTextComponent text={errors.surnameErrors[0]} invalid/>}
             </View>
             <View style={styles.formInputView}>
-                <Text style={[styles.pickerText, userSearchComplete ? {} : {opacity: 0.3}]}>Gender</Text>
-                <View style={[styles.pickerView, userSearchComplete ? {} : {opacity: 0.3}, errors.genderErrors.length > 0 ? {borderColor: colors.red} : {}]} >
-                <Picker onValueChange={setGender} selectedValue={user.main_user.sex} enabled={userSearchComplete} style={userSearchComplete ? {} : {opacity: 0.3}} mode="dropdown" >
-                    <Picker.Item label="" value="" />
-                    <Picker.Item label="Male" value="Male"/>
-                    <Picker.Item label="Female" value="Female"/>
-                </Picker>
-                </View>
+                <PickerComponent items={[{id: "", value: null}, {id: "Male", name: "Male"}, {id: "Female", name: "Female"}]} label="Gender" invalid={errors.genderErrors.length > 0 } disabled={!userSearchComplete} onValueChange={setGender} selectedValue={user.main_user.sex} mode="dropdown"/>
                 {errors.genderErrors.length > 0 && <HelperTextComponent text={errors.genderErrors[0]} invalid/>}
             </View>
             <View style={[styles.formInputView]}>

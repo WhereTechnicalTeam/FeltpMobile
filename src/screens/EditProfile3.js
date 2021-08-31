@@ -86,7 +86,7 @@ const EditProfile3Screen = (props) => {
         try {
             if(validateUserDetails()) {
                 setLoading(true);
-                let response = await updateUser(user, user.main_user.id);
+                let response = await updateUser(user, user.id);
                 setLoading(false);
                 if(response.status === 200) {
                     ToastComponent.show("Profile updated", {timeOut: 3500, level: 'success'});

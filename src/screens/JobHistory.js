@@ -60,7 +60,7 @@ const JobHistoryScreen = (props) => {
 
 
     const fetchJobHistory = async() => {
-        const response = await fetchUserJobHistory(token, user.main_user.id);
+        const response = await fetchUserJobHistory(token, user.id);
         if(response.status  == 200) {
             setJobHistory(response.alldata.job_to_user);
         } else ToastComponent.show("Failed to fetch job history", {timeOut: 3500, level: 'failure'});

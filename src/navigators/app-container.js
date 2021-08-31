@@ -95,13 +95,16 @@ const NotificationNavigator = () => (
 )
 
 const MainTabNavigator = () => (
-    <MainTabStack.Navigator initialRouteName="DashboardNavigator" >
+    <MainTabStack.Navigator initialRouteName="DashboardNavigator" screenOptions={{
+        tabBarActiveTintColor: colors.primary,
+          tabBarInactiveTintColor: colors.secondaryBlack,
+    }}>
         <MainTabStack.Screen 
         name="DashboardNavigator" 
         component={DashboardNavigator}
         options={{
             title: 'Dashboard',
-            tabBarIcon: () => <Icon name="grid" size={24}/>,
+            tabBarIcon: ({focused}) => <Icon name="grid" size={24} color={focused ? colors.primary : colors.secondaryBlack}/>,
             headerShown: false
         }}    
         />
@@ -110,7 +113,7 @@ const MainTabNavigator = () => (
         component={MemberListNavigator}
         options={{
             title: 'Members',
-            tabBarIcon: () => <Icon name="people" size={24}/>,
+            tabBarIcon: ({focused}) => <Icon name="people" size={24} color={focused ? colors.primary : colors.secondaryBlack}/>,
             headerShown: false
         }} 
         />
@@ -119,7 +122,7 @@ const MainTabNavigator = () => (
         component={ManageUserNavigator}
         options={{
             title: 'Manage Profile',
-            tabBarIcon: () => <Icon name="settings" size={24}/>,
+            tabBarIcon: ({focused}) => <Icon name="person-circle" size={24} color={focused ? colors.primary : colors.secondaryBlack}/>,
             header: (props) => (
                 <SettingsHeader {...props}/>
             ),

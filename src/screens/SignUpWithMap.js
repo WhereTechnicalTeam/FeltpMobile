@@ -21,6 +21,7 @@ import { getDistrictListByRegion, safeConvertToString } from '@utils/helperFunct
 import DropdownComponent from '@components/dropdown/DropdownComponent';
 import { levelOfHSList, RegionList } from '@utils/constants';
 import SpinnerComponent from '@components/spinner/SpinnerComponent';
+import PickerComponent from '@components/picker/PickerComponent';
 
 const SignUpWithMapScreen = (props) => {
 
@@ -242,7 +243,7 @@ const SignUpWithMapScreen = (props) => {
             <ScrollView showsVerticalScrollIndicator={false}>
             <View style={styles.inputWithIconView}>
                 <View style={[styles.emailInputView]}>
-                    <FormInputComponent label="Current Institution" onChangeText={setCurrentInstitution} invalid={errors.currentInstitutionErrors.length > 0} value={user.job_to_user[0].current_institution}/>
+                    <FormInputComponent label="Name of Institution" onChangeText={setCurrentInstitution} invalid={errors.currentInstitutionErrors.length > 0} value={user.job_to_user[0].current_institution}/>
                     {errors.currentInstitutionErrors.length > 0 && <HelperTextComponent text={errors.currentInstitutionErrors[0]} invalid/>}
                 </View>
                 <MapPreviewComponent 
@@ -257,30 +258,14 @@ const SignUpWithMapScreen = (props) => {
                 {errors.jobTitleErrors.length > 0 && <HelperTextComponent text={errors.jobTitleErrors[0]} invalid/>}
             </View>
             <View style={styles.formInputView}>
-            <Text style={styles.pickerText}>Current Region</Text>
-                <View style={styles.pickerView}>
-                <Picker onValueChange={setCurrentRegion} selectedValue={user.job_to_user[0].region} mode="dialog">
-                    <Picker.Item label="" value={null}/>
-                    {
-                        RegionList.map(reg => <Picker.Item key={reg.id} label={reg.name} value={reg.id}/>)
-                    }                    
-                </Picker>
-                </View>
-            </View>
+                <PickerComponent label="Region" items={RegionList} onValueChange={setCurrentRegion} selectedValue={user.job_to_user[0].region} mode="dialog"/>
+           </View>
             <View style={styles.formInputView}>
-            <Text style={styles.pickerText}>Current District</Text>
+            <Text style={styles.pickerText}>District</Text>
                 <DropdownComponent items={getDistrictListByRegion(selectedRegion)} selectText="" selectedItems={[user.job_to_user[0].district]} onSelectedItemsChange={(selectedItems) => setCurrentDistrict(selectedItems[0])} single searchPlaceholderText="Select a district" />
             </View>
             <View style={styles.formInputView}>
-                <Text style={styles.pickerText}>Level of Health System</Text>
-                <View style={styles.pickerView}>
-                <Picker onValueChange={setLevelOfHealthSystem} selectedValue={user.job_to_user[0].level_of_health_system} mode="dropdown">
-                    <Picker.Item label="" value={null}/>
-                    {
-                        levelOfHSList.map(healthSys => <Picker.Item key={healthSys.id} label={healthSys.name} value={healthSys.id}/>)
-                    }                    
-                </Picker>
-                </View>
+                <PickerComponent items={levelOfHSList} label="Level of Health System" onValueChange={setLevelOfHealthSystem} selectedValue={user.job_to_user[0].level_of_health_system} mode="dropdown"/>
             </View>
             <View>
                 <ButtonComponent title="Sign up" onPress={handleSubmit} buttonContainerStyle={styles.buttonComponent}/>

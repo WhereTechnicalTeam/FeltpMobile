@@ -12,6 +12,7 @@ import { isAlphaTextValid, isDateValid, isNumericTextValid, isPhoneNumberPresent
 import ToastComponent from '@components/toast/ToastComponent';
 import HelperTextComponent from '@components/helper-text/HelperTextComponent';
 import { safeConvertToString } from '@utils/helperFunctions';
+import PickerComponent from '@components/picker/PickerComponent';
 
 const IntermediateSignUpScreen = (props) => {
 
@@ -245,7 +246,9 @@ const IntermediateSignUpScreen = (props) => {
         let {main_user} = user;
         main_user = {...main_user, institution_enrolled_at_advanced};
         setUser(prevUser => ({...prevUser, main_user}));
-    }    
+    }   
+    
+    const pickerList = [{id: "No", name: "No"}, {id: "Yes", name: "Yes"}];
     
     return (
         <SafeAreaView style={styles.signupContainer}>
@@ -263,13 +266,7 @@ const IntermediateSignUpScreen = (props) => {
                 {errors.secondaryPhoneErrors.length > 0 && <HelperTextComponent text={errors.secondaryPhoneErrors[0]} invalid/>}
             </View>
             <View style={[styles.formInputView]}>
-                <Text style={styles.pickerText}>Have you been trained in Frontline?</Text>
-                <View style={styles.pickerView}>
-                <Picker onValueChange={setIsTrainedFrontline} selectedValue={user.main_user.is_trained_frontline} mode="dropdown">
-                    <Picker.Item label="No" value={"No"}/>
-                    <Picker.Item label="Yes" value={"Yes"}/>
-                </Picker>
-                </View>
+                <PickerComponent label="Have you been trained in Frontline?" items={pickerList} onValueChange={setIsTrainedFrontline} selectedValue={user.main_user.is_trained_frontline} mode="dropdown"/>
             </View>
             {
                 frontlineExpanded &&
@@ -296,13 +293,7 @@ const IntermediateSignUpScreen = (props) => {
                 </View>)
             }
             <View style={[styles.formInputView]}>
-                <Text style={styles.pickerText}>Have you been trained in Intermediate?</Text>
-                <View style={styles.pickerView}>
-                <Picker onValueChange={setIsTrainedIntermediate} selectedValue={user.main_user.is_trained_intermediate} mode="dropdown">
-                    <Picker.Item label="No" value={"No"}/>
-                    <Picker.Item label="Yes" value={"Yes"}/>
-                </Picker>
-                </View>
+                <PickerComponent items={pickerList} label="Have you been trained in Intermediate?" onValueChange={setIsTrainedIntermediate} selectedValue={user.main_user.is_trained_intermediate} mode="dropdown"/>
             </View>
             {
                 intermediateExpanded &&
@@ -328,13 +319,7 @@ const IntermediateSignUpScreen = (props) => {
                 </View>)
             }
             <View style={[styles.formInputView]}>
-                <Text style={styles.pickerText}>Have you been trained in Advanced?</Text>
-                <View style={styles.pickerView}>
-                <Picker onValueChange={setIsTrainedAdvanced} selectedValue={user.main_user.is_trained_advanced} mode="dropdown">
-                    <Picker.Item label="No" value={"No"}/>
-                    <Picker.Item label="Yes" value={"Yes"}/>
-                </Picker>
-                </View>
+                <PickerComponent items={pickerList} label="Have you been trained in Advanced?" onValueChange={setIsTrainedAdvanced} selectedValue={user.main_user.is_trained_advanced} mode="dropdown"/>
             </View>
             {
                 advancedExpanded &&
