@@ -32,9 +32,6 @@ const App = () => {
   );
 };
 
-//TODO: extract picker to component
-//TODO update picker, textInput placeholder, dropdown to use white in dark mode
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

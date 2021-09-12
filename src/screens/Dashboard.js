@@ -103,7 +103,7 @@ const DashboardScreen = (props) => {
                 </Pressable>
             </View>
             <View style={styles.subtitleView}>
-                <Text style={styles.subtitle}>Overview</Text>
+                <Text style={styles.subtitle}>Registered Members</Text>
             </View>
             <View style={styles.summaryView}>
                 <SummaryCardComponent mainText={memberStats.numAlumni} subText="total members" summaryContainerStyle={{backgroundColor: colors.accents[0]}}/>

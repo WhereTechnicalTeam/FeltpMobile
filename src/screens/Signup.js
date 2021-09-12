@@ -11,7 +11,6 @@ import { colors } from '@theme/colors';
 import { isAlphaTextValid, isDateValid, isEmailValid, isPasswordConfirmed, isPasswordValid, isTextValid } from '@utils/validation';
 import { findUserByEmail } from '@api/userApi';
 import DatePickerComponent from '@components/date-picker/DatePickerComponent';
-import { Picker } from '@react-native-picker/picker';
 import ToastComponent from '@components/toast/ToastComponent';
 import HelperTextComponent from '@components/helper-text/HelperTextComponent';
 import SpinnerComponent from '@components/spinner/SpinnerComponent';
