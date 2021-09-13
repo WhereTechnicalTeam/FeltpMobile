@@ -8,6 +8,7 @@ const colors = {
     red: 'red',
     warning: '#EF9B0F',
     lightPrimary: '#708BF4',
+    grey: '#F9F9F9',
     pearl: '#F0EAD6',
     ivory: '#FFFFF0',
     ripple: '#624C4C',

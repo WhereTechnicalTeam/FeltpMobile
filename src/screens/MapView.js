@@ -22,7 +22,6 @@ const MapViewScreen = (props) => {
         latitude: ''
     });
     const [officeMarkerPosition, setOfficeMarkerPosition] = useState(null);
-    const [officeSearchText, setOfficeSearchText] = useState('');
     const [hasLocationPermission, setHasLocationPermission] = useState(true);
     const mapRef = useRef(null);
 

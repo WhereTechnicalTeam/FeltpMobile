@@ -57,6 +57,7 @@ const MemberListScreen = (props) => {
             let response = await findAllUsers(token);
             if(response.status == 200) {
                 setMemberList(response.alldata.filter(data => data.main_user !== null));
+                await AsyncStorage.setItem("memberList", JSON.stringify(response.alldata))
             } else {
                 ToastComponent.show("Failed to fetch member list", {timeOut: 3500, level: 'failure'});
             }    

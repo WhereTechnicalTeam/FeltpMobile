@@ -9,7 +9,7 @@ const AvatarComponent = (props) => {
     return (
         <View style={[styles.avatarContainer, avatarContainerStyle]}>
             <Pressable onPress={onPress}>
-                <Image source={src} style={styles.image}/>
+                <Image source={src || require('@assets/man.jpg')} style={styles.image}/>
                 {
                     icon && 
                     <View style={{backgroundColor: colors.primary, padding: 5, borderRadius: 50, ...styles.icon}}>
@@ -25,13 +25,15 @@ export default AvatarComponent;
 
 const styles = StyleSheet.create({
     avatarContainer: {
-        width: 100
+        width: 100,
+        height: 100,
+        borderRadius: 50,
     },
     image: {
         width: '100%',
-        height: 100,
+        height: '100%',
         borderRadius: 50,
-        resizeMode: 'cover',
+        resizeMode: 'contain',
         alignSelf: 'center'
     },
     icon: {
