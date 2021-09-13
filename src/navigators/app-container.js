@@ -29,6 +29,9 @@ import EditProfileScreen from '@screens/EditProfile';
 import EditProfile2Screen from '@screens/EditProfile2';
 import EditProfile3Screen from '@screens/EditProfile3';
 import { colors } from '@theme/colors';
+import ChatListScreen from '@screens/ChatList';
+import ChatScreen from '@screens/Chat';
+import MemberMapScreen from '@screens/MemberMap';
 
 const MainTabStack = createBottomTabNavigator();
 const ManageUserTabStack = createMaterialTopTabNavigator();
@@ -40,6 +43,8 @@ const ProfileStack = createNativeStackNavigator();
 const JobStack = createNativeStackNavigator();
 const SettingsStack = createNativeStackNavigator();
 const NotificationStack = createNativeStackNavigator();
+const MemberMapStack = createNativeStackNavigator();
+const ChatStack = createNativeStackNavigator();
 
 const AuthNavigator = () => (
     <AuthStack.Navigator initialRouteName="AuthLoading" screenOptions={{headerShown: false}}>
@@ -101,6 +106,19 @@ const NotificationNavigator = () => (
     </NotificationStack.Navigator>
 )
 
+const ChatNavigator = () => (
+    <ChatStack.Navigator initialRouteName="ChatList" screenOptions={{headerShown: false}}>
+        <ChatStack.Screen name="ChatList" component={ChatListScreen} />
+        <ChatStack.Screen name="ChatScreen" component={ChatScreen} />
+    </ChatStack.Navigator>
+);
+
+const MemberMapNavigator = () => (
+    <MemberMapStack.Navigator initialRouteName="MemberMap" screenOptions={{headerShown: false}}>
+        <MemberMapStack.Screen name="MemberMapScreen" component={MemberMapScreen} />
+    </MemberMapStack.Navigator>
+)
+
 const MainTabNavigator = () => (
     <MainTabStack.Navigator initialRouteName="DashboardNavigator" screenOptions={{
         tabBarActiveTintColor: colors.primary,
@@ -121,6 +139,22 @@ const MainTabNavigator = () => (
         options={{
             title: 'Members',
             tabBarIcon: ({focused}) => <Icon name="people" size={24} color={focused ? colors.primary : colors.secondaryBlack}/>,
+            headerShown: false
+        }} />
+        <MainTabStack.Screen 
+        name="MemberMapNavigator" 
+        component={MemberMapNavigator}
+        options={{
+            title: 'Map',
+            tabBarIcon: ({focused}) => <Icon name="location" size={24} color={focused ? colors.primary : colors.secondaryBlack}/>,
+            headerShown: false
+        }} />
+        <MainTabStack.Screen 
+        name="ChatNavigator" 
+        component={ChatNavigator}
+        options={{
+            title: 'Chat',
+            tabBarIcon: ({focused}) => <Icon name="chatbubbles" size={24} color={focused ? colors.primary : colors.secondaryBlack}/>,
             headerShown: false
         }} />
     </MainTabStack.Navigator>

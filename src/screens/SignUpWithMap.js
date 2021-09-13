@@ -275,7 +275,7 @@ const SignUpWithMapScreen = (props) => {
         </View>
     );
 }
-//TODO add validation for current job details
+//TODO remove modal and spinner packages
 
 export default SignUpWithMapScreen;
 
