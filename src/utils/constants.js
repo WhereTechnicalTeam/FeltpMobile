@@ -400,4 +400,31 @@ const levelOfHSList = [
     }
 ];
 
-export {RegionList, levelOfHSList};
+const titleList = [
+    {
+        id: null,
+        name: ""
+    },
+    {
+        id: "Mr", 
+        name: "Mr"
+    }, 
+    {
+        id: "Mrs", 
+        name: "Mrs"
+    }, 
+    {
+        id: "Miss", 
+        name: "Miss"
+    }, 
+    {
+        id: "Dr", 
+        name: "Dr"
+    }, 
+    {
+        id: "Professor", 
+        name: "Professor"
+    }
+]
+
+export {RegionList, levelOfHSList, titleList};

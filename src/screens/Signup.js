@@ -15,6 +15,7 @@ import ToastComponent from '@components/toast/ToastComponent';
 import HelperTextComponent from '@components/helper-text/HelperTextComponent';
 import SpinnerComponent from '@components/spinner/SpinnerComponent';
 import PickerComponent from '@components/picker/PickerComponent';
+import { titleList } from '@utils/constants';
 
 const SignUpScreen = (props) => {
     
@@ -194,7 +195,7 @@ const SignUpScreen = (props) => {
                 />
             </View>
             <View style={styles.formInputView}>
-                <FormInputComponent label="Title" onChangeText={setTitle} disabled={!userSearchComplete} value={user.main_user.title} invalid={errors.titleErrors.length > 0}/>
+                <PickerComponent items={titleList} label="Title" onValueChange={setTitle} disabled={!userSearchComplete} selectedValue={user.main_user.title} invalid={errors.titleErrors.length > 0} mode="dropdown"/>
                 {errors.titleErrors.length > 0 && <HelperTextComponent text={errors.titleErrors[0]} invalid/>}
             </View>
             <View style={styles.formInputView}>
@@ -206,7 +207,7 @@ const SignUpScreen = (props) => {
                 {errors.surnameErrors.length > 0 && <HelperTextComponent text={errors.surnameErrors[0]} invalid/>}
             </View>
             <View style={styles.formInputView}>
-                <PickerComponent items={[{id: "", value: null}, {id: "Male", name: "Male"}, {id: "Female", name: "Female"}]} label="Gender" invalid={errors.genderErrors.length > 0 } disabled={!userSearchComplete} onValueChange={setGender} selectedValue={user.main_user.sex} mode="dropdown"/>
+                <PickerComponent items={[{id: null, name: ""}, {id: "Male", name: "Male"}, {id: "Female", name: "Female"}]} label="Gender" invalid={errors.genderErrors.length > 0 } disabled={!userSearchComplete} onValueChange={setGender} selectedValue={user.main_user.sex} mode="dropdown"/>
                 {errors.genderErrors.length > 0 && <HelperTextComponent text={errors.genderErrors[0]} invalid/>}
             </View>
             <View style={[styles.formInputView]}>

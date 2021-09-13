@@ -6,11 +6,20 @@ import { findAllUsers } from '@api/userApi';
 import MemberCardComponent from '@components/member-card/MemberCardComponent';
 import ToastComponent from '@components/toast/ToastComponent';
 import { colors } from '@theme/colors';
+import SearchBarComponent from '@components/search-bar/SearchBarComponent';
+import BadgeComponent from 'src/components/badge/BadgeComponent';
+import PickerComponent from 'src/components/picker/PickerComponent';
+import { Picker } from '@react-native-picker/picker';
+import { Icon } from 'react-native-vector-icons/Icon';
 
 const MemberListScreen = (props) => {
     const [memberList, setMemberList] = useState([]);
-    const [userDetails, setUserDetails] = useState({});
-    const [selectedFilter, setSelectedFilter] = useState('');
+    const [filteredMembers, setFilteredMembers] = useState([]);
+    const [levelFilter, setLevelFilter] = useState({
+        frontline: false,
+        intermediate: false,
+        advanced: false
+    });
     const [loading, setLoading] = useState(false);
     const [refresh, setRefresh] = useState(false);
 
@@ -21,6 +30,26 @@ const MemberListScreen = (props) => {
             setLoading(false);        
         })();
     }, []);
+
+    useEffect(() => {
+        setFilteredMembers(memberList);
+    }, [memberList])
+
+    useEffect(() => {
+        toggleLevelFilter();
+    }, [levelFilter]);
+
+    const toggleLevelFilter = () => {
+        const {frontline, intermediate, advanced} = levelFilter;
+        if([frontline, intermediate, advanced].some(val => val)) {
+            let filtered = memberList.filter(m => {
+                if(frontline) return m.main_user.is_trained_frontline == 'Yes'
+                else if (intermediate) return m.main_user.is_trained_intermediate == 'Yes'
+                else if(advanced) return m.main_user.is_trained_advanced == 'Yes'
+            });
+            setFilteredMembers(filtered);
+        } else setFilteredMembers(memberList)
+    }
 
     const fetchMembers = async() => {
         try {
@@ -78,11 +107,6 @@ const MemberListScreen = (props) => {
     </View>)
     }
 
-    const getFilteredMemberList = () => {
-        if(selectedFilter.length == 0)
-        return memberList;
-    }
-
     const navigateMemberProfile = (member) => {
         props.navigation.navigate('MemberProfile', {member});
     }
@@ -96,10 +120,24 @@ const MemberListScreen = (props) => {
     return (
             <View style={styles.membersContainer}>
             <View style={styles.headerView}>
-                <Text style={styles.screenTitle}>Member List</Text>
+                {/* <Text style={styles.screenTitle}>Members</Text> */}
+                <View style={styles.searchBarView}>
+                    <SearchBarComponent placeholder="Find a member..."/>
+                </View>
                 <Pressable style={styles.avatarView} onPress={navigateSettings}>
                     <Image style={styles.userAvatar} source={require('@assets/man.jpg')}/>
                 </Pressable>
+            </View>
+            <View style={styles.badgeView}>
+            <View>
+                <BadgeComponent text="Frontline" badgeContainerStyle={{backgroundColor: colors.lightPrimary}} selected={levelFilter.frontline} onPress={() => setLevelFilter({...levelFilter, frontline: !levelFilter.frontline})} />
+            </View>
+            <View>
+                <BadgeComponent text="Intermediate" badgeContainerStyle={{backgroundColor: colors.warning}} selected={levelFilter.intermediate} onPress={() => setLevelFilter({...levelFilter, intermediate: !levelFilter.intermediate})}/>
+            </View>
+            <View>
+                <BadgeComponent text="Advanced" badgeContainerStyle={{backgroundColor: colors.primaryGreen}} selected={levelFilter.advanced} onPress={() => setLevelFilter({...levelFilter, advanced: !levelFilter.advanced})}/>
+            </View>
             </View>
             <View>
                 {
@@ -107,7 +145,7 @@ const MemberListScreen = (props) => {
                     <FlatList showsVerticalScrollIndicator={false} 
                 contentContainerStyle={{flexDirection: 'column'}}
                 numColumns={2}
-                data={getFilteredMemberList()}
+                data={filteredMembers}
                 renderItem={renderMemberCard}
                 keyExtractor={(item) => item.id.toString()}
             />
@@ -125,7 +163,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 25,
         paddingTop: 30,
         backgroundColor: colors.white,
-        paddingBottom: 70,
+        paddingBottom: 100,
         position: 'relative'
     },
     headerView: {
@@ -151,4 +189,13 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         marginBottom: 20
     },
+    searchBarView: {
+        borderWidth: 0.5, 
+        borderRadius: 5, 
+        borderColor: colors.secondaryBlack
+    },
+    badgeView: {
+        flexDirection: 'row',
+        justifyContent: 'space-between'
+    }
 });

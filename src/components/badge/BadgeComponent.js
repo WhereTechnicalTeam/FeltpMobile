@@ -1,14 +1,14 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { Text, StyleSheet, Pressable } from 'react-native';
 import { colors } from '@theme/colors';
 
 const BadgeComponent = (props) => {
-    const {text, badgeContainerStyle} = props;
+    const {text, badgeContainerStyle, onPress, selected} = props;
 
     return (
-        <View style={[styles.badgeView, badgeContainerStyle]}>
+        <Pressable onPress={onPress} style={[styles.badgeView, badgeContainerStyle, selected ? {borderWidth: 3, borderColor: colors.primary} : {}]}>
             <Text style={styles.badgeText}>{text}</Text>
-        </View>
+        </Pressable>
     );
 }
 

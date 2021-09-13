@@ -121,7 +121,7 @@ const MainTabNavigator = () => (
         name="ManageUser" 
         component={ManageUserNavigator}
         options={{
-            title: 'Manage Profile',
+            title: 'Profile',
             tabBarIcon: ({focused}) => <Icon name="person-circle" size={24} color={focused ? colors.primary : colors.secondaryBlack}/>,
             header: (props) => (
                 <SettingsHeader {...props}/>

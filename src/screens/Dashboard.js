@@ -97,7 +97,7 @@ const DashboardScreen = (props) => {
     return (
         <View style={styles.dashboardContainer}>
             <View style={styles.headerView}>
-                <Text style={styles.screenTitle}>Dashboard</Text>
+                {/* <Text style={styles.screenTitle}>Dashboard</Text> */}
                 <Pressable style={styles.avatarView} onPress={navigateSettings}>
                     <Image style={styles.userAvatar} source={require('@assets/man.jpg')}/>
                 </Pressable>
@@ -114,7 +114,7 @@ const DashboardScreen = (props) => {
                 <SummaryCardComponent mainText={memberStats.numFrontline} subText="frontline" summaryContainerStyle={{backgroundColor: colors.accents[3]}}/>
             </View>
             <View style={styles.subtitleView}>
-                <Text style={[styles.subtitle, {fontWeight: '600'}]}>News Feed</Text>
+                <Text style={[styles.subtitle]}>News Feed</Text>
             </View>
             {
                 loading ? 
@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
     },
     headerView: {
         flexDirection: 'row',
-        justifyContent: 'space-between'
+        justifyContent: 'flex-end'
     },
     screenTitle: {
         fontWeight: 'bold',
@@ -154,8 +154,8 @@ const styles = StyleSheet.create({
     },
     subtitle: {
         fontSize: 20,
-        marginBottom: 10
-        // fontWeight: '700'
+        marginBottom: 10,
+        fontWeight: '600'
     },
     summaryView: {
         justifyContent: 'space-between',
