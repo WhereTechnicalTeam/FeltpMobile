@@ -53,9 +53,16 @@ const AuthNavigator = () => (
 );
 
 const DashboardNavigator = () => (
-    <DashboardStack.Navigator initialRouteName="Dashboard" screenOptions={{headerShown: false}}>
-        <DashboardStack.Screen name="Dashboard" component={DashboardScreen}/>
-        <DashboardStack.Screen name="NewsDisplay" component={NewsDisplayScreen}/>
+    <DashboardStack.Navigator initialRouteName="Dashboard" >
+        <DashboardStack.Screen name="Dashboard" component={DashboardScreen} options={{headerShown: false}}/>
+        <DashboardStack.Screen name="NewsDisplay" component={NewsDisplayScreen} options={{headerShown: false}}/>
+        <DashboardStack.Screen name="ManageUser" component={ManageUserNavigator} options={{
+            header: (props) => (
+                <SettingsHeader {...props}/>
+            ),
+            headerStyle: {height: 100},
+            headerMode: 'screen'
+        }} />
     </DashboardStack.Navigator>
 );
 
@@ -115,26 +122,12 @@ const MainTabNavigator = () => (
             title: 'Members',
             tabBarIcon: ({focused}) => <Icon name="people" size={24} color={focused ? colors.primary : colors.secondaryBlack}/>,
             headerShown: false
-        }} 
-        />
-        <MainTabStack.Screen 
-        name="ManageUser" 
-        component={ManageUserNavigator}
-        options={{
-            title: 'Profile',
-            tabBarIcon: ({focused}) => <Icon name="person-circle" size={24} color={focused ? colors.primary : colors.secondaryBlack}/>,
-            header: (props) => (
-                <SettingsHeader {...props}/>
-            ),
-            headerStyle: {height: 100},
-            headerMode: 'screen'
-        }} 
-        />
+        }} />
     </MainTabStack.Navigator>
 );
 
 const ManageUserNavigator = () => (
-    <ManageUserTabStack.Navigator initialRouteName="UserProfileNavigator">
+    <ManageUserTabStack.Navigator initialRouteName="UserProfileNavigator" >
         <ManageUserTabStack.Screen name="UserProfileNavigator" component={UserProfileNavigator} options={{ title: 'Profile' }}/>
         <ManageUserTabStack.Screen name="JobNavigator" component={JobNavigator} options={{ title: 'Job History' }}/>
         <ManageUserTabStack.Screen name="NotificationNavigator" component={NotificationNavigator} options={{ title: 'Notifications' }}/>
@@ -193,11 +186,11 @@ const AuthLoadingWrapper = (props) => {
 }
 
 const AppContainer = () => (
-    <MainStack.Navigator initialRouteName="Auth" screenOptions={{headerShown: false}}>
-        <MainStack.Screen name="Auth" component={AuthNavigator}/>
-        <MainStack.Screen name="Tabs" component={MainTabNavigator} />
+    <MainStack.Navigator initialRouteName="Auth" >
+        <MainStack.Screen name="Auth" component={AuthNavigator} options={{headerShown: false}}/>
+        <MainStack.Screen name="Tabs" component={MainTabNavigator} options={{headerShown: false}}/>
         <MainStack.Screen name="SettingsNavigator" component={SettingsNavigator} />
-        <MainStack.Screen name="MapView" component={MapViewScreen} />
+        <MainStack.Screen name="MapView" component={MapViewScreen} options={{headerShown: false}}/>
     </MainStack.Navigator>
 );
 

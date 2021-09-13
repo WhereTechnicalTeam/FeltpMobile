@@ -7,6 +7,7 @@ import ButtonComponent from '@components/button/ButtonComponent';
 import IconButtonComponent from '@components/icon-button/IconButtonComponent';
 import SearchBarComponent from '@components/search-bar/SearchBarComponent';
 import { colors } from '@theme/colors';
+import { isDefined } from '@utils/validation';
 
 const MapViewScreen = (props) => {
 
@@ -26,7 +27,8 @@ const MapViewScreen = (props) => {
     const mapRef = useRef(null);
 
     const saveOfficeLocation = () => {
-        navigateCallingScreen();
+        if(isDefined(officeMarkerPosition)) navigateCallingScreen();
+        else handleMarkerPosition();
     }
 
     const navigateCallingScreen = () => {
@@ -101,9 +103,8 @@ const MapViewScreen = (props) => {
         } else Alert.alert("Location permission is required to use map!");
     }
 
-    const handleMarkerPosition = (e) => {
-        let latLng = e.nativeEvent.coordinate;
-        setOfficeMarkerPosition(latLng);
+    const handleMarkerPosition = () => {
+        setOfficeMarkerPosition(userLocation);
     }
 
     const animateToUserPosition = () => {
@@ -115,7 +116,7 @@ const MapViewScreen = (props) => {
         <View style={styles.mapContainer}>
             <View style={[styles.optionButtonContainer, {bottom: 0, top: 30}]}>
                 <IconButtonComponent iconButtonStyle={[styles.shadow, styles.iconButton]} color={colors.secondaryBlack} size={25} icon="arrow-back-sharp" onPress={() => props.navigation.goBack(null)}/>
-                <SearchBarComponent placeholder="Search for office" disabled handleChange={setOfficeSearchText} value={officeSearchText} searchContainerStyle={styles.shadow}/>
+                {/* <SearchBarComponent placeholder="Search for office" disabled handleChange={setOfficeSearchText} value={officeSearchText} searchContainerStyle={styles.shadow}/> */}
             </View>
             <MapView style={styles.map}
                 ref={mapRef}
@@ -125,7 +126,7 @@ const MapViewScreen = (props) => {
                 followsUserLocation
                 showsCompass={false}
                 showsMyLocationButton={false}
-                onLongPress={handleMarkerPosition}
+                // onLongPress={handleMarkerPosition}
                 // onRegionChange={handleRegionChange}
             >
                 {
@@ -134,12 +135,14 @@ const MapViewScreen = (props) => {
                 }
             </MapView>
             <View style={[styles.optionButtonContainer, {bottom: 30}]}>
-                <ButtonComponent disabled={officeMarkerPosition == undefined} title="Save Office Location" onPress={saveOfficeLocation} buttonContainerStyle={[styles.shadow, {width: '80%'}]}/>
+                <ButtonComponent title={ !isDefined(officeMarkerPosition) ? "Set Office Marker" : "Save Office Location"} onPress={saveOfficeLocation} buttonContainerStyle={[styles.shadow, {width: '80%'}, isDefined(officeMarkerPosition) ? {backgroundColor: colors.primaryGreen} : {}]}/>
                 <IconButtonComponent iconButtonStyle={[styles.shadow, styles.iconButton]} color={colors.secondaryBlack} size={25} icon="locate" onPress={animateToUserPosition}/>
             </View>
         </View>
     )
 }
+
+//TODO: Fix back navigation icon button
 
 export default MapViewScreen;
 

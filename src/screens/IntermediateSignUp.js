@@ -258,11 +258,11 @@ const IntermediateSignUpScreen = (props) => {
             </View>
             <ScrollView showsVerticalScrollIndicator={false}>
             <View style={[styles.formInputView]}>
-                <FormInputComponent label="Primary Phone Number" onChangeText={setPrimaryPhone} invalid={errors.primaryPhoneErrors.length > 0} value={user.main_user.phone1} keyboardType="numeric" placeholder="020 - 123 - 4567" maxLength = {10}/>
+                <FormInputComponent label="Primary Phone Number" onChangeText={setPrimaryPhone} invalid={errors.primaryPhoneErrors.length > 0} value={user.main_user.phone1} keyboardType="numeric" placeholder="XXX - XXX - XXXX" maxLength = {10}/>
                 {errors.primaryPhoneErrors.length > 0 && <HelperTextComponent text={errors.primaryPhoneErrors[0]} invalid/>}
             </View>
             <View style={styles.formInputView}>
-                <FormInputComponent label="Secondary Phone Number" onChangeText={setSecondaryPhone} invalid={errors.secondaryPhoneErrors.length > 0} value={user.main_user.phone2} keyboardType="numeric" placeholder="020 - 123 - 4567" maxLength = {10}/>
+                <FormInputComponent label="Secondary Phone Number" onChangeText={setSecondaryPhone} invalid={errors.secondaryPhoneErrors.length > 0} value={user.main_user.phone2} keyboardType="numeric" placeholder="XXX - XXX - XXXX" maxLength = {10}/>
                 {errors.secondaryPhoneErrors.length > 0 && <HelperTextComponent text={errors.secondaryPhoneErrors[0]} invalid/>}
             </View>
             <View style={[styles.formInputView]}>
