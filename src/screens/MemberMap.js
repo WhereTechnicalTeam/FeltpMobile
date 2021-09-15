@@ -38,8 +38,9 @@ const MemberMapScreen = (props) => {
                         if(currentJob.length == 0) currentJob = m.job_to_user
                         return {
                             id: m.id, 
-                            firstname: m.firstname, 
-                            surname: m.surname, 
+                            firstname: m.main_user.firstname, 
+                            email: m.email,
+                            surname: m.main_user.surname, 
                             coordinate: {latitude: currentJob[0].latitude, longitude: currentJob[0].longitude},
                             photo: m.photo,
                             level: getFinalLevel(m)
@@ -75,6 +76,12 @@ const MemberMapScreen = (props) => {
         if(member.is_trained_advanced == "Yes") return "AD"
         else if(member.is_trained_intermediate == "Yes") return "IM"
         else return "FL"        
+    }
+
+    const handleUserSearch = (text) => {
+        setMemberSearchText(text);
+        setFilteredMembers(membersWithLoc.filter(m => m.email.includes(text) || m.firstname.includes(text) || m.surname.includes(text)))
+        //TODO: Handle user not found
     }
 
     const FilterModal = () => {
@@ -117,7 +124,7 @@ const MemberMapScreen = (props) => {
     return (
         <View style={styles.mapContainer}>
             <View style={[styles.optionButtonContainer, {bottom: 0, top: 30}]}>
-                <SearchBarComponent placeholder="Search for member" disabled handleChange={setMemberSearchText} value={memberSearchText} searchContainerStyle={styles.shadow}/>
+                <SearchBarComponent placeholder="Search for member" handleChange={handleUserSearch} value={memberSearchText} searchContainerStyle={styles.shadow}/>
                 <IconButtonComponent iconButtonStyle={[styles.shadow, styles.iconButton]} color={colors.secondaryBlack} size={25} icon="filter" onPress={() => setFilterModalVisible(true)}/>
             </View>
             <FilterModal />

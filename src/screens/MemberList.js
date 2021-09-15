@@ -22,6 +22,7 @@ const MemberListScreen = (props) => {
     });
     const [loading, setLoading] = useState(false);
     const [refresh, setRefresh] = useState(false);
+    const [memberSearchText, setMemberSearchText] = useState('');
 
     useEffect(() => {
         (async() => {
@@ -118,12 +119,18 @@ const MemberListScreen = (props) => {
         setRefresh(false);
     }
 
+    const handleUserSearch = (text) => {
+        setMemberSearchText(text);
+        setFilteredMembers(memberList.filter(m => m.email.includes(text) || m.main_user.firstname.includes(text) || m.main_user.surname.includes(text)))
+        //TODO: Handle user not found
+    }
+
     return (
             <View style={styles.membersContainer}>
             <View style={styles.headerView}>
                 {/* <Text style={styles.screenTitle}>Members</Text> */}
                 <View style={styles.searchBarView}>
-                    <SearchBarComponent placeholder="Find a member..."/>
+                    <SearchBarComponent placeholder="Find a member..." handleChange={handleUserSearch} value={memberSearchText}/>
                 </View>
                 <Pressable style={styles.avatarView} onPress={navigateSettings}>
                     <Image style={styles.userAvatar} source={require('@assets/man.jpg')}/>
