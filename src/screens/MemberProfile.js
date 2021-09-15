@@ -49,7 +49,7 @@ const MemberProfileScreen = (props) => {
     }, [props.route.params?.member]);
 
     const navigateBack = () => {
-        props.navigation.goBack();
+        props.navigation.navigate("MemberList");
     }
 
     return (
