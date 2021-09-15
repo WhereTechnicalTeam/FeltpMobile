@@ -285,11 +285,11 @@ const IntermediateSignUpScreen = (props) => {
                         {errors.cohortNumberFrontlineErrors.length > 0 && <HelperTextComponent text={errors.cohortNumberFrontlineErrors[0]} invalid/>}
                     </View>
                     <View style={styles.formInputSubView}>
-                        <FormInputComponent label="Year Completed" onChangeText={setYearCompletedFrontline} value={user.main_user.yr_completed_frontline} invalid={errors.yrCompletedFrontlineErrors.length > 0}/>
+                        <FormInputComponent label="Year Completed" maxLength = {4} keyboardType="numeric" onChangeText={setYearCompletedFrontline} value={user.main_user.yr_completed_frontline} invalid={errors.yrCompletedFrontlineErrors.length > 0}/>
                         {errors.yrCompletedFrontlineErrors.length > 0 && <HelperTextComponent text={errors.yrCompletedFrontlineErrors[0]} invalid/>}
                     </View>
                 </View>
-                </View>)
+                </View>) 
             }
             <View style={[styles.formInputView]}>
                 <PickerComponent items={pickerList} label="Have you been trained in Intermediate?" onValueChange={setIsTrainedIntermediate} selectedValue={user.main_user.is_trained_intermediate} mode="dropdown"/>
@@ -311,7 +311,7 @@ const IntermediateSignUpScreen = (props) => {
                     {errors.cohortNumberIntermediateErrors.length > 0 && <HelperTextComponent text={errors.cohortNumberIntermediateErrors[0]} invalid/>}
                     </View>
                     <View style={styles.formInputSubView}>
-                        <FormInputComponent label="Year Completed" onChangeText={setYearCompletedIntermediate} value={user.main_user.yr_completed_intermediate} invalid={false} invalid={errors.yrCompletedIntermediateErrors.length > 0}/>
+                        <FormInputComponent label="Year Completed" maxLength = {4} keyboardType="numeric" onChangeText={setYearCompletedIntermediate} value={user.main_user.yr_completed_intermediate} invalid={false} invalid={errors.yrCompletedIntermediateErrors.length > 0}/>
                     {errors.yrCompletedIntermediateErrors.length > 0 && <HelperTextComponent text={errors.yrCompletedIntermediateErrors[0]} invalid/>}
                     </View>
                 </View>
@@ -337,7 +337,7 @@ const IntermediateSignUpScreen = (props) => {
                     {errors.cohortNumberAdvancedErrors.length > 0 && <HelperTextComponent text={errors.cohortNumberAdvancedErrors[0]} invalid/>}
                     </View>
                     <View style={styles.formInputSubView}>
-                        <FormInputComponent label="Year Completed" onChangeText={setYearCompletedAdvanced} value={user.main_user.yr_completed_advanced} invalid={errors.yrCompletedAdvancedErrors.length > 0}/>
+                        <FormInputComponent label="Year Completed" keyboardType="numeric" maxLength = {4} onChangeText={setYearCompletedAdvanced} value={user.main_user.yr_completed_advanced} invalid={errors.yrCompletedAdvancedErrors.length > 0}/>
                     {errors.yrCompletedAdvancedErrors.length > 0 && <HelperTextComponent text={errors.yrCompletedAdvancedErrors[0]} invalid/>}
                     </View>
                 </View>

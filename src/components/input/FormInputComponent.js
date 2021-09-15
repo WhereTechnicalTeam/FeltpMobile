@@ -14,7 +14,7 @@ const FormInputComponent = (props) => {
                 <TextInput 
                     placeholder={placeholder}
                     value={value}
-                    placeholderTextColor={colors.secondaryBlack}
+                    placeholderTextColor={colors.grey}
                     onChangeText={onChangeText}
                      style={[styles.textInput, textInputStyle]}
                     editable={!disabled}

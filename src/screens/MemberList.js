@@ -44,8 +44,8 @@ const MemberListScreen = (props) => {
         if([frontline, intermediate, advanced].some(val => val)) {
             let filtered = memberList.filter(m => {
                 if(frontline) return m.main_user.is_trained_frontline == 'Yes'
-                else if (intermediate) return m.main_user.is_trained_intermediate == 'Yes'
-                else if(advanced) return m.main_user.is_trained_advanced == 'Yes'
+                if (intermediate) return m.main_user.is_trained_intermediate == 'Yes'
+                if(advanced) return m.main_user.is_trained_advanced == 'Yes'
             });
             setFilteredMembers(filtered);
         } else setFilteredMembers(memberList)

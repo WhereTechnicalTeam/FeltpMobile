@@ -268,11 +268,11 @@ const EditProfile2Screen = (props) => {
                 <IconButtonComponent icon="arrow-back-sharp" size={24} color={colors.black} iconButtonStyle={styles.iconButtonComponent} onPress={navigateBack}/>
             <ScrollView showsVerticalScrollIndicator={false}>
             <View>
-                <FormInputComponent label="Primary Phone Number" onChangeText={setPrimaryPhone} invalid={errors.primaryPhoneErrors.length > 0} value={user.main_user.phone1} keyboardType="numeric" placeholder="020 - 123 - 4567" maxLength = {10}/>
+                <FormInputComponent label="Primary Phone Number" onChangeText={setPrimaryPhone} invalid={errors.primaryPhoneErrors.length > 0} value={user.main_user.phone1} keyboardType="numeric" placeholder="XXX - XXX - XXXX" maxLength = {10}/>
                 {errors.primaryPhoneErrors.length > 0 && <HelperTextComponent text={errors.primaryPhoneErrors[0]} invalid/>}
             </View>
             <View style={styles.formInputView}>
-                <FormInputComponent label="Secondary Phone Number" onChangeText={setSecondaryPhone} invalid={errors.secondaryPhoneErrors.length > 0} value={user.main_user.phone2} keyboardType="numeric" placeholder="020 - 123 - 4567" maxLength = {10}/>
+                <FormInputComponent label="Secondary Phone Number" onChangeText={setSecondaryPhone} invalid={errors.secondaryPhoneErrors.length > 0} value={user.main_user.phone2} keyboardType="numeric" placeholder="XXX - XXX - XXXX" maxLength = {10}/>
                 {errors.secondaryPhoneErrors.length > 0 && <HelperTextComponent text={errors.secondaryPhoneErrors[0]} invalid/>}
             </View>
             <View style={[styles.formInputView]}>
@@ -296,7 +296,7 @@ const EditProfile2Screen = (props) => {
                         {errors.cohortNumberFrontlineErrors.length > 0 && <HelperTextComponent text={errors.cohortNumberFrontlineErrors[0]} invalid/>}
                     </View>
                     <View style={styles.formInputSubView}>
-                    <FormInputComponent label="Year Completed" onChangeText={setYearCompletedFrontline} value={user.main_user.yr_completed_frontline} invalid={errors.yrCompletedFrontlineErrors.length > 0}/>
+                    <FormInputComponent label="Year Completed" maxLength = {4} keyboardType="numeric" onChangeText={setYearCompletedFrontline} value={user.main_user.yr_completed_frontline} invalid={errors.yrCompletedFrontlineErrors.length > 0}/>
                         {errors.yrCompletedFrontlineErrors.length > 0 && <HelperTextComponent text={errors.yrCompletedFrontlineErrors[0]} invalid/>}
                     </View>
                 </View>
@@ -322,7 +322,7 @@ const EditProfile2Screen = (props) => {
                     {errors.cohortNumberIntermediateErrors.length > 0 && <HelperTextComponent text={errors.cohortNumberIntermediateErrors[0]} invalid/>}
                     </View>
                     <View style={styles.formInputSubView}>
-                    <FormInputComponent label="Year Completed" onChangeText={setYearCompletedIntermediate} value={user.main_user.yr_completed_intermediate} invalid={false} invalid={errors.yrCompletedIntermediateErrors.length > 0}/>
+                    <FormInputComponent label="Year Completed" maxLength = {4} keyboardType="numeric" onChangeText={setYearCompletedIntermediate} value={user.main_user.yr_completed_intermediate} invalid={false} invalid={errors.yrCompletedIntermediateErrors.length > 0}/>
                     {errors.yrCompletedIntermediateErrors.length > 0 && <HelperTextComponent text={errors.yrCompletedIntermediateErrors[0]} invalid/>}
                     </View>
                 </View>
@@ -348,7 +348,7 @@ const EditProfile2Screen = (props) => {
                     {errors.cohortNumberAdvancedErrors.length > 0 && <HelperTextComponent text={errors.cohortNumberAdvancedErrors[0]} invalid/>}
                     </View>
                     <View style={styles.formInputSubView}>
-                    <FormInputComponent label="Year Completed" onChangeText={setYearCompletedAdvanced} value={user.main_user.yr_completed_advanced} invalid={errors.yrCompletedAdvancedErrors.length > 0}/>
+                    <FormInputComponent label="Year Completed" maxLength = {4} keyboardType="numeric" onChangeText={setYearCompletedAdvanced} value={user.main_user.yr_completed_advanced} invalid={errors.yrCompletedAdvancedErrors.length > 0}/>
                     {errors.yrCompletedAdvancedErrors.length > 0 && <HelperTextComponent text={errors.yrCompletedAdvancedErrors[0]} invalid/>}
                     </View>
                 </View>
