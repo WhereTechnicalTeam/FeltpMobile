@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import { Text, View, StyleSheet, Dimensions, Pressable } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Callout, Marker } from 'react-native-maps';
 import { ClusterMap } from 'react-native-cluster-map';
 import Modal from "react-native-modal";
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -11,6 +11,7 @@ import IconButtonComponent from '@components/icon-button/IconButtonComponent';
 import HorizontalLineComponent from '@components/horizontal-line/HorizontalLine';
 import ProfileSummaryComponent from '@components/profile-summary/ProfileSummaryComponent';
 import { getDistrictById, getRegionById, safeConvertToString } from '@utils/helperFunctions';
+import CustomMarkerComponent from 'src/components/custom-marker/CustomMarkerComponent';
 
 const MemberMapScreen = (props) => {
     const [memberList, setMemberList] = useState([]);
@@ -83,9 +84,9 @@ const MemberMapScreen = (props) => {
     }
 
     const getFinalLevel = (member) => {
-        if(member.is_trained_advanced == "Yes") return "AD"
-        else if(member.is_trained_intermediate == "Yes") return "IM"
-        else return "FL"        
+        if(member.is_trained_advanced == "Yes") return "Advanced"
+        else if(member.is_trained_intermediate == "Yes") return "Intermediate"
+        else return "Frontline"        
     }
 
     const handleUserSearch = (text) => {
@@ -149,7 +150,7 @@ const MemberMapScreen = (props) => {
     const navigateMemberProfile = () => {
         props.navigation.navigate('MemberListNavigator', {
             screen: 'MemberProfile', 
-            params: {member: selectedMember}
+            params: {member: memberList.find(m => m.id == selectedMember.id)}
         });
     }
 
@@ -171,7 +172,10 @@ const MemberMapScreen = (props) => {
                     filteredMembers.map(m => {
                         return (
                         <Marker key={m.id} coordinate={m.coordinate} onPress={() => showMemberSummary(m.id)}>
-                            <CustomCalloutComponent level={m.level} memberImage={m.photo}/>
+                            <CustomMarkerComponent />
+                            <Callout>
+                                <CustomCalloutComponent level={m.level.substr(0, 2)} memberImage={m.photo}/>
+                            </Callout>
                         </Marker>
                     ) })
                 }
