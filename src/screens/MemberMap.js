@@ -9,6 +9,8 @@ import { colors } from '@theme/colors';
 import SearchBarComponent from '@components/search-bar/SearchBarComponent';
 import IconButtonComponent from '@components/icon-button/IconButtonComponent';
 import HorizontalLineComponent from '@components/horizontal-line/HorizontalLine';
+import ProfileSummaryComponent from '@components/profile-summary/ProfileSummaryComponent';
+import { getDistrictById, getRegionById, safeConvertToString } from '@utils/helperFunctions';
 
 const MemberMapScreen = (props) => {
     const [memberList, setMemberList] = useState([]);
@@ -27,6 +29,8 @@ const MemberMapScreen = (props) => {
       });
     const [memberSearchText, setMemberSearchText] = useState('');
     const [filterModalVisible, setFilterModalVisible] = useState(false);
+    const [summaryModalVisible, setSummaryModalVisible] = useState(false);
+    const [selectedMember, setSelectedMember] = useState();
 
     useEffect(() => {
         try{
@@ -38,11 +42,17 @@ const MemberMapScreen = (props) => {
                         if(currentJob.length == 0) currentJob = m.job_to_user
                         return {
                             id: m.id, 
-                            firstname: m.main_user.firstname, 
+                            firstname: safeConvertToString(m.main_user.firstname), 
                             email: m.email,
-                            surname: m.main_user.surname, 
+                            surname: safeConvertToString(m.main_user.surname), 
                             coordinate: {latitude: currentJob[0].latitude, longitude: currentJob[0].longitude},
+                            is_trained_frontline: m.main_user.is_trained_frontline,
+                            is_trained_intermediate: m.main_user.is_trained_intermediate,
+                            is_trained_advanced: m.main_user.is_trained_advanced,
                             photo: m.photo,
+                            region: getRegionById(currentJob[0].region),
+                            district: getDistrictById(currentJob[0].district),
+                            jobTitle: safeConvertToString(currentJob[0].jobTitle),
                             level: getFinalLevel(m)
                         };
                     })
@@ -63,10 +73,10 @@ const MemberMapScreen = (props) => {
     const toggleLevelFilter = () => {
         const {frontline, intermediate, advanced} = levelFilter;
         if([frontline, intermediate, advanced].some(val => val)) {
-            let filtered = memberList.filter(m => {
-                if(frontline) return m.main_user.is_trained_frontline == 'Yes'
-                else if (intermediate) return m.main_user.is_trained_intermediate == 'Yes'
-                else if(advanced) return m.main_user.is_trained_advanced == 'Yes'
+            let filtered = membersWithLoc.filter(m => {
+                if(frontline) return m.is_trained_frontline == 'Yes'
+                else if (intermediate) return m.is_trained_intermediate == 'Yes'
+                else if(advanced) return m.is_trained_advanced == 'Yes'
             });
             setFilteredMembers(filtered);
         } else setFilteredMembers(membersWithLoc)
@@ -81,7 +91,7 @@ const MemberMapScreen = (props) => {
     const handleUserSearch = (text) => {
         setMemberSearchText(text);
         setFilteredMembers(membersWithLoc.filter(m => m.email.includes(text) || m.firstname.includes(text) || m.surname.includes(text)))
-        //TODO: Handle user not found
+        //TODO: Handle user not found        
     }
 
     const FilterModal = () => {
@@ -92,7 +102,7 @@ const MemberMapScreen = (props) => {
             android_ripple={{color: colors.ivory}} 
             style={styles.modalPressable} 
             onPress={() => {
-                setLevelFilter({...levelFilter, frontline: !levelFilter.frontline});
+                setLevelFilter({...levelFilter, frontline: true});
                 setFilterModalVisible(false);
                 }}>
                 <Text style={styles.modalPressableText}>Frontline</Text>
@@ -102,7 +112,7 @@ const MemberMapScreen = (props) => {
             style={styles.modalPressable}  
             android_ripple={{color: colors.ivory}}
             onPress={() => {
-                setLevelFilter({...levelFilter, intermediate: !levelFilter.intermediate});
+                setLevelFilter({...levelFilter, intermediate: true});
                 setFilterModalVisible(false);
                 }}>
                     <Text style={styles.modalPressableText}>Intermediate</Text>
@@ -112,13 +122,35 @@ const MemberMapScreen = (props) => {
             style={styles.modalPressable}  
             android_ripple={{color: colors.ivory}}
             onPress={() => {
-                setLevelFilter({...levelFilter, advanced: !levelFilter.advanced});
+                setLevelFilter({...levelFilter, advanced: true});
                 setFilterModalVisible(false);
                 }}>
                 <Text style={styles.modalPressableText}>Advanced</Text>
             </Pressable>
+            <HorizontalLineComponent hrWidth='70%'/>
+            <Pressable 
+            style={styles.modalPressable}  
+            android_ripple={{color: colors.ivory}}
+            onPress={() => {
+                setLevelFilter({frontline: false, intermediate: false, advanced: false});
+                setFilterModalVisible(false);
+                }}>
+                <Text style={styles.modalPressableText}>All</Text>
+            </Pressable>
         </Modal>
         )
+    }
+
+    const showMemberSummary = (id) => {
+        setSummaryModalVisible(true);
+        setSelectedMember(membersWithLoc.filter(m => m.id == id)[0]);
+    }
+
+    const navigateMemberProfile = () => {
+        props.navigation.navigate('MemberListNavigator', {
+            screen: 'MemberProfile', 
+            params: {member: selectedMember}
+        });
     }
 
     return (
@@ -128,6 +160,9 @@ const MemberMapScreen = (props) => {
                 <IconButtonComponent iconButtonStyle={[styles.shadow, styles.iconButton]} color={colors.secondaryBlack} size={25} icon="filter" onPress={() => setFilterModalVisible(true)}/>
             </View>
             <FilterModal />
+            <Modal isVisible={summaryModalVisible} onBackdropPress={() => setSummaryModalVisible(false)}>
+                <ProfileSummaryComponent member={selectedMember} onProfilePress={navigateMemberProfile}/>
+            </Modal>
             <ClusterMap
             region={region}
             style={styles.map}
@@ -135,7 +170,7 @@ const MemberMapScreen = (props) => {
                 {
                     filteredMembers.map(m => {
                         return (
-                        <Marker key={m.id} coordinate={m.coordinate}>
+                        <Marker key={m.id} coordinate={m.coordinate} onPress={() => showMemberSummary(m.id)}>
                             <CustomCalloutComponent level={m.level} memberImage={m.photo}/>
                         </Marker>
                     ) })
@@ -145,9 +180,6 @@ const MemberMapScreen = (props) => {
     );
 }
 
-//TODO: Create mini map profile component
-//TODO: Add redirect to member profile
-//TODO: Add search by email, last name, first name
 //TODO: Change region back to central accra
 
 export default MemberMapScreen;
