@@ -9,8 +9,7 @@ import { colors } from '@theme/colors';
 import SearchBarComponent from '@components/search-bar/SearchBarComponent';
 import BadgeComponent from 'src/components/badge/BadgeComponent';
 import PickerComponent from 'src/components/picker/PickerComponent';
-import { Picker } from '@react-native-picker/picker';
-import { Icon } from 'react-native-vector-icons/Icon';
+import AvatarComponent from '@components/avatar/AvatarComponent';
 
 const MemberListScreen = (props) => {
     const [memberList, setMemberList] = useState([]);
@@ -132,9 +131,7 @@ const MemberListScreen = (props) => {
                 <View style={styles.searchBarView}>
                     <SearchBarComponent placeholder="Find a member..." handleChange={handleUserSearch} value={memberSearchText}/>
                 </View>
-                <Pressable style={styles.avatarView} onPress={navigateSettings}>
-                    <Image style={styles.userAvatar} source={require('@assets/man.jpg')}/>
-                </Pressable>
+                <AvatarComponent avatarContainerStyle={styles.userAvatar} onPress={navigateSettings}/>
             </View>
             <View style={styles.badgeView}>
             <View>
@@ -183,14 +180,10 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 20
     },
-    avatarView: {
-        width: 40,
-        height: 40
-    },
     userAvatar: {
-        width: '100%',
+        width: 40,
         height: 40,
-        borderRadius: 25
+        borderRadius: 20
     },
     memberListView: {
         justifyContent: 'space-between',

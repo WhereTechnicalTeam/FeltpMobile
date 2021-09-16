@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import { View, Text, StyleSheet, Image, FlatList, Alert, Pressable } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Pressable } from 'react-native';
 import SummaryCardComponent from '@components/summary-card/SummaryCardComponent';
 import NewsPreviewComponent from '@components/news-preview/NewsPreviewComponent';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
@@ -8,6 +8,7 @@ import { findAllNews } from '@api/newsApi';
 import {fetchUserStats} from '@api/userApi';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ToastComponent from '@components/toast/ToastComponent';
+import AvatarComponent from '@components/avatar/AvatarComponent';
 
 const DashboardScreen = (props) => {
 
@@ -98,9 +99,7 @@ const DashboardScreen = (props) => {
         <View style={styles.dashboardContainer}>
             <View style={styles.headerView}>
                 {/* <Text style={styles.screenTitle}>Dashboard</Text> */}
-                <Pressable style={styles.avatarView} onPress={navigateSettings}>
-                    <Image style={styles.userAvatar} source={require('@assets/man.jpg')}/>
-                </Pressable>
+                <AvatarComponent avatarContainerStyle={styles.userAvatar} onPress={navigateSettings}/>
             </View>
             <View style={styles.subtitleView}>
                 <Text style={styles.subtitle}>Registered Members</Text>
@@ -143,14 +142,10 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 20
     },
-    avatarView: {
-        width: 40,
-        height: 40
-    },
     userAvatar: {
-        width: '100%',
+        width: 40,
         height: 40,
-        borderRadius: 25
+        borderRadius: 20
     },
     subtitle: {
         fontSize: 20,
