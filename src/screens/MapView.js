@@ -5,9 +5,9 @@ import Geolocation from 'react-native-geolocation-service';
 
 import ButtonComponent from '@components/button/ButtonComponent';
 import IconButtonComponent from '@components/icon-button/IconButtonComponent';
-import SearchBarComponent from '@components/search-bar/SearchBarComponent';
 import { colors } from '@theme/colors';
 import { isDefined } from '@utils/validation';
+import ToastComponent from 'src/components/toast/ToastComponent';
 
 const MapViewScreen = (props) => {
 
@@ -23,6 +23,7 @@ const MapViewScreen = (props) => {
     });
     const [officeMarkerPosition, setOfficeMarkerPosition] = useState(null);
     const [hasLocationPermission, setHasLocationPermission] = useState(true);
+    const [isAccurate, setIsAccurate] = useState(true);
     const mapRef = useRef(null);
 
     const saveOfficeLocation = () => {
@@ -91,6 +92,7 @@ const MapViewScreen = (props) => {
             Geolocation.getCurrentPosition(
                 (position) => {
                     // console.log("current location:", position);
+                    if(position.accuracy < 10) setIsAccurate(false);
                     setUserLocation({latitude: position.coords.latitude, longitude: position.coords.longitude});
                     setRegion({...region, latitude: position.coords.latitude, longitude: position.coords.longitude});            
                 },
@@ -103,7 +105,10 @@ const MapViewScreen = (props) => {
     }
 
     const handleMarkerPosition = () => {
-        setOfficeMarkerPosition(userLocation);
+        getUserCurrentLocation();
+        if(!isAccurate) {
+            ToastComponent.show("Please step out in the open for sufficient accuracy", {timeOut: 3500, level: 'action'});
+        } else setOfficeMarkerPosition(userLocation);
     }
 
     const animateToUserPosition = () => {
@@ -115,7 +120,6 @@ const MapViewScreen = (props) => {
         <View style={styles.mapContainer}>
             <View style={[styles.optionButtonContainer, {bottom: 0, top: 30}]}>
                 <IconButtonComponent iconButtonStyle={[styles.shadow, styles.iconButton]} color={colors.secondaryBlack} size={25} icon="arrow-back-sharp" onPress={() => props.navigation.goBack(null)}/>
-                {/* <SearchBarComponent placeholder="Search for office" disabled handleChange={setOfficeSearchText} value={officeSearchText} searchContainerStyle={styles.shadow}/> */}
             </View>
             <MapView style={styles.map}
                 ref={mapRef}
@@ -134,7 +138,7 @@ const MapViewScreen = (props) => {
                 }
             </MapView>
             <View style={[styles.optionButtonContainer, {bottom: 30}]}>
-                <ButtonComponent title={ !isDefined(officeMarkerPosition) ? "Set Office Marker" : "Save Office Location"} onPress={saveOfficeLocation} buttonContainerStyle={[styles.shadow, {width: '80%'}, isDefined(officeMarkerPosition) ? {backgroundColor: colors.primaryGreen} : {}]}/>
+                <ButtonComponent title={ !isDefined(officeMarkerPosition) ? "Set Office Marker" : "Save Office Location"} onPress={saveOfficeLocation} disabled={!isAccurate} buttonContainerStyle={[styles.shadow, {width: '80%'}, isDefined(officeMarkerPosition) ? {backgroundColor: colors.primaryGreen} : {}]}/>
                 <IconButtonComponent iconButtonStyle={[styles.shadow, styles.iconButton]} color={colors.secondaryBlack} size={25} icon="locate" onPress={animateToUserPosition}/>
             </View>
         </View>
