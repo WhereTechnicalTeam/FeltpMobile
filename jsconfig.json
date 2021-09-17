@@ -8,7 +8,8 @@
             "@navigators": ["./src/navigators/*"],
             "@theme": ["./src/theme/*"],
             "@utils": ["./src/utils/*"],
-            "@screens": ["./src/screens/*"]
+            "@screens": ["./src/screens/*"],
+            "@firebaseConf": ["src/firebaseConf/*"]
         },
     },
     "exclude": ["node_modules"]

@@ -223,7 +223,7 @@ const AppContainer = () => (
     <MainStack.Navigator initialRouteName="Auth" >
         <MainStack.Screen name="Auth" component={AuthNavigator} options={{headerShown: false}}/>
         <MainStack.Screen name="Tabs" component={MainTabNavigator} options={{headerShown: false}}/>
-        <MainStack.Screen name="SettingsNavigator" component={SettingsNavigator} />
+        <MainStack.Screen name="SettingsNavigator" component={SettingsNavigator} options={{headerShown: false}}/>
         <MainStack.Screen name="MapView" component={MapViewScreen} options={{headerShown: false}}/>
     </MainStack.Navigator>
 );

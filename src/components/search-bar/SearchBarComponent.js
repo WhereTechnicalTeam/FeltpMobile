@@ -4,12 +4,12 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { colors } from '@theme/colors';
 
 const SearchBarComponent = (props) => {
-    const {placeholder, handleChange, value, searchContainerStyle} = props;
+    const {placeholder, handleChange, value, searchContainerStyle, onIconPress, iconName} = props;
 
     return (
         <View style={[styles.searchBarContainer, searchContainerStyle]}>
             <TextInput placeholder={placeholder} onChangeText={handleChange} value={value} style={styles.textInput}/>
-            <Icon size={25} color={colors.secondaryBlack} name="search"/>
+            <Icon size={25} color={colors.secondaryBlack} name={iconName || "search"} onPress={onIconPress}/>
         </View>
     )
 }

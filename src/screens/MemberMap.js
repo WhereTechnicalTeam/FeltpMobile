@@ -11,7 +11,8 @@ import IconButtonComponent from '@components/icon-button/IconButtonComponent';
 import HorizontalLineComponent from '@components/horizontal-line/HorizontalLine';
 import ProfileSummaryComponent from '@components/profile-summary/ProfileSummaryComponent';
 import { getDistrictById, getRegionById, safeConvertToString } from '@utils/helperFunctions';
-import CustomMarkerComponent from 'src/components/custom-marker/CustomMarkerComponent';
+import CustomMarkerComponent from '@components/custom-marker/CustomMarkerComponent';
+import { includesIgnoreCase } from '@utils/helperFunctions';
 
 const MemberMapScreen = (props) => {
     const [memberList, setMemberList] = useState([]);
@@ -91,7 +92,7 @@ const MemberMapScreen = (props) => {
 
     const handleUserSearch = (text) => {
         setMemberSearchText(text);
-        setFilteredMembers(membersWithLoc.filter(m => m.email.includes(text) || m.firstname.includes(text) || m.surname.includes(text)))
+        setFilteredMembers(membersWithLoc.filter(m => includesIgnoreCase(m.email, text) || includesIgnoreCase(m.firstname, text) || includesIgnoreCase(m.surname, text)))
         //TODO: Handle user not found        
     }
 
@@ -171,11 +172,8 @@ const MemberMapScreen = (props) => {
                 {
                     filteredMembers.map(m => {
                         return (
-                        <Marker key={m.id} coordinate={m.coordinate} onPress={() => showMemberSummary(m.id)}>
-                            <CustomMarkerComponent />
-                            <Callout>
-                                <CustomCalloutComponent level={m.level.substr(0, 2)} memberImage={m.photo}/>
-                            </Callout>
+                        <Marker key={m.id} coordinate={m.coordinate} onPress={() => showMemberSummary(m.id)} isPreselected>
+                            <CustomMarkerComponent calloutProps={{level: m.level.substr(0, 2).toUpperCase(), memberImage: m.photo}}/>
                         </Marker>
                     ) })
                 }
@@ -225,19 +223,20 @@ const styles = StyleSheet.create({
     },
     modalView: {
         width: 200,
-        maxHeight: 200,
+        maxHeight: '50%',
         borderRadius: 8,
         alignSelf: 'center',
         alignItems: 'center',
         justifyContent: 'space-around',
         zIndex: 99,
-        // paddingVertical: 20
+        paddingVertical: 10
     },
     modalTitle: {
-        fontSize: 20,
+        fontSize: 15,
         marginBottom: 5,
         fontWeight: '600',
-        textTransform: 'uppercase'
+        textTransform: 'uppercase',
+        color: colors.primary
     },
     modalPressable: {
         width:'100%', 

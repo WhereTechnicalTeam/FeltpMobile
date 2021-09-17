@@ -91,8 +91,7 @@ const MapViewScreen = (props) => {
         if(hasLocationPermission) {
             Geolocation.getCurrentPosition(
                 (position) => {
-                    // console.log("current location:", position);
-                    if(position.accuracy < 10) setIsAccurate(false);
+                    if(position.coords.accuracy < 10) setIsAccurate(false);
                     setUserLocation({latitude: position.coords.latitude, longitude: position.coords.longitude});
                     setRegion({...region, latitude: position.coords.latitude, longitude: position.coords.longitude});            
                 },

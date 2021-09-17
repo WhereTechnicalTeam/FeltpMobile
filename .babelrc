@@ -4,12 +4,7 @@
         [
           "module-resolver",
           {
-            "root": ["."], //  This says the root of your project folder
-            // To make your imports look better
-            // Insert your whatever name to make alias for the imports
-            // In this example I'm using @components to referring the components folder
-            // That located inside src folder.
-            // Note: You can make a lot of aliases in here
+            "root": ["."],
             "alias": {
               "@components": "./src/components",
               "@api": "./src/api",
@@ -17,7 +12,8 @@
               "@theme": "./src/theme",
               "@utils": "./src/utils",
               "@screens": "./src/screens",
-              "@assets": "./assets"
+              "@assets": "./assets",
+              "@firebaseConf": "./src/firebaseConf"
             },
             "extensions": [".ios.js", ".android.js", ".js", ".json"]
           }

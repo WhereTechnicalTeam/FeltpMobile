@@ -2,13 +2,14 @@ import React, {useEffect, useState} from 'react';
 import { Text, View, StyleSheet, FlatList, Pressable } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import AvatarComponent from '@components/avatar/AvatarComponent';
-import { colors } from 'src/theme/colors';
-import { safeConvertToString } from 'src/utils/helperFunctions';
+import { colors } from '@theme/colors';
+import { safeConvertToString } from '@utils/helperFunctions';
+// import { firebase} from 'src/firebaseConf/config';
 
 const ChatListScreen = (props) => {
 
     const [chatList, setChatList] = useState();
-    const mainForumRef = firebase.firestore().collection('GFELTPforum');
+    // const mainForumRef = firebase.firestore().collection('GFELTPforum');
 
     useEffect(() => {
         (async () => {
@@ -32,16 +33,16 @@ const ChatListScreen = (props) => {
     }, []);
 
     const fetchForumInfo = () => {
-        mainForumRef.onSnapshot( querySnapshot => {
-            let chatInfo = {};
-            querySnapshot.forEach(doc => {
-                chatInfo = {...doc.data(), id: doc.id};
-            });
-            setChatList([...chatList, chatInfo]);
-        }, 
-        error => {
-            console.warn("Error fetching forum details:", error)
-        })
+        // mainForumRef.onSnapshot( querySnapshot => {
+        //     let chatInfo = {};
+        //     querySnapshot.forEach(doc => {
+        //         chatInfo = {...doc.data(), id: doc.id};
+        //     });
+        //     setChatList([...chatList, chatInfo]);
+        // }, 
+        // error => {
+        //     console.warn("Error fetching forum details:", error)
+        // })
     }
 
     const navigateChatScreen = (chatInfo) => {
@@ -68,8 +69,8 @@ const ChatListScreen = (props) => {
                     {
                         item.latest_message &&
                         <View style={styles.messageView}>
-                            <Text style={styles.latestSender}>{item.latest_message.user.firstname}:</Text>
-                            <Text> {item.latest_message.text}</Text>
+                            <Text style={styles.latestSender}>{item.latest_message.user.name}:</Text>
+                            <Text numberOfLines={1} > {item.latest_message.text}</Text>
                         </View>
                     }
                 </View>
@@ -79,8 +80,8 @@ const ChatListScreen = (props) => {
 
     return (
         <View style={styles.mainContainer}>
-            <Text style={styles.mainHeaderText}>Conversations</Text>
-            <View>
+            <View style={styles.userAvatarView}>
+                <Text style={styles.mainHeaderText}>Conversations</Text>
                 <AvatarComponent avatarContainerStyle={styles.userAvatar} onPress={navigateSettings}/>
             </View>
             <FlatList renderItem={renderItem} keyExtractor={(item) => item.id.toString()} data={chatList}/>
@@ -131,11 +132,15 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: '600',
         textTransform: 'uppercase',
-        marginBottom: 20
     },
     userAvatar: {
         width: 40,
         height: 40,
         borderRadius: 20
     },
+    userAvatarView: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 20
+    }
 });

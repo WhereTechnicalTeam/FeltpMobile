@@ -2,10 +2,10 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { colors } from '@theme/colors';
 
-const HorizontalLineComponent = ({hrWidth}) => {
+const HorizontalLineComponent = ({hrWidth, hrStyle}) => {
     return (
         <View style={{alignSelf: 'center', width: hrWidth}}>
-            <View style={styles.hr}/>
+            <View style={[styles.hr, hrStyle]}/>
         </View>
     );
 }

@@ -28,4 +28,8 @@ const getDistrictById = (id) => {
     return district.length > 0 ? district[0].name : "";
 }
 
-export {safeConvertToString, getDistrictListByRegion, getRegionById, getDistrictById, getLevelofHSById}
+const includesIgnoreCase = (stringA, stringB) => {
+    return stringA.toLowerCase().includes(stringB.toLowerCase())
+}
+
+export {safeConvertToString, getDistrictListByRegion, getRegionById, getDistrictById, getLevelofHSById, includesIgnoreCase}

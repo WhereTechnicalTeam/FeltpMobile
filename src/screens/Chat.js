@@ -4,13 +4,13 @@ import { Bubble, GiftedChat, Send } from 'react-native-gifted-chat'
 import Icon from 'react-native-vector-icons/Ionicons';
 import { colors } from '@theme/colors';
 import AvatarComponent from 'src/components/avatar/AvatarComponent';
-import { firebase } from 'src/firebase/config';
+// import { firebase } from '@firebaseConf/config';
 
 const ChatScreen = (props) => {
 
     const [messages, setMessages] = useState([]);
     const [chatInfo, setChatInfo] = useState();
-    const mainForumRef = firebase.firestore().collection('GFELTPforum');
+    // const mainForumRef = firebase.firestore().collection('GFELTPforum');
 
   useEffect(() => {
     setMessages([
@@ -32,31 +32,31 @@ const ChatScreen = (props) => {
   }
 
   const saveToFirebase = (messages) => {
-      console.log(messages);
-      mainForumRef.collection('messages')
-      .add(messages)
-      .then( doc => {
-          console.log(doc);
-      })
-      .catch(error => {
-          console.warn("Failed to save message to firebase:", error);
-      })
+    //   console.log(messages);
+    //   mainForumRef.collection('messages')
+    //   .add(messages)
+    //   .then( doc => {
+    //       console.log(doc);
+    //   })
+    //   .catch(error => {
+    //       console.warn("Failed to save message to firebase:", error);
+    //   })
   }
 
   const fetchForumMessages = () => {
-      mainForumRef.collection('messages').orderBy('createdAt', 'desc')
-      .onSnapshot( 
-          querySnapshot => {
-              let newMessages = [];
-              querySnapshot.forEach(doc => {
-                  newMessages.push[{...doc.data(), _id: doc.id}]
-              });
-              setMessages(newMessages);
-          },
-          error => {
-              console.warn("Failed to fetch forum messages:", error);
-          }
-      );
+    //   mainForumRef.collection('messages').orderBy('createdAt', 'desc')
+    //   .onSnapshot( 
+    //       querySnapshot => {
+    //           let newMessages = [];
+    //           querySnapshot.forEach(doc => {
+    //               newMessages.push[{...doc.data(), _id: doc.id}]
+    //           });
+    //           setMessages(newMessages);
+    //       },
+    //       error => {
+    //           console.warn("Failed to fetch forum messages:", error);
+    //       }
+    //   );
   }
 
   const handleSend = useCallback((messages = []) => {

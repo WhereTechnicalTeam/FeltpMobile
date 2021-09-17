@@ -6,6 +6,7 @@ import ProfileTextComponent from '@components/profile-text/ProfileTextComponent'
 import { colors } from '@theme/colors';
 import { isDefined } from '@utils/validation';
 import { safeConvertToString } from '@utils/helperFunctions';
+import { getDistrictById, getRegionById } from '@utils/helperFunctions';
 
 const MemberProfileScreen = (props) => {
     const [member, setMember] = useState({
@@ -57,8 +58,8 @@ const MemberProfileScreen = (props) => {
             <View style={styles.header}>
                 <IconButtonComponent icon="arrow-back-sharp" size={24} color={colors.white} iconButtonStyle={styles.iconButtonComponent} onPress={navigateBack}/>
                 <Text style={styles.nameText}>{`${safeConvertToString(member.main_user.firstname)} ${safeConvertToString(member.main_user.surname)}`}</Text>
-                <Text style={styles.titleText}>{member.job_to_user.job_title}</Text>
-                <Text style={styles.locationText}>{isDefined(member.job_to_user.district) ? `${member.job_to_user.district}, ${member.job_to_user.region}` : ''}</Text>
+                <Text style={styles.titleText}>{member.job_to_user[0].job_title}</Text>
+                <Text style={styles.locationText}>{getDistrictById(member.job_to_user[0].district)}, {getRegionById(member.job_to_user[0].region)}</Text>
             </View>
             <View style={[styles.mainOverlay, styles.shadow]}>
                 <View style={[styles.imageView, styles.shadow]}>
