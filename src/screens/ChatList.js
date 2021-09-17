@@ -4,45 +4,30 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import AvatarComponent from '@components/avatar/AvatarComponent';
 import { colors } from '@theme/colors';
 import { safeConvertToString } from '@utils/helperFunctions';
-// import { firebase} from 'src/firebaseConf/config';
+import firestore from '@react-native-firebase/firestore';
+import dayjs from 'dayjs';
 
 const ChatListScreen = (props) => {
 
     const [chatList, setChatList] = useState();
-    // const mainForumRef = firebase.firestore().collection('GFELTPforum');
+    const mainForumRef = firestore().collection('threads');
 
     useEffect(() => {
-        (async () => {
-            setChatList([
-                {
-                    id: 1,
-                    name: 'GFELTP Forum',
-                    avatar: '',
-                    latest_message: {
-                        time: '10:47',
-                        text: 'Hello all',
-                        user: {
-                            name: 'John K.',
-                            id: 0
-                        }
-                    },
-                }
-            ]);
-            fetchForumInfo();
-        })();
+        const subscriber = fetchForumInfo();
+        return () => subscriber();
     }, []);
 
     const fetchForumInfo = () => {
-        // mainForumRef.onSnapshot( querySnapshot => {
-        //     let chatInfo = {};
-        //     querySnapshot.forEach(doc => {
-        //         chatInfo = {...doc.data(), id: doc.id};
-        //     });
-        //     setChatList([...chatList, chatInfo]);
-        // }, 
-        // error => {
-        //     console.warn("Error fetching forum details:", error)
-        // })
+        return mainForumRef.onSnapshot( querySnapshot => {
+            let chatInfo = {};
+            querySnapshot.forEach(doc => {
+                chatInfo = {...doc.data(), id: doc.id};
+            });
+            setChatList([chatInfo]);
+        }, 
+        error => {
+            console.warn("Error fetching forum details:", error)
+        })
     }
 
     const navigateChatScreen = (chatInfo) => {
@@ -58,19 +43,19 @@ const ChatListScreen = (props) => {
     const renderItem = ({item}) => {
         return (
             <Pressable style={styles.listContainer} onPress={() => navigateChatScreen(item)}>
-                <View>
+                <View style={{width: 70}}>
                     <AvatarComponent avatarContainerStyle={styles.avatar}/>
                 </View>
                 <View style={styles.centerView}>
                     <View style={styles.centerHeader}>
                     <Text style={styles.chatName}>{item.name}</Text>
-                    <Text style={styles.messageTime}>{safeConvertToString(item.latest_message.time)}</Text>
+                    {item.lastMessage && <Text style={styles.messageTime}>{dayjs(item.lastMessage.createdAt).format("h:mm a")}</Text> }
                     </View>
                     {
-                        item.latest_message &&
+                        item.lastMessage &&
                         <View style={styles.messageView}>
-                            <Text style={styles.latestSender}>{item.latest_message.user.name}:</Text>
-                            <Text numberOfLines={1} > {item.latest_message.text}</Text>
+                            <Text style={styles.latestSender}>{item.lastMessage.user.name}:</Text>
+                            <Text numberOfLines={1} > {item.lastMessage.text}</Text>
                         </View>
                     }
                 </View>
@@ -94,13 +79,14 @@ export default ChatListScreen;
 const styles = StyleSheet.create({
     mainContainer: {
         paddingHorizontal: 20,
-        paddingVertical: 30
+        paddingVertical: 30,
     },
     listContainer: {
         flexDirection: 'row',
     },
     centerHeader: {
         flexDirection: 'row',
+        justifyContent: 'space-between'
     },
     avatar: {
         width: 50,
@@ -111,15 +97,17 @@ const styles = StyleSheet.create({
     chatName: {
         fontSize: 16,
         fontWeight: '600',
-        marginRight: '50%'
+        color: colors.primary
     },
     messageTime: {
         alignSelf: 'center',
         fontSize: 11,
-        color: colors.secondaryBlack
+        color: colors.secondaryBlack,
+        textAlign: 'right'
     },
     centerView: {
-        justifyContent: 'space-evenly'
+        justifyContent: 'space-evenly',
+        width: '80%',
     },
     messageView: {
         flexDirection: 'row'

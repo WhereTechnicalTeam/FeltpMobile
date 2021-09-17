@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "222561225701",
+    "firebase_url": "https://rn-firebase-todo-d3c6c.firebaseio.com",
+    "project_id": "rn-firebase-todo-d3c6c",
+    "storage_bucket": "rn-firebase-todo-d3c6c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:222561225701:android:6133e0e85cee743fe13d0c",
+        "android_client_info": {
+          "package_name": "com.feltpmobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "222561225701-k1sulup2ocrivuijo3nh10hfggi07tn5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDR7QK-QEPLGUhkxDpOfJIBIN9pkGjnhtE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "222561225701-k1sulup2ocrivuijo3nh10hfggi07tn5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:222561225701:android:2056f85e9cc59971e13d0c",
+        "android_client_info": {
+          "package_name": "com.rnfirebase.todo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "222561225701-k1sulup2ocrivuijo3nh10hfggi07tn5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDR7QK-QEPLGUhkxDpOfJIBIN9pkGjnhtE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "222561225701-k1sulup2ocrivuijo3nh10hfggi07tn5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

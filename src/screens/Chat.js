@@ -1,111 +1,129 @@
-import React, { useState, useCallback, useEffect } from 'react'
-import {View, Text, StyleSheet} from 'react-native';
-import { Bubble, GiftedChat, Send } from 'react-native-gifted-chat'
+import React, { useState, useEffect } from 'react'
+import {View, Text, StyleSheet, TextInput} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { colors } from '@theme/colors';
-import AvatarComponent from 'src/components/avatar/AvatarComponent';
-// import { firebase } from '@firebaseConf/config';
+import AvatarComponent from '@components/avatar/AvatarComponent';
+import IconButtonComponent from '@components/icon-button/IconButtonComponent';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import firestore from '@react-native-firebase/firestore';
+import ToastComponent from '@components/toast/ToastComponent';
+import MessageListComponent from '@components/message-list/MessageListComponent';
+import { isEmpty, isDefined } from '@utils/validation';
 
 const ChatScreen = (props) => {
 
     const [messages, setMessages] = useState([]);
     const [chatInfo, setChatInfo] = useState();
-    // const mainForumRef = firebase.firestore().collection('GFELTPforum');
+    const [user, setUser] = useState();
+    const [currentMessageText, setCurrentMessageText] = useState('');
+    const mainForumRef = firestore().collection('threads').doc('PeA4CPvGKjzpUkzMSNGG');
 
-  useEffect(() => {
-    setMessages([
-      {
-        _id: 1,
-        text: 'Hello developer',
-        createdAt: new Date(),
-        user: {
-          _id: 2,
-          name: 'React Native',
-          avatar: 'https://placeimg.com/140/140/any',
-        },
-      },
-    ])
-  }, []);
+    useEffect(() => {
+    (async() => {
+        AsyncStorage.getItem('userDetails')
+        .then(storedUser => {
+            setUser(JSON.parse(storedUser));
+        })    
+        .catch(error => console.warn("Error fetching stored user:", error));        
+    })();
+    }, []);
+
+    useEffect(() => {
+        try {
+            if(isDefined(user))
+            fetchForumMessages();
+        } catch(err) {
+            console.warn("Error fetching forum messages:", err)
+        }
+    }, [user])
 
   const navigateChatList = () => {
       props.navigation.navigate('ChatList');
   }
 
-  const saveToFirebase = (messages) => {
-    //   console.log(messages);
-    //   mainForumRef.collection('messages')
-    //   .add(messages)
-    //   .then( doc => {
-    //       console.log(doc);
-    //   })
-    //   .catch(error => {
-    //       console.warn("Failed to save message to firebase:", error);
-    //   })
+    const saveToFirebase = (message) => {
+        mainForumRef.collection('messages')
+        .add(message)
+        .then( doc => {
+            setCurrentMessageText('');
+            mainForumRef.set({lastMessage: message}, {merge: true}).then(doc => {
+
+            }).catch(error => console.warn("Error updating last message:", error))
+        })
+        .catch(error => {
+            console.warn("Failed to save message to firebase:", error);
+            ToastComponent.show("Failed to send message!", {timeOut: 3000, level: 'failure'})
+        });
+    }
+
+    const fetchForumMessages = () => {
+            mainForumRef
+            .collection('messages').orderBy('createdAt', 'desc')
+            .onSnapshot( 
+                querySnapshot => {
+                    let newMessages = [];
+                    querySnapshot.forEach(doc => {
+                        newMessages.push({
+                            ...doc.data(),
+                            id: doc.id,
+                            isRight: doc.data().user.id === user.id,
+                            isSameUser: !isDefined(newMessages[newMessages.length - 1]) ? false : newMessages[newMessages.length - 1].user.id === user.id
+                        });
+                    });
+                  setMessages(newMessages);
+                },
+                error => {
+                    console.warn("Failed to fetch forum messages:", error);
+                }
+            );
+       
+    }
+
+  const handleSend = () => {
+        try {
+            if(isEmpty(currentMessageText)) return;
+            let message = {
+                text: currentMessageText,
+                createdAt: Date.now(),
+                user: {
+                  id: user.id,
+                  name: user.main_user.firstname + " " + user.main_user.surname,
+                  avatar: null
+                },
+              }
+            console.log("current msg", message)
+        saveToFirebase(message);
+        } catch(err) {
+            console.warn("Error sending message:", err)
+        }
   }
 
-  const fetchForumMessages = () => {
-    //   mainForumRef.collection('messages').orderBy('createdAt', 'desc')
-    //   .onSnapshot( 
-    //       querySnapshot => {
-    //           let newMessages = [];
-    //           querySnapshot.forEach(doc => {
-    //               newMessages.push[{...doc.data(), _id: doc.id}]
-    //           });
-    //           setMessages(newMessages);
-    //       },
-    //       error => {
-    //           console.warn("Failed to fetch forum messages:", error);
-    //       }
-    //   );
-  }
+  const ChatHeader = () => (
+    <View style={styles.header}>
+    <View style={styles.iconButtonView}>
+        <Icon name="arrow-back-sharp" size={24} color={colors.white} onPress={navigateChatList}/>
+    </View>
+    <AvatarComponent src={require('@assets/logo_1.jpg')} avatarContainerStyle={styles.avatar}/>
+    <View>
+        <Text style={styles.chatName}>GFELTP Forum</Text>
+    </View>
+    </View>
+  );
 
-  const handleSend = useCallback((messages = []) => {
-    setMessages(previousMessages => GiftedChat.append(previousMessages, messages));
-    saveToFirebase(messages);
-  }, []);
-
-  const renderSend = (props) => {
-      return (
-          <Send {...props}>
-              <Icon name="send" color={colors.lightPrimary} size={24} style={{marginBottom: 10, marginRight: 10}}/>
-          </Send>
-      );
-  }
-
-  const renderBubble = (props) => {
-      return (
-            <Bubble {...props}
-                wrapperStyle={{
-                    left: {backgroundColor: colors.white},
-                    right: {backgroundColor: colors.lightPrimary}
-                }}        
-            />
-      )
-  }
+    const ChatFooter = () => (
+        <View style={styles.chatFooterView}>
+            <TextInput placeholder="Message" style={[styles.textInput, styles.shadow]} multiline value={currentMessageText} onChangeText={setCurrentMessageText}/>
+            <IconButtonComponent icon="send" size={24} color={colors.white} iconButtonStyle={[styles.shadow, styles.sendIconButton]} onPress={handleSend} />
+        </View>
+    )
 
     return (
         <View style={styles.container}>
-            <View style={styles.header}>
-                <View style={styles.iconButtonView}>
-                    <Icon name="arrow-back-sharp" size={24} color={colors.white} onPress={navigateChatList}/>
-                </View>
-                <AvatarComponent src={require('@assets/logo_1.jpg')} avatarContainerStyle={styles.avatar}/>
-                <View>
-                    <Text style={styles.chatName}>GFELTP Forum</Text>
-                </View>
+            <ChatHeader />
+            <View style={{flex: 1}}>
+            <MessageListComponent messages={messages}/>
             </View>
-            <GiftedChat
-            messages={messages}
-            renderUsernameOnMessage 
-            alwaysShowSend
-            scrollToBottom
-            renderSend={renderSend}
-            renderBubble={renderBubble}
-            onSend={handleSend}
-            user={{
-                _id: 1,
-            }}
-            />
+            <ChatFooter />
         </View>
     )
 }
@@ -121,7 +139,8 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         height: 50,
         alignItems: 'center',
-        backgroundColor: colors.lightPrimary
+        backgroundColor: colors.lightPrimary,
+        marginBottom: 10
     },
     iconButtonView: {
         marginRight: 20
@@ -137,5 +156,32 @@ const styles = StyleSheet.create({
         fontSize: 15,
         color: colors.white,
         textAlign: 'center'
-    }
+    },
+    chatFooterView: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginVertical: 10
+    },
+    textInput: {
+        backgroundColor: colors.white,
+        marginRight: 10,
+        width: '80%',
+        paddingHorizontal: 10,
+    },
+    sendIconButton: {
+        backgroundColor: colors.lightPrimary,
+        borderRadius: 25
+    },
+    shadow: {
+        shadowColor: "#000",
+        shadowOffset: {
+          width: 0,
+          height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+        backgroundColor: colors.white
+    },
 });

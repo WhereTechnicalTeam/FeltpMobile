@@ -28,8 +28,6 @@ const JobHistoryScreen = (props) => {
                     AsyncStorage.getItem('authToken').then(async(authToken) => {
                         setUser(JSON.parse(storedUser));
                         setToken(authToken);
-                        if(isDefined(user)) await fetchJobHistory();
-                        setLoading(false);
                     });
                 });
             })();
@@ -37,6 +35,13 @@ const JobHistoryScreen = (props) => {
             console.warn("Error setting up job history screen", err);
         }
     }, []);
+
+    useEffect(() => {
+        (async() => {
+            if(isDefined(user) && isDefined(token)) await fetchJobHistory();
+            setLoading(false);
+        })();
+    }, [user])
 
     useEffect(() => {
         console.log("job history route params:", props.route.params);
