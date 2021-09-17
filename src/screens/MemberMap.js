@@ -85,8 +85,8 @@ const MemberMapScreen = (props) => {
     }
 
     const getFinalLevel = (member) => {
-        if(member.is_trained_advanced == "Yes") return "Advanced"
-        else if(member.is_trained_intermediate == "Yes") return "Intermediate"
+        if(member.main_user.is_trained_advanced == "Yes") return "Advanced"
+        else if(member.main_user.is_trained_intermediate == "Yes") return "Intermediate"
         else return "Frontline"        
     }
 
