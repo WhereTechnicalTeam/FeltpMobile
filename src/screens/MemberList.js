@@ -90,7 +90,7 @@ const MemberListScreen = (props) => {
         let filtered = filteredMembers;
         try {
             switch(advancedFilterOptions) {
-                case "None": filtered = filteredMembers.filter(m => includesIgnoreCase(m.email, memberSearchText) || includesIgnoreCase(m.main_user.firstname, memberSearchText) || includesIgnoreCase(m.main_user.surname, memberSearchText))
+                case "None": filtered = filteredMembers.filter(m => includesIgnoreCase(m.email, memberSearchText) || includesIgnoreCase(`${m.main_user.firstname} ${m.main_user.surname}`, memberSearchText)) 
                     break;
                 case "Region": filtered = filteredMembers.filter(m => {
                     console.log(m)
@@ -261,6 +261,10 @@ const MemberListScreen = (props) => {
         </Modal>
     )
 
+    const ListEmpty = () => (
+        <Text>No members found</Text>
+    )
+
     return (
             <View style={styles.membersContainer}>
             <View style={styles.filterOptionView}>
@@ -295,6 +299,7 @@ const MemberListScreen = (props) => {
                 data={handleAdvancedFilter()}
                 renderItem={renderMemberCard}
                 keyExtractor={(item) => item.id.toString()}
+                // ListEmptyComponent={ListEmpty}
             />
                 }
             </View>
