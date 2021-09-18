@@ -13,6 +13,7 @@ import ProfileSummaryComponent from '@components/profile-summary/ProfileSummaryC
 import { getDistrictById, getRegionById, safeConvertToString } from '@utils/helperFunctions';
 import CustomMarkerComponent from '@components/custom-marker/CustomMarkerComponent';
 import { includesIgnoreCase } from '@utils/helperFunctions';
+import { isDefined } from '@utils/validation';
 
 const MemberMapScreen = (props) => {
     const [memberList, setMemberList] = useState([]);
@@ -39,7 +40,7 @@ const MemberMapScreen = (props) => {
             (async() => {
                 AsyncStorage.getItem("memberList").then(members => {
                     const parsedMembers = JSON.parse(members);
-                    const membersWithLoc = parsedMembers.filter(m => m.job_to_user.length > 0).map(m => {
+                    const membersWithLoc = parsedMembers.filter(m => isLocationDefined(m)).map(m => {
                         let currentJob = m.job_to_user.filter(j => j.is_current === 'Yes')
                         if(currentJob.length == 0) currentJob = m.job_to_user
                         return {
@@ -58,6 +59,7 @@ const MemberMapScreen = (props) => {
                             level: getFinalLevel(m)
                         };
                     })
+                    console.log(membersWithLoc)
                     setMemberList(parsedMembers);
                     setFilteredMembers(membersWithLoc);
                     setMembersWithLoc(membersWithLoc);
@@ -71,6 +73,16 @@ const MemberMapScreen = (props) => {
     useEffect(() => {
         toggleLevelFilter();
     }, [levelFilter]);
+
+    const isLocationDefined = (member) => {
+        let found = false;
+        if (member.job_to_user.length > 0) {
+            let currentJob = member.job_to_user.filter(j => j.is_current === "Yes")[0]
+            if(!isDefined(currentJob)) currentJob = member.job_to_user[0] 
+            found = isDefined(currentJob.latitude) && isDefined(currentJob.longitude)
+        }
+        return found;
+    }
 
     const toggleLevelFilter = () => {
         const {frontline, intermediate, advanced} = levelFilter;

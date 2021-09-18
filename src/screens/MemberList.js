@@ -13,7 +13,7 @@ import { includesIgnoreCase } from '@utils/helperFunctions';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Modal from 'react-native-modal';
 import HorizontalLineComponent from '@components/horizontal-line/HorizontalLine';
-import { getRegionById } from '@utils/helperFunctions';
+import { getRegionById, getDistrictById, getLevelofHSById, safeConvertToString } from '@utils/helperFunctions';
 import { isDefined } from '@utils/validation';
 
 const MemberListScreen = (props) => {
@@ -30,6 +30,7 @@ const MemberListScreen = (props) => {
     const [filterModalVisible, setFilterModalVisible] = useState(false);
     const [advancedFilterOptions, setAdvancedFilterOptions] = useState("None");
     const [user, setUser] = useState();
+    const [advancedFilteredMembers, setAdvancedFilteredMembers] = useState([]);
 
     useEffect(() => {
         (async() => {
@@ -47,11 +48,12 @@ const MemberListScreen = (props) => {
 
     useEffect(() => {
         setFilteredMembers(memberList);
+        setAdvancedFilteredMembers(memberList);
     }, [memberList])
 
     useEffect(() => {
         toggleLevelFilter();
-    }, [levelFilter]);
+    }, [levelFilter, advancedFilterOptions]);
 
     const toggleLevelFilter = () => {
         const {frontline, intermediate, advanced} = levelFilter;
@@ -67,45 +69,58 @@ const MemberListScreen = (props) => {
 
     const levelAdvancedFilter = (option, text) => {
         const {frontline, intermediate, advanced} = levelFilter;
-        console.log(option, text);
-        let filtered = memberList.filter(m => {
+        let filtered = filteredMembers.filter(m => {
             let isMatch = [];
-            console.log(m.main_user[`${option}_frontline`])
-            if(frontline) isMatch.push(includesIgnoreCase(m.main_user[`${option}_frontline`], text))
-            if(intermediate) isMatch.push(includesIgnoreCase(m.main_user[`${option}_intermediate`], text))
-            if(advanced) isMatch.push(includesIgnoreCase(m.main_user[`${option}_advanced`], text))
-            console.log(isMatch)
+            if(frontline) isMatch.push(includesIgnoreCase(safeConvertToString(m.main_user[`${option}_frontline`]), text))
+            if(intermediate) isMatch.push(includesIgnoreCase(safeConvertToString(m.main_user[`${option}_intermediate`]), text))
+            if(advanced) isMatch.push(includesIgnoreCase(safeConvertToString(m.main_user[`${option}_advanced`]), text))
             return isMatch.some(m => m);
         });
-        setFilteredMembers(filtered);
+        return filtered;
     }
 
     const getCurrentJob = (member) => {
-        return member.job_to_user.filter(j => j.is_current === "Yes")[0];
+        let currentJob = member.job_to_user.filter(j => j.is_current === "Yes");
+        return currentJob[0] || member.job_to_user[0];
     }
 
-    const handleAdvancedFilter = (text) => {
+    const handleAdvancedFilter = () => {
         const {frontline, intermediate, advanced} = levelFilter;
         const levelFilterEnabled = [frontline, intermediate, advanced].some(val => val)
+        let filtered = filteredMembers;
         try {
             switch(advancedFilterOptions) {
-                case "None": setFilteredMembers(memberList.filter(m => includesIgnoreCase(m.email, text) || includesIgnoreCase(m.main_user.firstname, text) || includesIgnoreCase(m.main_user.surname, text)))
+                case "None": filtered = filteredMembers.filter(m => includesIgnoreCase(m.email, memberSearchText) || includesIgnoreCase(m.main_user.firstname, memberSearchText) || includesIgnoreCase(m.main_user.surname, memberSearchText))
                     break;
-                // case "Region": setFilteredMembers(memberList.filter(m => m.job_to_user.length > 0).filter(m => includesIgnoreCase(getCurrentJob(m).region, text)))
-                //     break;
-                // case "District": setFilteredMembers(memberList.filter(m => m.job_to_user.length > 0).filter(m => includesIgnoreCase(getCurrentJob(m).district, text)))
-                //     break;
-                // case "LevelOfHealth": setFilteredMembers(memberList.filter(m => m.job_to_user.length > 0).filter(m => includesIgnoreCase(getCurrentJob(m).level_of_health_system, text)))
-                //     break;
-                // case "CohortNum": if(levelFilterEnabled) levelAdvancedFilter('cohort_number', text)
-                // break;
-                // case "YearCompleted": if(levelFilterEnabled) levelAdvancedFilter('cohort_number', text)
-                // break;
+                case "Region": filtered = filteredMembers.filter(m => {
+                    console.log(m)
+                    let currentJob = getCurrentJob(m);
+                    if(isDefined(currentJob) && isDefined(currentJob.region)) return includesIgnoreCase(getRegionById(currentJob.region), memberSearchText)
+                    else return false;
+                    })
+                    break;
+                case "District": filtered = filteredMembers.filter(m => {
+                    let currentJob = getCurrentJob(m);
+                    if(isDefined(currentJob) && isDefined(currentJob.district)) return includesIgnoreCase(getDistrictById(currentJob.district), memberSearchText)
+                    else return false;
+                    });
+                    break;
+                case "Level Of Health System": filtered = filteredMembers.filter(m => {
+                    let currentJob = getCurrentJob(m);
+                    if(isDefined(currentJob) && isDefined(currentJob.level_of_health_system)) return includesIgnoreCase(getLevelofHSById(currentJob.level_of_health_system), memberSearchText)
+                    else return false;
+                    })
+                    break;
+                case "Cohort Number": if(levelFilterEnabled) filtered = levelAdvancedFilter('cohort_number', memberSearchText) 
+                // else ToastComponent.show("Please select a training level!", {timeOut: 2000, level: 'warning'})
+                break;
+                case "Year Completed": if(levelFilterEnabled) filtered = levelAdvancedFilter('yr_completed', memberSearchText)
+                break;
             }
         } catch (err) {
             console.warn("Error handling advanced filter:", err)
-        }        
-        console.log("Advanced filter:", advancedFilterOptions)
+        }     
+        return filtered   
     }
 
     const fetchMembers = async() => {
@@ -177,7 +192,6 @@ const MemberListScreen = (props) => {
 
     const handleUserSearch = (text) => {
         setMemberSearchText(text);
-        handleAdvancedFilter(text);
         //TODO: Handle user not found
     }
 
@@ -208,7 +222,7 @@ const MemberListScreen = (props) => {
             style={styles.modalPressable}  
             android_ripple={{color: colors.ivory}}
             onPress={() => {
-                setAdvancedFilterOptions("LevelOfHealth");
+                setAdvancedFilterOptions("Level Of Health System");
                 setFilterModalVisible(false);
                 }}>
                 <Text style={styles.modalPressableText}>Level of Health</Text>
@@ -218,7 +232,7 @@ const MemberListScreen = (props) => {
             style={styles.modalPressable}  
             android_ripple={{color: colors.ivory}}
             onPress={() => {
-                setAdvancedFilterOptions("CohortNum");
+                setAdvancedFilterOptions("Cohort Number");
                 setFilterModalVisible(false);
                 }}>
                 <Text style={styles.modalPressableText}>Cohort Number</Text>
@@ -228,7 +242,7 @@ const MemberListScreen = (props) => {
             style={styles.modalPressable}  
             android_ripple={{color: colors.ivory}}
             onPress={() => {
-                setAdvancedFilterOptions("YearCompleted");
+                setAdvancedFilterOptions("Year Completed");
                 setFilterModalVisible(false);
                 }}>
                 <Text style={styles.modalPressableText}>Year Completed</Text>
@@ -249,6 +263,10 @@ const MemberListScreen = (props) => {
 
     return (
             <View style={styles.membersContainer}>
+            <View style={styles.filterOptionView}>
+            <Text>Advanced Filter:</Text>
+            <Text style={styles.filterOption}> {advancedFilterOptions}</Text>
+            </View>
             <View style={styles.headerView}>
                 {/* <Text style={styles.screenTitle}>Members</Text> */}
                 <View style={styles.searchBarView}>
@@ -274,7 +292,7 @@ const MemberListScreen = (props) => {
                     <FlatList showsVerticalScrollIndicator={false} 
                 contentContainerStyle={{flexDirection: 'column'}}
                 numColumns={2}
-                data={filteredMembers}
+                data={handleAdvancedFilter()}
                 renderItem={renderMemberCard}
                 keyExtractor={(item) => item.id.toString()}
             />
@@ -361,4 +379,12 @@ const styles = StyleSheet.create({
         elevation: 5,
         backgroundColor: colors.white
     },
+    filterOptionView: {
+        flexDirection: 'row',
+        marginBottom: 5,
+    },
+    filterOption: {
+        color: colors.primary,
+        marginLeft: 2
+    }
 });

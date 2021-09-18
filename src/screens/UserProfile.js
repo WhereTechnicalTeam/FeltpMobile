@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, RefreshControl } from 'react-native';
+import { View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
 import IconButtonComponent from '@components/icon-button/IconButtonComponent';
 import ProfileTextComponent from '@components/profile-text/ProfileTextComponent';
 import { colors } from '@theme/colors';
