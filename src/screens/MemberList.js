@@ -13,7 +13,8 @@ import { includesIgnoreCase } from '@utils/helperFunctions';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Modal from 'react-native-modal';
 import HorizontalLineComponent from '@components/horizontal-line/HorizontalLine';
-import { getRegionById } from 'src/utils/helperFunctions';
+import { getRegionById } from '@utils/helperFunctions';
+import { isDefined } from '@utils/validation';
 
 const MemberListScreen = (props) => {
     const [memberList, setMemberList] = useState([]);
@@ -28,12 +29,19 @@ const MemberListScreen = (props) => {
     const [memberSearchText, setMemberSearchText] = useState('');
     const [filterModalVisible, setFilterModalVisible] = useState(false);
     const [advancedFilterOptions, setAdvancedFilterOptions] = useState("None");
+    const [user, setUser] = useState();
 
     useEffect(() => {
         (async() => {
-            setLoading(true);
+            try {
+                setLoading(true);
             await fetchMembers();
-            setLoading(false);        
+            const storedUser = await AsyncStorage.getItem("userDetails");
+            setUser(JSON.parse(storedUser));
+            setLoading(false); 
+            } catch(err) {
+                console.warn("Error setting up member list:", err);
+            }      
         })();
     }, []);
 
@@ -246,7 +254,7 @@ const MemberListScreen = (props) => {
                 <View style={styles.searchBarView}>
                     <SearchBarComponent placeholder="Enter search text..." handleChange={handleUserSearch} value={memberSearchText} iconName="chevron-down-circle" onIconPress={() => setFilterModalVisible(true)}/>
                 </View>
-                <AvatarComponent avatarContainerStyle={styles.userAvatar} onPress={navigateSettings}/>
+                <AvatarComponent avatarContainerStyle={styles.userAvatar} onPress={navigateSettings} src={isDefined(user) ? user.main_user.photo : null}/>
             </View>
             <View style={styles.badgeView}>
             <View>

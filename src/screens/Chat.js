@@ -9,6 +9,7 @@ import firestore from '@react-native-firebase/firestore';
 import ToastComponent from '@components/toast/ToastComponent';
 import MessageListComponent from '@components/message-list/MessageListComponent';
 import { isEmpty, isDefined } from '@utils/validation';
+import ChatFooterComponent from '@components/chat-footer/ChatFooterComponent';
 
 const ChatScreen = (props) => {
 
@@ -110,20 +111,13 @@ const ChatScreen = (props) => {
     </View>
   );
 
-    const ChatFooter = () => (
-        <View style={styles.chatFooterView}>
-            <TextInput placeholder="Message" style={[styles.textInput, styles.shadow]} multiline value={currentMessageText} onChangeText={setCurrentMessageText}/>
-            <IconButtonComponent icon="send" size={24} color={colors.white} iconButtonStyle={[styles.shadow, styles.sendIconButton]} onPress={handleSend} />
-        </View>
-    )
-
     return (
         <View style={styles.container}>
             <ChatHeader />
             <View style={{flex: 1}}>
             <MessageListComponent messages={messages}/>
             </View>
-            <ChatFooter />
+            <ChatFooterComponent setCurrentMessageText={setCurrentMessageText} currentMessageText={currentMessageText} handleSend={handleSend}/>
         </View>
     )
 }
@@ -156,22 +150,6 @@ const styles = StyleSheet.create({
         fontSize: 15,
         color: colors.white,
         textAlign: 'center'
-    },
-    chatFooterView: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginVertical: 10
-    },
-    textInput: {
-        backgroundColor: colors.white,
-        marginRight: 10,
-        width: '80%',
-        paddingHorizontal: 10,
-    },
-    sendIconButton: {
-        backgroundColor: colors.lightPrimary,
-        borderRadius: 25
     },
     shadow: {
         shadowColor: "#000",

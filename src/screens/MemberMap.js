@@ -24,8 +24,8 @@ const MemberMapScreen = (props) => {
         advanced: false
     }); 
     const [region, setRegion] = useState({
-        latitude: 37.4153701680001,
-        longitude: -122.101618275046,
+        latitude: 5.6890625,
+        longitude: -0.2556875,
         latitudeDelta: 0.0922,
         longitudeDelta: 0.0421,
       });
@@ -181,8 +181,6 @@ const MemberMapScreen = (props) => {
         </View>
     );
 }
-
-//TODO: Change region back to central accra
 
 export default MemberMapScreen;
 

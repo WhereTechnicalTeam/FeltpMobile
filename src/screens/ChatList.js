@@ -6,13 +6,24 @@ import { colors } from '@theme/colors';
 import { safeConvertToString } from '@utils/helperFunctions';
 import firestore from '@react-native-firebase/firestore';
 import dayjs from 'dayjs';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { isDefined } from '@utils/validation';
 
 const ChatListScreen = (props) => {
 
     const [chatList, setChatList] = useState();
+    const [user, setUser] = useState();
     const mainForumRef = firestore().collection('threads');
 
     useEffect(() => {
+        (async () => {
+            try {
+                const storedUser = await AsyncStorage.getItem('userDetails');
+                setUser(JSON.parse(storedUser));
+            } catch (err) {
+                console.warn("Error fetching user:", err)
+            }
+        })();
         const subscriber = fetchForumInfo();
         return () => subscriber();
     }, []);
@@ -44,7 +55,7 @@ const ChatListScreen = (props) => {
         return (
             <Pressable style={styles.listContainer} onPress={() => navigateChatScreen(item)}>
                 <View style={{width: 70}}>
-                    <AvatarComponent avatarContainerStyle={styles.avatar}/>
+                    <AvatarComponent avatarContainerStyle={styles.avatar} src={require('@assets/logo_1.jpg')}/>
                 </View>
                 <View style={styles.centerView}>
                     <View style={styles.centerHeader}>
@@ -67,7 +78,7 @@ const ChatListScreen = (props) => {
         <View style={styles.mainContainer}>
             <View style={styles.userAvatarView}>
                 <Text style={styles.mainHeaderText}>Conversations</Text>
-                <AvatarComponent avatarContainerStyle={styles.userAvatar} onPress={navigateSettings}/>
+                <AvatarComponent avatarContainerStyle={styles.userAvatar} onPress={navigateSettings} src={isDefined(user) ? user.main_user.photo : null}/>
             </View>
             <FlatList renderItem={renderItem} keyExtractor={(item) => item.id.toString()} data={chatList}/>
         </View>

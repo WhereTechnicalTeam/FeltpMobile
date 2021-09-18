@@ -18,7 +18,8 @@ const SettingsHeader = (props) => {
     const [user, setUser] = useState({
         main_user: {
             firstname: '',
-            surname: ''
+            surname: '',
+            photo: null
         },
         job_to_user: [
             {
@@ -41,6 +42,12 @@ const SettingsHeader = (props) => {
         })();
     }, []);
 
+    useEffect(() => {
+        (async() => {
+            await AsyncStorage.setItem("userDetails", JSON.stringify(user));
+        })();
+    }, [user?.main_user.photo])
+
     const handleCameraPicker = async() => {
         const permissionGranted = await checkCameraPermissions();
         if(permissionGranted) {
@@ -61,6 +68,7 @@ const SettingsHeader = (props) => {
 
     const updateUserPhoto = async(image) => {
         setSelectedImage({uri: image.uri});
+        setUser({...user, photo: image.uri});
         console.log("selected image:", image);
         setModalVisible(false);
     }

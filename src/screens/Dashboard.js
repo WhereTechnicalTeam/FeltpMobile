@@ -9,6 +9,7 @@ import {fetchUserStats} from '@api/userApi';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ToastComponent from '@components/toast/ToastComponent';
 import AvatarComponent from '@components/avatar/AvatarComponent';
+import { isDefined } from '@utils/validation';
 
 const DashboardScreen = (props) => {
 
@@ -19,7 +20,7 @@ const DashboardScreen = (props) => {
         numAdvanced: 0,
         numAlumni: 0
     });
-    const [userDetails, setUserDetails] = useState({});
+    const [userDetails, setUserDetails] = useState();
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -99,7 +100,7 @@ const DashboardScreen = (props) => {
         <View style={styles.dashboardContainer}>
             <View style={styles.headerView}>
                 {/* <Text style={styles.screenTitle}>Dashboard</Text> */}
-                <AvatarComponent avatarContainerStyle={styles.userAvatar} onPress={navigateSettings}/>
+                <AvatarComponent avatarContainerStyle={styles.userAvatar} onPress={navigateSettings} src={isDefined(userDetails) ? userDetails.main_user.photo : null} />
             </View>
             <View style={styles.subtitleView}>
                 <Text style={styles.subtitle}>Registered Members</Text>

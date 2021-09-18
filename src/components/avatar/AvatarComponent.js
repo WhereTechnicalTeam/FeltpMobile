@@ -2,14 +2,15 @@ import React from 'react';
 import { Pressable, StyleSheet, View, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { colors } from '@theme/colors';
+import { isDefined } from '@utils/validation';
 
 const AvatarComponent = (props) => {
-    const {icon, src, onPress, avatarContainerStyle } = props;
+    const {icon, src, onPress, avatarContainerStyle, avatarImageStyle } = props;
 
     return (
         <View style={[styles.avatarContainer, avatarContainerStyle]}>
             <Pressable onPress={onPress}>
-                <Image source={src || require('@assets/man.jpg')} style={styles.image}/>
+                <Image source={isDefined(src) ? src : require('@assets/man.jpg')} style={[styles.image, avatarImageStyle]}/>
                 {
                     icon && 
                     <View style={{backgroundColor: colors.primary, padding: 5, borderRadius: 50, ...styles.icon}}>
