@@ -8,6 +8,7 @@ import firestore from '@react-native-firebase/firestore';
 import dayjs from 'dayjs';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { isDefined } from '@utils/validation';
+import IconButtonComponent from '@components/icon-button/IconButtonComponent';
 
 const ChatListScreen = (props) => {
 
@@ -51,6 +52,10 @@ const ChatListScreen = (props) => {
         props.navigation.navigate('ManageUser');
     }
 
+    const navigateSelectChat = () => {
+        props.navigation.navigate("SelectChat")
+    }
+
     const renderItem = ({item}) => {
         return (
             <Pressable style={styles.listContainer} onPress={() => navigateChatScreen(item)}>
@@ -81,6 +86,7 @@ const ChatListScreen = (props) => {
                 <AvatarComponent avatarContainerStyle={styles.userAvatar} onPress={navigateSettings} src={isDefined(user) ? user.main_user.photo : null}/>
             </View>
             <FlatList renderItem={renderItem} keyExtractor={(item) => item.id.toString()} data={chatList}/>
+            <IconButtonComponent icon="plus" size={24} color={colors.white} iconButtonStyle={[styles.iconButton, styles.shadow]} onPress={navigateSelectChat}/>
         </View>
     );
 }
@@ -141,5 +147,20 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         marginBottom: 20
-    }
+    },
+    iconButton: {
+        backgroundColor: colors.primary,
+        borderRadius: 25
+    },
+    shadow: {
+        shadowColor: "#000",
+        shadowOffset: {
+          width: 0,
+          height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+        backgroundColor: colors.white
+    },
 });

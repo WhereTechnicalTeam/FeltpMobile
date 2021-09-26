@@ -47,4 +47,4 @@ const createChat = (userOne, userTwo, callback) => {
     }).catch(error => console.warn("Error creating chat:", error));
 }
 
-module.exports = {getUserChats, getChatMessages, createChat};
+export {getUserChats, getChatMessages, createChat};

@@ -155,15 +155,15 @@ const MemberListScreen = (props) => {
 
     const getFinalLevel = (member) => {
         let finalLevel = {};
-        if(member.is_trained_advanced == "Yes") {
+        if(member.main_user.is_trained_advanced == "Yes") {
             finalLevel.level = 'advanced';
-            finalLevel.yearCompleted = member.yr_completed_advanced;
-        } else if(member.is_trained_intermediate == "Yes") {
+            finalLevel.yearCompleted = member.main_user.yr_completed_advanced;
+        } else if(member.main_user.is_trained_intermediate == "Yes") {
             finalLevel.level = 'intermediate',
-            finalLevel.yearCompleted = member.yr_completed_intermediate
+            finalLevel.yearCompleted = member.main_user.yr_completed_intermediate
         } else {
             finalLevel.level = 'frontline';
-            finalLevel.yearCompleted = member.yr_completed_frontline;
+            finalLevel.yearCompleted = member.main_user.yr_completed_frontline;
         }
         return finalLevel;
     }
