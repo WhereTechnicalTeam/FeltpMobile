@@ -16,6 +16,7 @@ import HelperTextComponent from '@components/helper-text/HelperTextComponent';
 import SpinnerComponent from '@components/spinner/SpinnerComponent';
 import PickerComponent from '@components/picker/PickerComponent';
 import { titleList } from '@utils/constants';
+import { sendToken, validateToken } from 'src/api/authApi';
 
 const SignUpScreen = (props) => {
     
@@ -42,9 +43,12 @@ const SignUpScreen = (props) => {
         passwordErrors: [],
         cpasswordErrors: [],
         dobErrors: [],
+        validationCodeErrors: []
     });
     const [showPassword, setShowPassword] = useState(true);
     const [loading, setLoading] = useState(false);
+    const [verified, setVerified] = useState(false);
+    const [validationCode, setValidationCode] = useState("");
 
     const navigateIntermediateSignup = () => {
         props.navigation.navigate('IntermediateSignup', {
@@ -68,13 +72,17 @@ const SignUpScreen = (props) => {
                 setErrors(prevErrors => ({...prevErrors, emailErrors}));
                 setLoading(true);
                 const response = await findUserByEmail(user.email);
-                if(response.status == 400) {
+                if(response.status !== 200) {
                     setUser(prevUser => {
                         let {main_user} = prevUser;
                         main_user = {...main_user, status: 'registered', email_status: 'not verified'}
                         return {...prevUser, main_user};
                     }); 
-                    ToastComponent.show("User does not exist", {timeOut: 3500, level: 'warning'});
+                    ToastComponent.show("User not found", {timeOut: 3500, level: 'warning'});
+                    let tokenResponse = await sendToken(user.email);
+                    if(tokenResponse.status !== 200) {
+                        ToastComponent.show("Failed to send verification token", {timeOut: 3000, level: "failure"});
+                    }
                     setShowPassword(true);
                     setUser({...initUser, email: user.email});
                 } else {
@@ -143,12 +151,26 @@ const SignUpScreen = (props) => {
         setUser(prevState => ({...prevState, cpassword}));
     }
 
-    const handleSubmit = () => {
+    const handleSubmit = async() => {
         try {
+            if(userSearchComplete && !verified) {
+                const validationCodeErrors = isTextValid(validationCode);
+                setErrors({...errors, validationCodeErrors});
+                if(validationCodeErrors.length == 0) {
+                    let response = await validateToken(validationCode);
+                    if(response.status == 200) {
+                        ToastComponent.show("Account verified!", {timeOut: 3000, level: 'success'})
+                        setVerified(true);
+                    } else {
+                        ToastComponent.show("Account verification failed!", {timeOut: 3000, level: 'failure'})
+                    }
+                }
+            } else {
             if(validateUserDetails()) {
                 navigateIntermediateSignup();
             } else {
                 ToastComponent.show("Validation failed", {timeOut: 3500, level: 'failure'});
+            }
             }
         } catch(err) {
             console.warn("Error navigating to intermediate sign up:", err);
@@ -194,6 +216,16 @@ const SignUpScreen = (props) => {
                     iconButtonStyle={errors.emailErrors.length > 0 ? {marginBottom: '8%'} : {} }
                 />
             </View>
+            {
+                userSearchComplete && !verified ?
+                <View style={styles.formInputView}>
+                    <FormInputComponent label="Verification Code" value={validationCode} onChangeText={setValidationCode} invalid={errors.validationCodeErrors.length > 0}/>
+                </View>
+                : null
+            }
+            {
+                verified ? 
+                <View>
             <View style={styles.formInputView}>
                 <PickerComponent items={titleList} label="Title" onValueChange={setTitle} disabled={!userSearchComplete} selectedValue={user.main_user.title} invalid={errors.titleErrors.length > 0} mode="dropdown"/>
                 {errors.titleErrors.length > 0 && <HelperTextComponent text={errors.titleErrors[0]} invalid/>}
@@ -224,9 +256,13 @@ const SignUpScreen = (props) => {
                 <FormInputComponent label="Confirm Password" onChangeText={setConfirmPassword} hidden disabled={!userSearchComplete} value={user.cpassword} invalid={errors.cpasswordErrors.length > 0}/>
                 {errors.cpasswordErrors.length > 0 && <HelperTextComponent text={errors.cpasswordErrors[0]} invalid/>}
             </View>
-            </>)}
+            </>)}                    
+                </View>
+                : 
+                null
+            }
             <View>
-                <ButtonComponent title="Next" onPress={handleSubmit} buttonContainerStyle={styles.buttonComponent} disabled={!userSearchComplete} />
+                <ButtonComponent title={userSearchComplete && !verified ? "Verifiy account" : "Next"} onPress={handleSubmit} buttonContainerStyle={styles.buttonComponent} disabled={!userSearchComplete} />
                 <LinkTextComponent preText="Already have an account?" actionText="Login" onPress={navigateSignin}/>
             </View>
             </ScrollView>

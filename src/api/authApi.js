@@ -126,4 +126,20 @@ const validateToken = async(token) => {
     });
 }
 
-export {login, logout, registerUser, verifyEmail, changePassword, validateToken}
+const sendToken = async(email) => {
+    return fetch(`${BASE_URL}/sendcode`, {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json'
+        },
+        body: JSON.stringify({email})
+    })
+    .then(response => response.json())
+    .then(json => json)
+    .catch(err => {
+        console.warn("Error sending validation token:", err);
+        return {status: 500}
+    })
+}
+
+export {login, logout, registerUser, verifyEmail, changePassword, validateToken, sendToken}
