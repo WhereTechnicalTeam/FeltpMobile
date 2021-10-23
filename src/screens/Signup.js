@@ -83,11 +83,13 @@ const SignUpScreen = (props) => {
                     if(tokenResponse.status !== 200) {
                         ToastComponent.show("Failed to send verification token", {timeOut: 3000, level: "failure"});
                     }
+                    ToastComponent.show("Verification code sent!", {timeOut: 3500, level: "success"});
                     setShowPassword(true);
                     setUser({...initUser, email: user.email});
                 } else {
                 let foundUser = response.alldata[0];
                 console.log("user", foundUser);
+                setVerified(foundUser.email_status == 'verified');
                 setUser({...foundUser, job_to_user: [foundUser.job_to_user]});
                 setShowPassword(false);
                 ToastComponent.show("User account found", {timeOut: 3500, level: 'success'});
@@ -153,6 +155,7 @@ const SignUpScreen = (props) => {
 
     const handleSubmit = async() => {
         try {
+            setLoading(true);
             if(userSearchComplete && !verified) {
                 const validationCodeErrors = isTextValid(validationCode);
                 setErrors({...errors, validationCodeErrors});
@@ -172,7 +175,9 @@ const SignUpScreen = (props) => {
                 ToastComponent.show("Validation failed", {timeOut: 3500, level: 'failure'});
             }
             }
+            setLoading(false);
         } catch(err) {
+            setLoading(false);
             console.warn("Error navigating to intermediate sign up:", err);
         }
         
@@ -199,7 +204,11 @@ const SignUpScreen = (props) => {
                 <LogoComponent logoText="Sign Up" logoStyle={styles.logoStyle}/>
             </View>
             <View style={styles.subTitleView}>
-                <Text style={styles.subTitle}>Connect with your peers. Create an account</Text>
+                <Text style={styles.subTitle}>{
+                userSearchComplete && !verified ?
+                `A verification code has been sent to: ${user.email}`
+                : 'Connect with your peers. Create an account'
+                }</Text>
             </View>
             <ScrollView showsVerticalScrollIndicator={false}>
             <View style={styles.inputWithIconView}>

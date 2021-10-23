@@ -130,12 +130,15 @@ const sendToken = async(email) => {
     return fetch(`${BASE_URL}/sendcode`, {
         method: 'POST',
         headers: {
-            Accept: 'application/json'
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify({email})
     })
     .then(response => response.json())
-    .then(json => json)
+    .then(json => {
+        return json;
+    }) 
     .catch(err => {
         console.warn("Error sending validation token:", err);
         return {status: 500}
