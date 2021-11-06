@@ -16,7 +16,7 @@ import HelperTextComponent from '@components/helper-text/HelperTextComponent';
 import SpinnerComponent from '@components/spinner/SpinnerComponent';
 import PickerComponent from '@components/picker/PickerComponent';
 import { titleList } from '@utils/constants';
-import { sendToken, validateToken } from 'src/api/authApi';
+import { sendCode, verifyEmail } from 'src/api/authApi';
 
 const SignUpScreen = (props) => {
     
@@ -78,22 +78,21 @@ const SignUpScreen = (props) => {
                         main_user = {...main_user, status: 'registered', email_status: 'not verified'}
                         return {...prevUser, main_user};
                     }); 
-                    ToastComponent.show("User not found", {timeOut: 3500, level: 'warning'});
-                    let tokenResponse = await sendToken(user.email);
-                    if(tokenResponse.status !== 200) {
-                        ToastComponent.show("Failed to send verification token", {timeOut: 3000, level: "failure"});
-                    }
-                    ToastComponent.show("Verification code sent!", {timeOut: 3500, level: "success"});
+                    // ToastComponent.show("User not found", {timeOut: 3500, level: 'warning'});
                     setShowPassword(true);
                     setUser({...initUser, email: user.email});
                 } else {
                 let foundUser = response.alldata[0];
                 console.log("user", foundUser);
-                setVerified(foundUser.email_status == 'verified');
+                // setVerified(foundUser.email_status == 'verified');
                 setUser({...foundUser, job_to_user: [foundUser.job_to_user]});
                 setShowPassword(false);
                 ToastComponent.show("User account found", {timeOut: 3500, level: 'success'});
                 }
+                let tokenResponse = await sendCode(user.email);
+                    if(tokenResponse.status !== 200) {
+                        ToastComponent.show("Failed to send verification token", {timeOut: 3000, level: "failure"});
+                    } else ToastComponent.show("Verification code sent!", {timeOut: 3500, level: "success"});
                 setLoading(false);
                 setUserSearchComplete(true);
             } else {
@@ -160,7 +159,7 @@ const SignUpScreen = (props) => {
                 const validationCodeErrors = isTextValid(validationCode);
                 setErrors({...errors, validationCodeErrors});
                 if(validationCodeErrors.length == 0) {
-                    let response = await validateToken(validationCode);
+                    let response = await verifyEmail(validationCode);
                     if(response.status == 200) {
                         ToastComponent.show("Account verified!", {timeOut: 3000, level: 'success'})
                         setVerified(true);

@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import { Text, View, StyleSheet, FlatList, Pressable } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
 import AvatarComponent from '@components/avatar/AvatarComponent';
 import { colors } from '@theme/colors';
 import { safeConvertToString } from '@utils/helperFunctions';
@@ -14,7 +13,8 @@ const ChatListScreen = (props) => {
 
     const [chatList, setChatList] = useState();
     const [user, setUser] = useState();
-    const mainForumRef = firestore().collection('threads');
+    const mainForumRef = firestore().collection('threads'); //change to main_forum 
+    const directChatRef = firestore().collection('direct_chat');
 
     useEffect(() => {
         (async () => {
@@ -25,21 +25,33 @@ const ChatListScreen = (props) => {
                 console.warn("Error fetching user:", err)
             }
         })();
-        const subscriber = fetchForumInfo();
-        return () => subscriber();
+        fetchForumInfo();
+        // fetchDirectChatInfo();
+        // return () => subscriber();
     }, []);
 
     const fetchForumInfo = () => {
-        return mainForumRef.onSnapshot( querySnapshot => {
+        mainForumRef.get().then(querySnapshot => {
             let chatInfo = {};
             querySnapshot.forEach(doc => {
                 chatInfo = {...doc.data(), id: doc.id};
             });
             setChatList([chatInfo]);
-        }, 
-        error => {
+        }).catch(error => {
             console.warn("Error fetching forum details:", error)
-        })
+        });
+    }
+
+    const fetchDirectChatInfo = () => {
+        directChatRef.where("members", "array-contains-any", user.id).orderBy("createdAt", "desc").get().then(querySnapshot => {
+            let chatInfo = {};
+            querySnapshot.forEach(doc => {
+                chatInfo = {...doc.data(), id: doc.id};
+            });
+            setChatList([chatInfo]);
+        }).catch(error => {
+            console.warn("Error fetching forum details:", error)
+        });
     }
 
     const navigateChatScreen = (chatInfo) => {
@@ -85,8 +97,8 @@ const ChatListScreen = (props) => {
                 <Text style={styles.mainHeaderText}>Conversations</Text>
                 <AvatarComponent avatarContainerStyle={styles.userAvatar} onPress={navigateSettings} src={isDefined(user) ? user.main_user.photo : null}/>
             </View>
-            <FlatList renderItem={renderItem} keyExtractor={(item) => item.id.toString()} data={chatList}/>
-            <IconButtonComponent icon="plus" size={24} color={colors.white} iconButtonStyle={[styles.iconButton, styles.shadow]} onPress={navigateSelectChat}/>
+            <FlatList renderItem={renderItem} keyExtractor={(item) => safeConvertToString(item.id)} data={chatList}/>
+            <IconButtonComponent icon="add" size={30} color={colors.primary} iconButtonStyle={{...styles.iconButton, ...styles.shadow}} onPress={navigateSelectChat}/>
         </View>
     );
 }
@@ -97,6 +109,7 @@ const styles = StyleSheet.create({
     mainContainer: {
         paddingHorizontal: 20,
         paddingVertical: 30,
+        flex: 1
     },
     listContainer: {
         flexDirection: 'row',
@@ -149,8 +162,10 @@ const styles = StyleSheet.create({
         marginBottom: 20
     },
     iconButton: {
-        backgroundColor: colors.primary,
-        borderRadius: 25
+        borderRadius: 25,
+        position: 'absolute',
+        bottom: 20,
+        right: 20
     },
     shadow: {
         shadowColor: "#000",

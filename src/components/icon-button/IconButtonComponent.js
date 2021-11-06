@@ -20,7 +20,6 @@ export default IconButtonComponent;
 const styles = StyleSheet.create({
     iconButtonView: {
         backgroundColor: colors.primary,
-        // opacity: 0.8,
         borderRadius: 5,
         width: 50,
         height: 50,

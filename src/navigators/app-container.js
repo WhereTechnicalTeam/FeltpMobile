@@ -32,7 +32,7 @@ import { colors } from '@theme/colors';
 import ChatListScreen from '@screens/ChatList';
 import ChatScreen from '@screens/Chat';
 import MemberMapScreen from '@screens/MemberMap';
-// import SelectChatScreen from '@screens/SelectChat';
+import SelectChatScreen from '@screens/SelectChat';
 
 const MainTabStack = createBottomTabNavigator();
 const ManageUserTabStack = createMaterialTopTabNavigator();
@@ -111,7 +111,7 @@ const ChatNavigator = () => (
     <ChatStack.Navigator initialRouteName="ChatList" screenOptions={{headerShown: false}}>
         <ChatStack.Screen name="ChatList" component={ChatListScreen} />
         <ChatStack.Screen name="ChatScreen" component={ChatScreen} />
-        {/* <ChatStack.Screen name="SelectChat" component={SelectChatScreen} /> */}
+        <ChatStack.Screen name="SelectChat" component={SelectChatScreen} />
     </ChatStack.Navigator>
 );
 

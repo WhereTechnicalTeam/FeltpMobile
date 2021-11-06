@@ -112,10 +112,10 @@ const IntermediateSignUpScreen = (props) => {
         const jobTitleIntermediateErrors = intermediateExpanded ? isAlphaTextValid(user.main_user.job_title_at_enroll_intermediate) : [];
         const yrCompletedIntermediateErrors = intermediateExpanded ? isDateValid(user.main_user.yr_completed_intermediate) : [];
         const cohortNumberIntermediateErrors = intermediateExpanded ? isNumericTextValid(user.main_user.cohort_number_intermediate) : [];
-        const institutionAdvancedErrors = advancedExpanded ? isTextValid(user.main_user.institution_enrolled_at_intermediate) : [];
-        const jobTitleAdvancedErrors = advancedExpanded ? isAlphaTextValid(user.main_user.job_title_at_enroll_intermediate) : [];
-        const yrCompletedAdvancedErrors = advancedExpanded ? isDateValid(user.main_user.yr_completed_intermediate) : [];
-        const cohortNumberAdvancedErrors = advancedExpanded ? isNumericTextValid(user.main_user.cohort_number_intermediate) : [];
+        const institutionAdvancedErrors = advancedExpanded ? isTextValid(user.main_user.institution_enrolled_at_advanced) : [];
+        const jobTitleAdvancedErrors = advancedExpanded ? isAlphaTextValid(user.main_user.job_title_at_enroll_advanced) : [];
+        const yrCompletedAdvancedErrors = advancedExpanded ? isDateValid(user.main_user.yr_completed_advanced) : [];
+        const cohortNumberAdvancedErrors = advancedExpanded ? isNumericTextValid(user.main_user.cohort_number_advanced) : [];
 
         setErrors({primaryPhoneErrors, secondaryPhoneErrors, institutionFrontlineErrors, jobTitleFrontlineErrors, yrCompletedFrontlineErrors, 
             cohortNumberFrontlineErrors, institutionIntermediateErrors, jobTitleIntermediateErrors, yrCompletedIntermediateErrors, cohortNumberIntermediateErrors,

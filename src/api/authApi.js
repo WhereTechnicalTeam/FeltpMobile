@@ -126,7 +126,7 @@ const validateToken = async(token) => {
     });
 }
 
-const sendToken = async(email) => {
+const sendCode = async(email) => {
     return fetch(`${BASE_URL}/sendcode`, {
         method: 'POST',
         headers: {
@@ -145,4 +145,4 @@ const sendToken = async(email) => {
     })
 }
 
-export {login, logout, registerUser, verifyEmail, changePassword, validateToken, sendToken}
+export {login, logout, registerUser, verifyEmail, changePassword, validateToken, sendCode}

@@ -101,13 +101,9 @@ const SignUpWithMapScreen = (props) => {
                 await AsyncStorage.setItem('userDetails', JSON.stringify(user));
 
                 ToastComponent.show("Registration successful!", {timeOut: 3500, level: 'success'});
-                if(user.main_user.email_status == 'verified') {
                     // navigateDashboard();
                     // await AsyncStorage.setItem('authToken', response.token);
-                    navigateSignin();
-                } else {
-                    navigateVerifyEmail();           
-               }
+                navigateSignin();
             } else {
                 ToastComponent.show("Registration failed", {timeOut: 3500, level: 'failure'});
             }
@@ -188,51 +184,6 @@ const SignUpWithMapScreen = (props) => {
         props.navigation.navigate('Signin');
     }
 
-    const parseUserDetails = () => {
-        const userDetails = {
-            "email": user.email,
-            "password": user.password,
-            "cpassword": user.cpassword,
-            "main_user": {
-                "title": "",
-                "surname": user.lastname,
-                "firstname": user.firstname,
-                "sex": user.sex,
-                "phone1": user.phone1,
-                "phone2": user.phone2,
-                "is_trained_frontline": user.is_trained_frontline,
-                "cohort_number_frontline": parseInt(user.cohort_number_frontline),
-                "yr_completed_frontline": user.yr_completed_frontline,
-                "institution_enrolled_at_frontline": user.institution_enrolled_at_frontline,
-                "job_title_at_enroll_frontline": user.job_title_at_enroll_frontline,
-                "is_trained_intermediate": user.is_trained_intermediate,
-                "cohort_number_intermediate": parseInt(user.cohort_number_intermediate),
-                "yr_completed_intermediate": isEmpty(user.yr_completed_intermediate) ? user.yr_completed_intermediate : '2020-08-31',
-                "institution_enrolled_at_intermediate": user.institution_enrolled_at_intermediate,
-                "job_title_at_enroll_intermediate": user.job_title_at_enroll_intermediate,
-                "is_trained_advanced": user.is_trained_advanced,
-                "cohort_number_advanced": parseInt(user.cohort_number_advanced),
-                "yr_completed_advanced": isEmpty(user.yr_completed_advanced) ? user.yr_completed_advanced : '2020-08-31',
-                "institution_enrolled_at_advanced": user.institution_enrolled_at_advanced,
-                "image": null,
-                "email_status": user.email_status,
-                "job_title_at_enroll_advanced": user.job_title_at_enroll_advanced
-            },
-            "job_to_user": [{
-                "current_institution": user.job_to_user.current_institution,
-                "job_title": user.job_to_user.job_title,
-                "region": 1,
-                "district": 1,
-                "level_of_health_system": 1,
-                "employment_status": "",
-                "is_current": user.job_to_user.is_current,
-                "longitude": user.job_to_user.longitude,
-                "latitude": user.job_to_user.latitude
-            }]
-        }
-        return userDetails;
-    }
-
     return (
         <View style={styles.signupContainer}>
             <Spinner visible={loading} customIndicator={<SpinnerComponent />}/>
@@ -258,14 +209,14 @@ const SignUpWithMapScreen = (props) => {
                 {errors.jobTitleErrors.length > 0 && <HelperTextComponent text={errors.jobTitleErrors[0]} invalid/>}
             </View>
             <View style={styles.formInputView}>
-                <PickerComponent label="Region" items={RegionList} onValueChange={setCurrentRegion} selectedValue={user.job_to_user[0].region} mode="dialog"/>
+                <PickerComponent label="Region" items={[{name: "", id: null}, ...RegionList]} onValueChange={setCurrentRegion} selectedValue={user.job_to_user[0].region} mode="dialog"/>
            </View>
             <View style={styles.formInputView}>
             <Text style={styles.pickerText}>District</Text>
                 <DropdownComponent items={getDistrictListByRegion(selectedRegion)} selectText="" selectedItems={[user.job_to_user[0].district]} onSelectedItemsChange={(selectedItems) => setCurrentDistrict(selectedItems[0])} single searchPlaceholderText="Select a district" />
             </View>
             <View style={styles.formInputView}>
-                <PickerComponent items={levelOfHSList} label="Level of Health System" onValueChange={setLevelOfHealthSystem} selectedValue={user.job_to_user[0].level_of_health_system} mode="dropdown"/>
+                <PickerComponent items={[{name: "", id: null}, ...levelOfHSList]} label="Level of Health System" onValueChange={setLevelOfHealthSystem} selectedValue={user.job_to_user[0].level_of_health_system} mode="dropdown"/>
             </View>
             <View>
                 <ButtonComponent title="Sign up" onPress={handleSubmit} buttonContainerStyle={styles.buttonComponent}/>
