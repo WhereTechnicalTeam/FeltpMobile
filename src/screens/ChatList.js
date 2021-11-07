@@ -31,7 +31,6 @@ const ChatListScreen = (props) => {
                 console.warn("Error fetching user:", err)
             }
         })();
-        // return () => subscriber();
     }, []);
 
     const fetchForumInfo = () => {
@@ -74,7 +73,7 @@ const ChatListScreen = (props) => {
                     {
                         item.lastMessage &&
                         <View style={styles.messageView}>
-                            <Text style={styles.latestSender}>{item.lastMessage.user.name}:</Text>
+                            <Text style={styles.latestSender}>{item.lastMessage.user.id == user.id ? 'You' : item.lastMessage.user.name}:</Text>
                             <Text numberOfLines={1} > {item.lastMessage.text}</Text>
                         </View>
                     }

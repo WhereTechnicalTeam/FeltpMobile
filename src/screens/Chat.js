@@ -40,7 +40,7 @@ const ChatScreen = (props) => {
 
     useEffect(() => {
         try {
-            if(isDefined(user)) {
+            if(isDefined(user) && isDefined(chatDetails.id)) {
             if(isMainForum) {
                 fetchForumMessages();
             } else getChatMessages(chatDetails.id, setMessages)
@@ -56,12 +56,13 @@ const ChatScreen = (props) => {
 
   const getChatMessages = (chatID, callback) => {
     let messages = [];
-    chatRef.doc(chatID).collection("messages").orderBy("createdAt", "desc")
+    directChatRef.doc(chatID).collection("messages").orderBy("createdAt", "desc")
     .onSnapshot(querySnapshot => {
         querySnapshot.forEach(doc => {
             messages.push({
                 id: doc.id,
-                ...doc.data()
+                ...doc.data(),
+                isRight: doc.data().user.id === user.id,
             });
             
         });
@@ -72,11 +73,12 @@ const ChatScreen = (props) => {
 }
 
     const saveToFirebase = (message) => {
-        mainForumRef.collection('messages')
+        const chatRef = isMainForum ? mainForumRef : directChatRef.doc(chatDetails.id);
+        chatRef.collection('messages')
         .add(message)
         .then( doc => {
             setCurrentMessageText('');
-            mainForumRef.set({lastMessage: message}, {merge: true}).then(doc => {
+            chatRef.set({lastMessage: message}, {merge: true}).then(doc => {
 
             }).catch(error => console.warn("Error updating last message:", error))
         })

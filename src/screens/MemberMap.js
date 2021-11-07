@@ -44,36 +44,20 @@ const MemberMapScreen = (props) => {
             (async() => {
                 const authToken = await AsyncStorage.getItem('authToken');
                 let fetchedMembers = [];
+                let membersWithLoc = [];
                 let {next, members} =  await fetchMembers(authToken);
-                fetchedMembers.push(members);
+                fetchedMembers.push(...members);
+                membersWithLoc.push(...filterMembersWithLocation(members));
                 while(next !== null) {
                     let results = await fetchNextMemberList(authToken, next);
-                    fetchedMembers.push(results.members);
+                    fetchedMembers.push(...results.members);
+                    membersWithLoc.push(...filterMembersWithLocation(results.members));
                     next = results.next;
                     console.log("nextUrl:", next);
                 }
-                console.log("fetched:", fetchedMembers);
-
-                    const membersWithLoc = fetchedMembers.filter(m => isLocationDefined(m)).map(m => {
-                        let currentJob = m.job_to_user.filter(j => j.is_current === 'Yes')
-                        if(currentJob.length == 0) currentJob = m.job_to_user
-                        return {
-                            id: m.id, 
-                            firstname: safeConvertToString(m.main_user.firstname), 
-                            email: m.email,
-                            surname: safeConvertToString(m.main_user.surname), 
-                            coordinate: {latitude: currentJob[0].latitude, longitude: currentJob[0].longitude},
-                            is_trained_frontline: m.main_user.is_trained_frontline,
-                            is_trained_intermediate: m.main_user.is_trained_intermediate,
-                            is_trained_advanced: m.main_user.is_trained_advanced,
-                            photo: m.photo,
-                            region: getRegionById(currentJob[0].region),
-                            district: getDistrictById(currentJob[0].district),
-                            jobTitle: safeConvertToString(currentJob[0].jobTitle),
-                            level: getFinalLevel(m)
-                        };
-                    })
-                console.log("members with loc", membersWithLoc)
+                console.log("fetched:", fetchedMembers.length);
+                console.log("members with loc:", membersWithLoc.length);
+                setMemberList(fetchedMembers);
                 setFilteredMembers(membersWithLoc);
                 setMembersWithLoc(membersWithLoc);
             })();
@@ -86,6 +70,29 @@ const MemberMapScreen = (props) => {
         toggleLevelFilter();
     }, [levelFilter]);
 
+    const filterMembersWithLocation = (members) => {
+        return members.filter(m => isLocationDefined(m)).map(m => {
+            let currentJob = m.job_to_user.filter(j => j.is_current === 'Yes')
+            if(currentJob.length == 0) currentJob = m.job_to_user
+            return {
+                id: m.id, 
+                firstname: safeConvertToString(m.main_user.firstname), 
+                email: m.email,
+                surname: safeConvertToString(m.main_user.surname), 
+                coordinate: {latitude: currentJob[0].latitude, longitude: currentJob[0].longitude},
+                is_trained_frontline: m.main_user.is_trained_frontline,
+                is_trained_intermediate: m.main_user.is_trained_intermediate,
+                is_trained_advanced: m.main_user.is_trained_advanced,
+                photo: m.photo,
+                region: getRegionById(currentJob[0].region),
+                district: getDistrictById(currentJob[0].district),
+                jobTitle: safeConvertToString(currentJob[0].jobTitle),
+                level: getFinalLevel(m)
+            };
+        });
+    }
+    
+
     const fetchMembers = async(token) => {
         let next, members = null;
         try {
@@ -93,7 +100,7 @@ const MemberMapScreen = (props) => {
             if(response.status == 200) {
                 members = response.alldata.results.filter(data => data.main_user !== null);
                 next = response.alldata.next;
-                setMemberList(members);
+                // setMemberList(members);
             } else {
                 ToastComponent.show("Failed to fetch member list", {timeOut: 3500, level: 'failure'});
             }    
@@ -109,7 +116,7 @@ const MemberMapScreen = (props) => {
             let response = await findUsersFromNextURL(token, nextURL);
             if(response.status == 200) {
                 members = response.alldata.results.filter(data => data.main_user !== null);
-                setMemberList([...memberList, ...members]);
+                // setMemberList([...memberList, ...members]);
                 next = response.alldata.next;
             }   
         } catch(err) {
