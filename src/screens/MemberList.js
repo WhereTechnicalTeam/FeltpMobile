@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {useState, useEffect} from 'react';
 import { View, Text, StyleSheet, Image, FlatList, ActivityIndicator, Pressable } from 'react-native';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
-import { findAllUsers } from '@api/userApi';
+import { findAllUsers, findUsersFromNextURL } from '@api/userApi';
 import MemberCardComponent from '@components/member-card/MemberCardComponent';
 import ToastComponent from '@components/toast/ToastComponent';
 import { colors } from '@theme/colors';
@@ -31,6 +31,8 @@ const MemberListScreen = (props) => {
     const [advancedFilterOptions, setAdvancedFilterOptions] = useState("None");
     const [user, setUser] = useState();
     const [advancedFilteredMembers, setAdvancedFilteredMembers] = useState([]);
+    const [nextFetchURL, setNextFetchURL] = useState();
+    const [endLoading, setEndLoading] = useState(false);
 
     useEffect(() => {
         (async() => {
@@ -128,8 +130,9 @@ const MemberListScreen = (props) => {
             const token = await AsyncStorage.getItem('authToken');
             let response = await findAllUsers(token);
             if(response.status == 200) {
-                setMemberList(response.alldata.filter(data => data.main_user !== null));
-                await AsyncStorage.setItem("memberList", JSON.stringify(response.alldata))
+                const members = response.alldata.results.filter(data => data.main_user !== null);
+                setMemberList(members);
+                setNextFetchURL(response.alldata.next);
             } else {
                 ToastComponent.show("Failed to fetch member list", {timeOut: 3500, level: 'failure'});
             }    
@@ -189,6 +192,25 @@ const MemberListScreen = (props) => {
         await fetchMembers();
         setRefresh(false);
     }
+
+    const fetchNextMemberList = async() => {
+        if(!isDefined(nextFetchURL)) return;
+        setEndLoading(true);
+        try {
+            const token = await AsyncStorage.getItem('authToken');
+            let response = await findUsersFromNextURL(token, nextFetchURL);
+            if(response.status == 200) {
+                const members = response.alldata.results.filter(data => data.main_user !== null);
+                setMemberList([...memberList, ...members]);
+                setNextFetchURL(response.alldata.next);
+            } else {
+                ToastComponent.show("Failed to fetch member list", {timeOut: 3500, level: 'failure'});
+            }    
+        } catch(err) {
+            console.warn("Error fetching member list:", err);
+        }  
+        setEndLoading(false); 
+    } 
 
     const handleUserSearch = (text) => {
         setMemberSearchText(text);
@@ -298,10 +320,13 @@ const MemberListScreen = (props) => {
                 numColumns={2}
                 data={handleAdvancedFilter()}
                 renderItem={renderMemberCard}
-                keyExtractor={(item) => item.id.toString()}
+                keyExtractor={(item) => safeConvertToString(item.id)}
+                onEndReachedThreshold={0.5}
+                onEndReached={fetchNextMemberList}
                 // ListEmptyComponent={ListEmpty}
             />
                 }
+            { endLoading && <ActivityIndicator size={25} color={colors.lightPrimary} style={{marginTop: -20}} /> }
             </View>
         </View>
     );
@@ -315,7 +340,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 25,
         paddingTop: 30,
         backgroundColor: colors.white,
-        paddingBottom: 100,
+        paddingBottom: 150,
         position: 'relative'
     },
     headerView: {

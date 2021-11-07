@@ -6,6 +6,7 @@ import Modal from "react-native-modal";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CustomCalloutComponent from '@components/custom-callout/CustomCalloutComponent';
 import { colors } from '@theme/colors';
+import { findAllUsers, findUsersFromNextURL } from '@api/userApi';
 import SearchBarComponent from '@components/search-bar/SearchBarComponent';
 import IconButtonComponent from '@components/icon-button/IconButtonComponent';
 import HorizontalLineComponent from '@components/horizontal-line/HorizontalLine';
@@ -14,6 +15,7 @@ import { getDistrictById, getRegionById, safeConvertToString } from '@utils/help
 import CustomMarkerComponent from '@components/custom-marker/CustomMarkerComponent';
 import { includesIgnoreCase } from '@utils/helperFunctions';
 import { isDefined } from '@utils/validation';
+import ToastComponent from '@components/toast/ToastComponent';
 
 const MemberMapScreen = (props) => {
     const [memberList, setMemberList] = useState([]);
@@ -23,7 +25,7 @@ const MemberMapScreen = (props) => {
         frontline: false,
         intermediate: false,
         advanced: false
-    }); 
+    });  
     const [region, setRegion] = useState({
         latitude: 5.6890625,
         longitude: -0.2556875,
@@ -35,12 +37,24 @@ const MemberMapScreen = (props) => {
     const [summaryModalVisible, setSummaryModalVisible] = useState(false);
     const [selectedMember, setSelectedMember] = useState();
 
+    //TODO: Add fetch all users method to get all users with pagination. Remove persist to async storage from memberlist
+
     useEffect(() => {
         try{
             (async() => {
-                AsyncStorage.getItem("memberList").then(members => {
-                    const parsedMembers = JSON.parse(members);
-                    const membersWithLoc = parsedMembers.filter(m => isLocationDefined(m)).map(m => {
+                const authToken = await AsyncStorage.getItem('authToken');
+                let fetchedMembers = [];
+                let {next, members} =  await fetchMembers(authToken);
+                fetchedMembers.push(members);
+                while(next !== null) {
+                    let results = await fetchNextMemberList(authToken, next);
+                    fetchedMembers.push(results.members);
+                    next = results.next;
+                    console.log("nextUrl:", next);
+                }
+                console.log("fetched:", fetchedMembers);
+
+                    const membersWithLoc = fetchedMembers.filter(m => isLocationDefined(m)).map(m => {
                         let currentJob = m.job_to_user.filter(j => j.is_current === 'Yes')
                         if(currentJob.length == 0) currentJob = m.job_to_user
                         return {
@@ -59,11 +73,9 @@ const MemberMapScreen = (props) => {
                             level: getFinalLevel(m)
                         };
                     })
-                    console.log(membersWithLoc)
-                    setMemberList(parsedMembers);
-                    setFilteredMembers(membersWithLoc);
-                    setMembersWithLoc(membersWithLoc);
-                });                 
+                console.log("members with loc", membersWithLoc)
+                setFilteredMembers(membersWithLoc);
+                setMembersWithLoc(membersWithLoc);
             })();
         } catch(err) {
             console.warn("Failed to fetch stored members");
@@ -74,9 +86,41 @@ const MemberMapScreen = (props) => {
         toggleLevelFilter();
     }, [levelFilter]);
 
+    const fetchMembers = async(token) => {
+        let next, members = null;
+        try {
+            let response = await findAllUsers(token);
+            if(response.status == 200) {
+                members = response.alldata.results.filter(data => data.main_user !== null);
+                next = response.alldata.next;
+                setMemberList(members);
+            } else {
+                ToastComponent.show("Failed to fetch member list", {timeOut: 3500, level: 'failure'});
+            }    
+        } catch(err) {
+            console.warn("Error fetching member list:", err);
+        }        
+        return {next, members};          
+    }
+
+    const fetchNextMemberList = async(token, nextURL) => {
+        let next, members = null;
+        try {
+            let response = await findUsersFromNextURL(token, nextURL);
+            if(response.status == 200) {
+                members = response.alldata.results.filter(data => data.main_user !== null);
+                setMemberList([...memberList, ...members]);
+                next = response.alldata.next;
+            }   
+        } catch(err) {
+            console.warn("Error fetching member list:", err);
+        }  
+        return {next, members};
+    } 
+
     const isLocationDefined = (member) => {
         let found = false;
-        if (member.job_to_user.length > 0) {
+        if (isDefined(member.job_to_user) && member.job_to_user.length > 0) {
             let currentJob = member.job_to_user.filter(j => j.is_current === "Yes")[0]
             if(!isDefined(currentJob)) currentJob = member.job_to_user[0] 
             found = isDefined(currentJob.latitude) && isDefined(currentJob.longitude)

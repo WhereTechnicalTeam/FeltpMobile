@@ -14,33 +14,62 @@ import ChatFooterComponent from '@components/chat-footer/ChatFooterComponent';
 const ChatScreen = (props) => {
 
     const [messages, setMessages] = useState([]);
-    const [chatInfo, setChatInfo] = useState();
+    const [chatDetails, setChatDetails] = useState({
+        name: "",
+        avatar: ""
+    });
     const [user, setUser] = useState();
     const [currentMessageText, setCurrentMessageText] = useState('');
+    const [isMainForum, setIsMainForum] = useState(true);
     const mainForumRef = firestore().collection('threads').doc('PeA4CPvGKjzpUkzMSNGG');
+    const directChatRef = firestore().collection('chats');
 
     useEffect(() => {
-    (async() => {
-        AsyncStorage.getItem('userDetails')
-        .then(storedUser => {
-            setUser(JSON.parse(storedUser));
-        })    
-        .catch(error => console.warn("Error fetching stored user:", error));        
-    })();
+        try {
+            (async() => {
+                let {chatInfo} = props.route.params;
+                const storedUser = await AsyncStorage.getItem('userDetails')
+                setUser(JSON.parse(storedUser));
+                setChatDetails(chatInfo);  
+                if(chatInfo.name !== "GFELTP Forum") setIsMainForum(false) 
+            })();
+        } catch(err){
+            console.warn("Error setting up chat:", err);
+        }
     }, []);
 
     useEffect(() => {
         try {
-            if(isDefined(user))
-            fetchForumMessages();
+            if(isDefined(user)) {
+            if(isMainForum) {
+                fetchForumMessages();
+            } else getChatMessages(chatDetails.id, setMessages)
+            }
         } catch(err) {
             console.warn("Error fetching forum messages:", err)
         }
-    }, [user])
+    }, [user, isMainForum, chatDetails]);
 
   const navigateChatList = () => {
       props.navigation.navigate('ChatList');
   }
+
+  const getChatMessages = (chatID, callback) => {
+    let messages = [];
+    chatRef.doc(chatID).collection("messages").orderBy("createdAt", "desc")
+    .onSnapshot(querySnapshot => {
+        querySnapshot.forEach(doc => {
+            messages.push({
+                id: doc.id,
+                ...doc.data()
+            });
+            
+        });
+        callback(messages);
+    },
+    error => console.warn("Error fetching chat messages:", error)
+    );
+}
 
     const saveToFirebase = (message) => {
         mainForumRef.collection('messages')
@@ -104,9 +133,9 @@ const ChatScreen = (props) => {
     <View style={styles.iconButtonView}>
         <Icon name="arrow-back-sharp" size={24} color={colors.white} onPress={navigateChatList}/>
     </View>
-    <AvatarComponent src={require('@assets/logo_1.jpg')} avatarContainerStyle={styles.avatar}/>
+    <AvatarComponent src={chatDetails.avatar} avatarContainerStyle={styles.avatar}/>
     <View>
-        <Text style={styles.chatName}>GFELTP Forum</Text>
+        <Text style={styles.chatName}>{chatDetails.name}</Text>
     </View>
     </View>
   );
@@ -140,8 +169,8 @@ const styles = StyleSheet.create({
         marginRight: 20
     },
     avatar: {
-        width: 50, 
-        height: 50, 
+        width: 40, 
+        height: 40, 
         borderRadius: 25,
         marginRight: 30
     },

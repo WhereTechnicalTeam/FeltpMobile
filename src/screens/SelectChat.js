@@ -1,13 +1,15 @@
 import React, {useEffect, useState} from 'react';
-import { FlatList, StyleSheet, Text, View, Pressable } from 'react-native';
+import { FlatList, StyleSheet, Text, View, Pressable, ActivityIndicator } from 'react-native';
 import SearchBarComponent from '@components/search-bar/SearchBarComponent';
-import { includesIgnoreCase } from '@utils/helperFunctions';
+import { includesIgnoreCase, safeConvertToString } from '@utils/helperFunctions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AvatarComponent from '@components/avatar/AvatarComponent';
 import { createChat } from '@utils/chatroom';
-import { findAllUsers } from '@api/userApi';
+import { findAllUsers, findUsersFromNextURL } from '@api/userApi';
 import ToastComponent from '@components/toast/ToastComponent';
 import { colors } from '@theme/colors';
+import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
+import { isDefined } from '@utils/validation';
 
 const SelectChatScreen = (props) => {
 
@@ -16,18 +18,20 @@ const SelectChatScreen = (props) => {
     const [searchText, setSearchText] = useState("");
     const [user, setUser] = useState();
     const [refresh, setRefresh] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [token, setToken] = useState();
+    const [nextFetchURL, setNextFetchURL] = useState();
+    const [endLoading, setEndLoading] = useState(false);
 
     useEffect(() => {
         (async () => {
-            try {
-                AsyncStorage.getItem("memberList").then(members => {
-                    setMemberList(JSON.parse(members));
-                    setFilteredMembers(JSON.parse(members));
-                });
-                AsyncStorage.getItem("userDetails").then(storedUser => setUser(JSON.parse(storedUser)));
-            } catch(err) {
-                console.warn("Error fetching member list:", err);
-            } 
+            setLoading(true);
+            const authToken = await AsyncStorage.getItem('authToken');
+            await fetchMembers(authToken);
+            setToken(authToken);
+            const storedUser = await AsyncStorage.getItem("userDetails");
+            setUser(JSON.parse(storedUser));
+            setLoading(false);
         })();
     }, []);
 
@@ -37,22 +41,39 @@ const SelectChatScreen = (props) => {
         });
     }
 
-    const fetchMembers = async() => {
-        setRefresh(true);
+    const fetchMembers = async(token) => {
         try {
-        const token = await AsyncStorage.getItem("authToken");
-        let response = await findAllUsers(token);
-        if(response.status == 200) {
-            setMemberList(response.alldata);
-            setFilteredMembers(response.alldata)
-        } else {
-            ToastComponent.show("Failed to fetch users", {level: 'failure', timeOut: 3000})
-        }
-        } catch(error) {
-            console.warn("Error refreshing member list:", error)
-        }
-        setRefresh(false);
+            let response = await findAllUsers(token);
+            if(response.status == 200) {
+                const members = response.alldata.results.filter(data => data.main_user !== null);
+                setMemberList(members);
+                setFilteredMembers(members);
+                setNextFetchURL(response.alldata.next);
+            } else {
+                ToastComponent.show("Failed to fetch member list", {timeOut: 3500, level: 'failure'});
+            }    
+        } catch(err) {
+            console.warn("Error fetching member list:", err);
+        }                  
     }
+
+    const fetchNextMemberList = async() => {
+        if(!isDefined(nextFetchURL)) return;
+        setEndLoading(true);
+        try {
+            let response = await findUsersFromNextURL(token, nextFetchURL);
+            if(response.status == 200) {
+                const members = response.alldata.results.filter(data => data.main_user !== null);
+                setMemberList([...memberList, ...members]);
+                setNextFetchURL(response.alldata.next);
+            } else {
+                ToastComponent.show("Failed to fetch member list", {timeOut: 3500, level: 'failure'});
+            }    
+        } catch(err) {
+            console.warn("Error fetching member list:", err);
+        }  
+        setEndLoading(false); 
+    } 
 
     const getFinalLevel = (main_user) => {
         if(main_user.is_trained_advanced == "Yes") return "Advanced";
@@ -61,11 +82,11 @@ const SelectChatScreen = (props) => {
     } 
 
     const renderItem = ({item}) => (
-        <Pressable onPress={() => createChat(user, item, navigateChatScreen)}>
+        <Pressable onPress={() => createChat(user, item, navigateChatScreen)} style={styles.listItemView}>
             <AvatarComponent src={item.main_user.photo} avatarContainerStyle={styles.avatar} />
             <View>
                 <Text>{`${item.main_user.firstname} ${item.main_user.surname}`}</Text>
-                <Text>{getFinalLevel(item.main_user)}</Text>
+                <Text style={{color: colors.primary}}>{getFinalLevel(item.main_user)}</Text>
             </View>
         </Pressable>
     );
@@ -73,7 +94,19 @@ const SelectChatScreen = (props) => {
     const filterMemberList = (text) => {
         setSearchText(text);
         let filtered = memberList.filter(m => includesIgnoreCase(m.email, text) || includesIgnoreCase(`${m.main_user.firstname} ${m.main_user.surname}`, text))
-        setFiltered(filtered);
+        setFilteredMembers(filtered);
+    }
+
+    const SkeletonLoader = () => {
+        return (
+        <SkeletonPlaceholder>
+            {
+                [1, 2, 3, 4].map(e => (
+                    <SkeletonPlaceholder.Item  key={e} width="90%" height={50} alignSelf="center" marginBottom={5} marginTop={10}/>
+                ))
+            }
+        </SkeletonPlaceholder>
+        )
     }
 
     return (
@@ -82,8 +115,20 @@ const SelectChatScreen = (props) => {
             <View style={styles.searchBarView}>
                 <SearchBarComponent placeholder="Enter a name or email..." value={searchText} handleChange={filterMemberList}/>
             </View>
-            <FlatList keyExtractor={(item) => item.id.toString()} onRefresh={fetchMembers} refreshing={refresh} data={filteredMembers} renderItem={renderItem}/>
-        </View>
+            <View style={{marginTop: 20}}>
+            {loading ? <SkeletonLoader/> : 
+            <FlatList 
+              keyExtractor={(item) => safeConvertToString(item.id)} 
+              onRefresh={fetchMembers} refreshing={refresh} 
+              data={filteredMembers} 
+              showsVerticalScrollIndicator={false}
+              renderItem={renderItem}
+              onEndReachedThreshold={0.5}
+              onEndReached={fetchNextMemberList}
+            />}
+            { endLoading && <ActivityIndicator size={25} color={colors.lightPrimary} style={{marginTop: -20}} /> }
+            </View>
+            </View>
     );
 }
 
@@ -97,6 +142,10 @@ const styles = StyleSheet.create({
         backgroundColor: colors.white,
         paddingBottom: 100,
         position: 'relative'
+    },
+    listItemView: {
+        flexDirection: 'row',
+        marginBottom: 20
     },
     headerText: {
         fontSize: 18,

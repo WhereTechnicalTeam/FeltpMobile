@@ -8,25 +8,29 @@ import dayjs from 'dayjs';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { isDefined } from '@utils/validation';
 import IconButtonComponent from '@components/icon-button/IconButtonComponent';
+import { get } from 'react-native/Libraries/Utilities/PixelRatio';
+import { getUserChats } from 'src/utils/chatroom';
 
 const ChatListScreen = (props) => {
 
-    const [chatList, setChatList] = useState();
+    const [chatList, setChatList] = useState([]);
+    const [mainForum, setMainForum] = useState([]);
     const [user, setUser] = useState();
     const mainForumRef = firestore().collection('threads'); //change to main_forum 
-    const directChatRef = firestore().collection('direct_chat');
+    const directChatRef = firestore().collection('chats');
 
     useEffect(() => {
         (async () => {
             try {
-                const storedUser = await AsyncStorage.getItem('userDetails');
-                setUser(JSON.parse(storedUser));
+                let storedUser = await AsyncStorage.getItem('userDetails');
+                storedUser = JSON.parse(storedUser);
+                setUser(storedUser);
+                fetchForumInfo();
+                getUserChats(storedUser.id, setChatList);
             } catch (err) {
                 console.warn("Error fetching user:", err)
             }
         })();
-        fetchForumInfo();
-        // fetchDirectChatInfo();
         // return () => subscriber();
     }, []);
 
@@ -34,21 +38,9 @@ const ChatListScreen = (props) => {
         mainForumRef.get().then(querySnapshot => {
             let chatInfo = {};
             querySnapshot.forEach(doc => {
-                chatInfo = {...doc.data(), id: doc.id};
+                chatInfo = {...doc.data(), id: doc.id, avatar: require('@assets/logo_1.jpg')};
             });
-            setChatList([chatInfo]);
-        }).catch(error => {
-            console.warn("Error fetching forum details:", error)
-        });
-    }
-
-    const fetchDirectChatInfo = () => {
-        directChatRef.where("members", "array-contains-any", user.id).orderBy("createdAt", "desc").get().then(querySnapshot => {
-            let chatInfo = {};
-            querySnapshot.forEach(doc => {
-                chatInfo = {...doc.data(), id: doc.id};
-            });
-            setChatList([chatInfo]);
+            setMainForum([chatInfo]);
         }).catch(error => {
             console.warn("Error fetching forum details:", error)
         });
@@ -72,7 +64,7 @@ const ChatListScreen = (props) => {
         return (
             <Pressable style={styles.listContainer} onPress={() => navigateChatScreen(item)}>
                 <View style={{width: 70}}>
-                    <AvatarComponent avatarContainerStyle={styles.avatar} src={require('@assets/logo_1.jpg')}/>
+                    <AvatarComponent avatarContainerStyle={styles.avatar} src={item.avatar}/>
                 </View>
                 <View style={styles.centerView}>
                     <View style={styles.centerHeader}>
@@ -97,7 +89,7 @@ const ChatListScreen = (props) => {
                 <Text style={styles.mainHeaderText}>Conversations</Text>
                 <AvatarComponent avatarContainerStyle={styles.userAvatar} onPress={navigateSettings} src={isDefined(user) ? user.main_user.photo : null}/>
             </View>
-            <FlatList renderItem={renderItem} keyExtractor={(item) => safeConvertToString(item.id)} data={chatList}/>
+            <FlatList renderItem={renderItem} keyExtractor={(item) => safeConvertToString(item.id)} data={[...mainForum, ...chatList]}/>
             <IconButtonComponent icon="add" size={30} color={colors.primary} iconButtonStyle={{...styles.iconButton, ...styles.shadow}} onPress={navigateSelectChat}/>
         </View>
     );
@@ -113,14 +105,15 @@ const styles = StyleSheet.create({
     },
     listContainer: {
         flexDirection: 'row',
+        marginBottom: 15
     },
     centerHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between'
     },
     avatar: {
-        width: 50,
-        height: 50,
+        width: 45,
+        height: 45,
         borderRadius: 40,
         marginRight: 20
     },

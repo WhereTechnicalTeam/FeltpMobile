@@ -53,7 +53,6 @@ const findAllUsers = async(token) => {
     })
     .then((response) => response.json())
     .then(json => {
-        console.log(json);
         return json;
     })
     .catch((error) => {
@@ -146,4 +145,24 @@ const updateJobHistory = async(token, id, joblist) => {
     });
 }
 
-export {findUserByEmail, findAllUsers, updateUser, findUserById, fetchUserStats, fetchUserJobHistory, updateJobHistory};
+const findUsersFromNextURL = async(token, nextURL) => {
+    return fetch(nextURL, {
+        method: 'GET',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Token ${token}`
+        }
+    })
+    .then((response) => response.json())
+    .then(json => {
+        console.log("response from next:", json);
+        return json;
+    })
+    .catch((error) => {
+        console.warn("Error fetching all users:", error);
+        return {status: 500};
+    });
+}
+
+export {findUserByEmail, findAllUsers, updateUser, findUserById, fetchUserStats, fetchUserJobHistory, updateJobHistory, findUsersFromNextURL};
