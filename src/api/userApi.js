@@ -42,6 +42,29 @@ const updateUser = async(user, id) => {
     });
 }
 
+const updateUserPhoto = async(formData) => {
+    return fetch(`${BASE_URL}/imageupload`, {
+        method: 'PUT',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'multipart/form-data'
+        },
+        body: formData
+    })
+    .then((response) => {
+        console.log("photo update response:", response);
+        return response.json()
+    })
+    .then(json => {
+        console.log("update response:", json);
+        return json;
+    })
+    .catch((error) => {
+        console.warn("User update error:", error);
+        return {status: 500};
+    });
+}
+
 const findAllUsers = async(token) => {
     return fetch(`${BASE_URL}/alldata`, {
         method: 'GET',
@@ -165,4 +188,4 @@ const findUsersFromNextURL = async(token, nextURL) => {
     });
 }
 
-export {findUserByEmail, findAllUsers, updateUser, findUserById, fetchUserStats, fetchUserJobHistory, updateJobHistory, findUsersFromNextURL};
+export {findUserByEmail, findAllUsers, updateUser, findUserById, fetchUserStats, fetchUserJobHistory, updateJobHistory, findUsersFromNextURL, updateUserPhoto};

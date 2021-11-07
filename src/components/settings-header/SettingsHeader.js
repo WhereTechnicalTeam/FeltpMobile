@@ -10,7 +10,7 @@ import AvatarComponent from '@components/avatar/AvatarComponent';
 import { isDefined } from '@utils/validation';
 import { safeConvertToString } from '@utils/helperFunctions';
 import { getRegionById, getDistrictById } from '@utils/helperFunctions';
-import { updateUser } from '@api/userApi';
+import { updateUserPhoto } from '@api/userApi';
 import ToastComponent from '@components/toast/ToastComponent';
 
 const SettingsHeader = (props) => {
@@ -66,9 +66,26 @@ const SettingsHeader = (props) => {
         }
     }
 
-    const updateUserPhoto = async(image) => {
+    const updatePhoto = async(image) => {
         setSelectedImage({uri: image.uri});
-        setUser({...user, photo: image.uri});
+        let data = new FormData();
+        data.append("user_profile", user.main_user.id);
+        data.append("image", {
+            uri: image.uri,
+            type: image.type,
+            name: image.fileName,
+            size: image.fileSize
+        });
+        console.log("form data:", data);
+        try {
+            const response = await updateUserPhoto(data);
+            if(response.status == 200) {
+                ToastComponent.show("Profile photo updated!", {timeOut: 3500, level: "success"});
+            } else ToastComponent.show("Profile photo update failed!", {timeOut: 3500, level: "failure"});
+
+        }catch (err){
+            console.log("Error updating user photo:", err);
+        }
         console.log("selected image:", image);
         setModalVisible(false);
     }
@@ -84,7 +101,7 @@ const SettingsHeader = (props) => {
                 } else if(errorCode) {
                     console.log("Error using camera picker", errorCode, errorMessage);
                 } else {
-                    await updateUserPhoto(assets[0])
+                    await updatePhoto(assets[0])
                 }
             })
         }
@@ -167,7 +184,7 @@ const SettingsHeader = (props) => {
         <View style={styles.headerContainer}>
             <PickerModal />
             <View>
-                <AvatarComponent src={selectedImage} icon="camera" onPress={() => setModalVisible(true)} avatarContainerStyle={styles.image}/>
+                <AvatarComponent src={selectedImage} icon="camera" onPress={() => setModalVisible(true)} avatarContainerStyle={styles.image} />
             </View>
             <View style={styles.headerContentView}>
                 <View style={styles.headerTextView}>
