@@ -1,4 +1,4 @@
-const BASE_URL = "https://feltp.herokuapp.com/api";
+const BASE_URL = "https://feltp.wheregeospatial.com/api";
 
 export {BASE_URL};
 

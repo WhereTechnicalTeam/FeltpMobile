@@ -21,7 +21,7 @@ const ChatScreen = (props) => {
     const [user, setUser] = useState();
     const [currentMessageText, setCurrentMessageText] = useState('');
     const [isMainForum, setIsMainForum] = useState(true);
-    const mainForumRef = firestore().collection('threads').doc('PeA4CPvGKjzpUkzMSNGG');
+    const mainForumRef = firestore().collection('main_forum').doc('NhcmaHB7g6NyGZZ9za7t');
     const directChatRef = firestore().collection('chats');
 
     useEffect(() => {

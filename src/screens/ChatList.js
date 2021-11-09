@@ -8,7 +8,6 @@ import dayjs from 'dayjs';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { isDefined } from '@utils/validation';
 import IconButtonComponent from '@components/icon-button/IconButtonComponent';
-import { get } from 'react-native/Libraries/Utilities/PixelRatio';
 import { getUserChats } from 'src/utils/chatroom';
 
 const ChatListScreen = (props) => {
@@ -16,7 +15,7 @@ const ChatListScreen = (props) => {
     const [chatList, setChatList] = useState([]);
     const [mainForum, setMainForum] = useState([]);
     const [user, setUser] = useState();
-    const mainForumRef = firestore().collection('threads'); //change to main_forum 
+    const mainForumRef = firestore().collection('main_forum'); 
     const directChatRef = firestore().collection('chats');
 
     useEffect(() => {

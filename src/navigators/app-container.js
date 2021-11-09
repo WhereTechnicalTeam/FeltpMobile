@@ -186,8 +186,6 @@ const AuthLoadingWrapper = (props) => {
     try {
         (async() => {
             setLoading(true);
-            // await AsyncStorage.removeItem('authToken');
-            // await AsyncStorage.removeItem('userDetails');
 
             const token = await AsyncStorage.getItem('authToken');            
             const response = await validateToken(token);
