@@ -65,6 +65,7 @@ const SignInScreen = (props) => {
         if(validateLoginDetails()) {
             setLoading(true);
             let response = await login(loginDetails);
+            console.log("login response:", response)
             setLoading(false);
             if(response.status == 200) {
                 await AsyncStorage.setItem('authToken', response.token);

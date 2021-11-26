@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {ActivityIndicator, ScrollView, StyleSheet, Text, View} from 'react-native';
+import { WebView } from 'react-native-webview';
 import { findNewsById } from '@api/newsApi';
 import IconButtonComponent from '@components/icon-button/IconButtonComponent';
 import { colors } from '@theme/colors';
@@ -26,9 +27,13 @@ const NewsDisplayScreen = (props) => {
                 <View>
                     <IconButtonComponent icon="arrow-back-sharp" size={24} color={colors.black} iconButtonStyle={styles.iconButtonComponent} onPress={navigateBack}/>
                 </View>
-                <ScrollView>
+                <ScrollView contentContainerStyle={{flex: 1}}>
                     <Text style={styles.newsTitle}>{newsDetails.title}</Text>
-                    <Text style={styles.newsContent}>{newsDetails.content}</Text>
+                    <WebView
+                        originWhitelist={['*']}
+                        source={{ html: newsDetails.content }}
+                        textZoom={100}
+                    />
                 </ScrollView>
         </View>
     );
