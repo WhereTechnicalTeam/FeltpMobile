@@ -29,8 +29,8 @@ const ChangePasswordScreen = (props) => {
     useEffect(() => {
         try {
             (async () => {
-                const user = await AsyncStorage.getItem('userDetails'); 
-                setUser(JSON.parse(user));
+                const storedUser = await AsyncStorage.getItem('userDetails'); 
+                setUser(JSON.parse(storedUser));
             })();
         } catch(err) {
             console.warn("Error retrieving user details from storage:", err)

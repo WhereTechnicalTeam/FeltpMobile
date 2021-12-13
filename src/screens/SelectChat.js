@@ -27,25 +27,32 @@ const SelectChatScreen = (props) => {
         (async () => {
             setLoading(true);
             const authToken = await AsyncStorage.getItem('authToken');
-            await fetchMembers(authToken);
             setToken(authToken);
-            const storedUser = await AsyncStorage.getItem("userDetails");
-            setUser(JSON.parse(storedUser));
+            let storedUser = await AsyncStorage.getItem("userDetails");
+            storedUser = JSON.parse(storedUser)
+            setUser(storedUser);
+            await fetchMembers(authToken, storedUser.id);
             setLoading(false);
         })();
     }, []);
 
+    useEffect(() => {
+        if(memberList.length > 0) setFilteredMembers(memberList);
+    }, [memberList])
+
     const navigateChatScreen = (chatInfo) => {
+        console.log("navigating chat:", chatInfo)
         props.navigation.navigate("ChatScreen", {
             chatInfo
         });
     }
 
-    const fetchMembers = async(token) => {
+    const fetchMembers = async(token, userId) => {
         try {
             let response = await findAllUsers(token);
+            console.log("fetch members response:", response);
             if(response.status == 200) {
-                const members = response.alldata.results.filter(data => data.main_user !== null);
+                const members = response.alldata.results.filter(data => isDefined(data) && data.main_user !== null && data.id != userId);
                 setMemberList(members);
                 setFilteredMembers(members);
                 setNextFetchURL(response.alldata.next);
@@ -59,11 +66,12 @@ const SelectChatScreen = (props) => {
 
     const fetchNextMemberList = async() => {
         if(!isDefined(nextFetchURL)) return;
-        setEndLoading(true);
         try {
+            setEndLoading(true);
             let response = await findUsersFromNextURL(token, nextFetchURL);
+            setEndLoading(false); 
             if(response.status == 200) {
-                const members = response.alldata.results.filter(data => data.main_user !== null);
+                const members = response.alldata.results.filter(data => isDefined(data) && data.main_user !== null && data.id != user.id);
                 setMemberList([...memberList, ...members]);
                 setNextFetchURL(response.alldata.next);
             } else {
@@ -72,7 +80,6 @@ const SelectChatScreen = (props) => {
         } catch(err) {
             console.warn("Error fetching member list:", err);
         }  
-        setEndLoading(false); 
     } 
 
     const getFinalLevel = (main_user) => {
@@ -119,7 +126,8 @@ const SelectChatScreen = (props) => {
             {loading ? <SkeletonLoader/> : 
             <FlatList 
               keyExtractor={(item) => safeConvertToString(item.id)} 
-              onRefresh={fetchMembers} refreshing={refresh} 
+              onRefresh={() => fetchMembers(token, user.id)} 
+              refreshing={refresh} 
               data={filteredMembers} 
               showsVerticalScrollIndicator={false}
               renderItem={renderItem}

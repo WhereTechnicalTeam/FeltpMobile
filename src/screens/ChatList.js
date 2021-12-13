@@ -9,6 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { isDefined } from '@utils/validation';
 import IconButtonComponent from '@components/icon-button/IconButtonComponent';
 import { getUserChats } from '@utils/chatroom';
+import HorizontalLineComponent from 'src/components/horizontal-line/HorizontalLine';
 
 const ChatListScreen = (props) => {
 
@@ -24,23 +25,45 @@ const ChatListScreen = (props) => {
                 let storedUser = await AsyncStorage.getItem('userDetails');
                 storedUser = JSON.parse(storedUser);
                 setUser(storedUser);
-                fetchForumInfo();
-                getUserChats(storedUser.id, setChatList);
             } catch (err) {
-                console.warn("Error fetching user chats:", err)
+                console.warn("Error fetching stored user:", err)
             }
         })();
     }, []);
 
+    useEffect(() => {
+        let unsubscribeForum;
+        try {
+            unsubscribeForum = fetchForumInfo();
+            return unsubscribeForum;
+        } catch (err) {
+            console.warn("Error fetching forum:", err)
+        }
+    }, []);
+
+    useEffect(() => {
+        let unsubscribeChats;
+        try {
+            if(isDefined(user)) {
+            unsubscribeChats = getUserChats(user.id, setChatList);
+            console.log("chatList", chatList)
+            return unsubscribeChats;
+            }
+        } catch (err) {
+            console.warn("Error fetching chats:", err)
+        }
+    }, [user]);
+
     const fetchForumInfo = () => {
-        mainForumRef.get().then(querySnapshot => {
+        return mainForumRef.onSnapshot(querySnapshot => {
             let chatInfo = {};
             querySnapshot.forEach(doc => {
                 chatInfo = {...doc.data(), id: doc.id, avatar: require('@assets/logo_1.jpg')};
                 setMainForum([chatInfo]);
             });
             console.log("chat info:", chatInfo);
-        }).catch(error => {
+        },
+        error => {
             console.warn("Error fetching forum details:", error)
         });
     }
@@ -88,7 +111,21 @@ const ChatListScreen = (props) => {
                 <Text style={styles.mainHeaderText}>Conversations</Text>
                 <AvatarComponent avatarContainerStyle={styles.userAvatar} onPress={navigateSettings} src={isDefined(user) ? user.main_user.photo : null}/>
             </View>
-            <FlatList renderItem={renderItem} keyExtractor={(item) => safeConvertToString(item.id)} data={[...mainForum, ...chatList]}/>
+            {mainForum.length > 0 ? 
+            <>
+                {renderItem({item: mainForum[0]}) }
+                <View style={{flexDirection: 'row', alignItems: 'stretch', justifyContent: 'space-around'}}>
+                    <HorizontalLineComponent hrWidth="30%" hrStyle={{marginBottom: 20}}/>
+                    <Text style={{marginTop: -8}}>Direct Messages</Text>
+                    <HorizontalLineComponent hrWidth="30%" hrStyle={{marginBottom: 20}}/>
+                </View>
+            </>
+            : null}
+            {/* <View style={{paddingTop: 10}}> */}
+            <FlatList renderItem={renderItem} keyExtractor={(item) => safeConvertToString(item.id)} data={chatList}
+              showsVerticalScrollIndicator={false}
+            />
+            {/* </View> */}
             <IconButtonComponent icon="add" size={30} color={colors.primary} iconButtonStyle={{...styles.iconButton, ...styles.shadow}} onPress={navigateSelectChat}/>
         </View>
     );

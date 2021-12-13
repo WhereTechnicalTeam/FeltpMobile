@@ -70,6 +70,7 @@ const DashboardScreen = (props) => {
             let response = await findAllNews(token);
             if(response.status == 200) {
                 setNewsItems(response.news);
+                response.news.forEach(n => stripHTMLFromNews(n.content))
             } else {
                 ToastComponent.show("Failed to fetch news", {timeOut: 3500, level: 'failure'});
             }
@@ -82,7 +83,7 @@ const DashboardScreen = (props) => {
         props.navigation.navigate('ManageUser');
     }
     
-    const renderNewsItem = ({item}) => <NewsPreviewComponent containerStyle={{marginBottom: 20}} title={item.title} summary={item.content} onPress={() => navigateNewsDisplay(item)}/>
+    const renderNewsItem = ({item}) => <NewsPreviewComponent containerStyle={{marginBottom: 20}} title={item.title} summary={stripHTMLFromNews(item.content)} onPress={() => navigateNewsDisplay(item)}/>
 
     const NewsSkeletonLoader = () => {
         return (
@@ -94,6 +95,11 @@ const DashboardScreen = (props) => {
             }
         </SkeletonPlaceholder>
         )
+    }
+
+    const stripHTMLFromNews = (news) => {
+        const htmlRegex = /<.+>(.+)<\/.+>/g;
+        return news.replace(htmlRegex, "$1");
     }
 
     return (

@@ -16,7 +16,7 @@ import HelperTextComponent from '@components/helper-text/HelperTextComponent';
 import SpinnerComponent from '@components/spinner/SpinnerComponent';
 import PickerComponent from '@components/picker/PickerComponent';
 import { titleList } from '@utils/constants';
-import { sendCode, verifyEmail } from 'src/api/authApi';
+import { sendCode, verifyEmail } from '@api/authApi';
 
 const SignUpScreen = (props) => {
     
@@ -160,6 +160,7 @@ const SignUpScreen = (props) => {
                 setErrors({...errors, validationCodeErrors});
                 if(validationCodeErrors.length == 0) {
                     let response = await verifyEmail(validationCode);
+                    console.log("verification response:", response);
                     if(response.status == 200) {
                         ToastComponent.show("Account verified!", {timeOut: 3000, level: 'success'})
                         setVerified(true);
@@ -270,7 +271,7 @@ const SignUpScreen = (props) => {
                 null
             }
             <View>
-                <ButtonComponent title={userSearchComplete && !verified ? "Verifiy account" : "Next"} onPress={handleSubmit} buttonContainerStyle={styles.buttonComponent} disabled={!userSearchComplete} />
+                <ButtonComponent title={userSearchComplete && !verified ? "Verify email" : "Next"} onPress={handleSubmit} buttonContainerStyle={styles.buttonComponent} disabled={!userSearchComplete} />
                 <LinkTextComponent preText="Already have an account?" actionText="Login" onPress={navigateSignin}/>
             </View>
             </ScrollView>

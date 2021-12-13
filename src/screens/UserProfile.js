@@ -6,52 +6,19 @@ import ProfileTextComponent from '@components/profile-text/ProfileTextComponent'
 import { colors } from '@theme/colors';
 import { findUserByEmail } from 'src/api/userApi';
 import ToastComponent from 'src/components/toast/ToastComponent';
+import { safeConvertToString } from 'src/utils/helperFunctions';
+import { isDefined } from 'src/utils/validation';
 
 const UserProfileScreen = (props) => {
-    const [user, setUser] = useState({
-        main_user: {
-            firstname: null,
-            surname: null,
-            is_trained_frontline: null,
-            cohort_number_frontline: null,
-            yr_completed_frontline: null,
-            institution_enrolled_at_frontline: null,
-            job_title_at_enroll_frontline: null,
-            is_trained_intermediate: false,
-            yr_completed_intermediate: null,
-            institution_enrolled_at_intermediate: null,
-            job_title_at_enroll_intermediate: null,
-            cohort_number_intermediate: null,
-            is_trained_advanced: false,
-            cohort_number_advanced: null,
-            yr_completed_advanced: null,
-            institution_enrolled_at_advanced: null,
-            job_title_at_enroll_advanced: null
-        },
-        job_to_user: [
-            {
-                current_institution: null,
-                district: null,
-                employment_status: null,
-                is_current: "Yes",
-                job_title: null,
-                latitude: null,
-                level_of_health_system: null,
-                longitude: null,
-                region: null,
-            }
-        ]
-    });
+    const [user, setUser] = useState();
     const [refresh, setRefresh] = useState(false);
     
     useEffect(() => {
         (async () => {
             try {
-                await AsyncStorage.getItem('userDetails')
-                .then(storedUser => {
-                    setUser(JSON.parse(storedUser));
-                    console.log('user profile', user);
-                });                
+                const storedUser = await AsyncStorage.getItem('userDetails')
+                setUser(JSON.parse(storedUser));
+                console.log("parsed user", JSON.parse(storedUser));               
             } catch(err) {
                 console.warn("Error retrieving user details:", err);
             }
@@ -88,31 +55,31 @@ const UserProfileScreen = (props) => {
         <View style={styles.profileContainer}>
         <ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl onRefresh={handleRefresh} refreshing={refresh}/>}>
             <View style={[styles.cardContainer, styles.shadow]}>
-                <ProfileTextComponent label="Email" text={user.email} />
-                <ProfileTextComponent label="Gender" text={user.main_user.sex} />
-                <ProfileTextComponent label="Primary Phone number" text={user.main_user.phone1} />
-                <ProfileTextComponent label="Secondary Phone number" text={user.main_user.phone2} />            
+                <ProfileTextComponent label="Email" text={isDefined(user) ? safeConvertToString(user.email) : ""} />
+                <ProfileTextComponent label="Gender" text={isDefined(user) ? safeConvertToString(user.main_user.sex) : ""} />
+                <ProfileTextComponent label="Primary Phone number" text={isDefined(user) ? safeConvertToString(user.main_user.phone1) : ""} />
+                <ProfileTextComponent label="Secondary Phone number" text={isDefined(user) ? safeConvertToString(user.main_user.phone2) : ""} />            
             </View>
             <View style={[styles.cardContainer, styles.shadow]}>
-                <ProfileTextComponent label="Trained in Frontline" text={user.main_user.is_trained_frontline} />
-                <ProfileTextComponent label="Name of Institution" text={user.main_user.institution_enrolled_at_frontline} />
-                <ProfileTextComponent label="Job Title" text={user.main_user.job_title_at_enroll_frontline} />
-                <ProfileTextComponent label="Cohort Number" text={user.main_user.cohort_number_frontline} />
-                <ProfileTextComponent label="Year of Completion" text={user.main_user.yr_completed_frontline} />
+                <ProfileTextComponent label="Trained in Frontline" text={isDefined(user) ? safeConvertToString(user.main_user.is_trained_frontline) : ""} />
+                <ProfileTextComponent label="Name of Institution" text={isDefined(user) ? safeConvertToString(user.main_user.institution_enrolled_at_frontline) : ""} />
+                <ProfileTextComponent label="Job Title" text={isDefined(user) ? safeConvertToString(user.main_user.job_title_at_enroll_frontline) : ""} />
+                <ProfileTextComponent label="Cohort Number" text={isDefined(user) ? safeConvertToString(user.main_user.cohort_number_frontline) : ""} />
+                <ProfileTextComponent label="Year of Completion" text={isDefined(user) ? safeConvertToString(user.main_user.yr_completed_frontline) : ""} />
             </View>
             <View style={[styles.cardContainer, styles.shadow]}>
-                <ProfileTextComponent label="Trained in Intermediate" text={user.main_user.is_trained_intermediate} />
-                <ProfileTextComponent label="Name of Institution" text={user.main_user.institution_enrolled_at_intermediate} />
-                <ProfileTextComponent label="Job Title" text={user.main_user.job_title_at_enroll_intermediate} />
-                <ProfileTextComponent label="Cohort Number" text={user.main_user.cohort_number_intermediate} />
-                <ProfileTextComponent label="Year of Completion" text={user.main_user.yr_completed_intermediate} />
+                <ProfileTextComponent label="Trained in Intermediate" text={isDefined(user) ? safeConvertToString(user.main_user.is_trained_intermediate) : ""} />
+                <ProfileTextComponent label="Name of Institution" text={isDefined(user) ? safeConvertToString(user.main_user.institution_enrolled_at_intermediate) : ""} />
+                <ProfileTextComponent label="Job Title" text={isDefined(user) ? safeConvertToString(user.main_user.job_title_at_enroll_intermediate) : ""} />
+                <ProfileTextComponent label="Cohort Number" text={isDefined(user) ? safeConvertToString(user.main_user.cohort_number_intermediate) : ""} />
+                <ProfileTextComponent label="Year of Completion" text={isDefined(user) ? safeConvertToString(user.main_user.yr_completed_intermediate) : ""} />
             </View>
             <View style={[styles.cardContainer, styles.shadow]}>
-                <ProfileTextComponent label="Trained in Advanced" text={user.main_user.is_trained_advanced} />
-                <ProfileTextComponent label="Name of Institution" text={user.main_user.institution_enrolled_at_advanced} />
-                <ProfileTextComponent label="Job Title" text={user.main_user.job_title_at_enroll_advanced} />
-                <ProfileTextComponent label="Cohort Number" text={user.main_user.cohort_number_advanced} />
-                <ProfileTextComponent label="Year of Completion" text={user.main_user.yr_completed_advanced} />
+                <ProfileTextComponent label="Trained in Advanced" text={isDefined(user) ? safeConvertToString(user.main_user.is_trained_advanced) : ""} />
+                <ProfileTextComponent label="Name of Institution" text={isDefined(user) ? safeConvertToString(user.main_user.institution_enrolled_at_advanced) : ""} />
+                <ProfileTextComponent label="Job Title" text={isDefined(user) ? safeConvertToString(user.main_user.job_title_at_enroll_advanced) : ""} />
+                <ProfileTextComponent label="Cohort Number" text={isDefined(user) ? safeConvertToString(user.main_user.cohort_number_advanced) : ""} />
+                <ProfileTextComponent label="Year of Completion" text={isDefined(user) ? safeConvertToString(user.main_user.yr_completed_advanced) : ""} />
             </View>
         </ScrollView>
         <View style={styles.fabView}>

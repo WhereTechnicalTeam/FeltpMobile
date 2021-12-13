@@ -65,6 +65,7 @@ const MemberListScreen = (props) => {
                 if (intermediate) return m.main_user.is_trained_intermediate == 'Yes'
                 if(advanced) return m.main_user.is_trained_advanced == 'Yes'
             });
+            console.log("filtered:", filtered)
             setFilteredMembers(filtered);
         } else setFilteredMembers(memberList)
     }

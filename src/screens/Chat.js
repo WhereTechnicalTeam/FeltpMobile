@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import {View, Text, StyleSheet, TextInput} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import Spinner from 'react-native-loading-spinner-overlay';
 import { colors } from '@theme/colors';
 import AvatarComponent from '@components/avatar/AvatarComponent';
 import IconButtonComponent from '@components/icon-button/IconButtonComponent';
@@ -10,6 +11,7 @@ import ToastComponent from '@components/toast/ToastComponent';
 import MessageListComponent from '@components/message-list/MessageListComponent';
 import { isEmpty, isDefined } from '@utils/validation';
 import ChatFooterComponent from '@components/chat-footer/ChatFooterComponent';
+import SpinnerComponent from '@components/spinner/SpinnerComponent';
 
 const ChatScreen = (props) => {
 
@@ -23,14 +25,18 @@ const ChatScreen = (props) => {
     const [isMainForum, setIsMainForum] = useState(true);
     const mainForumRef = firestore().collection('main_forum').doc('zKt1FlYpp10lGHeHDhEz');
     const directChatRef = firestore().collection('chats');
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         try {
             (async() => {
+                setLoading(true);
                 let {chatInfo} = props.route.params;
+                console.log("chat details:", chatInfo)
                 const storedUser = await AsyncStorage.getItem('userDetails')
                 setUser(JSON.parse(storedUser));
                 setChatDetails(chatInfo);  
+                setLoading(false);
                 if(chatInfo.name !== "GFELTP Forum") setIsMainForum(false) 
             })();
         } catch(err){
@@ -42,8 +48,10 @@ const ChatScreen = (props) => {
         try {
             if(isDefined(user) && isDefined(chatDetails.id)) {
             if(isMainForum) {
-                fetchForumMessages();
-            } else getChatMessages(chatDetails.id, setMessages)
+                return fetchForumMessages();
+            } else {
+                return getChatMessages(chatDetails.id, setMessages)
+                }
             }
         } catch(err) {
             console.warn("Error fetching forum messages:", err)
@@ -55,16 +63,16 @@ const ChatScreen = (props) => {
   }
 
   const getChatMessages = (chatID, callback) => {
-    let messages = [];
-    directChatRef.doc(chatID).collection("messages").orderBy("createdAt", "desc")
+    return directChatRef.doc(chatID).collection("messages").orderBy("createdAt", "desc")
     .onSnapshot(querySnapshot => {
+        let messages = [];
         querySnapshot.forEach(doc => {
             messages.push({
                 id: doc.id,
                 ...doc.data(),
                 isRight: doc.data().user.id === user.id,
             });
-            
+            console.log("got messages:", messages);
         });
         callback(messages);
     },
@@ -74,12 +82,12 @@ const ChatScreen = (props) => {
 
     const saveToFirebase = (message) => {
         const chatRef = isMainForum ? mainForumRef : directChatRef.doc(chatDetails.id);
+        console.log("chat id:", chatDetails.id)
         chatRef.collection('messages')
         .add(message)
         .then( doc => {
             setCurrentMessageText('');
-            chatRef.set({lastMessage: message}, {merge: true}).then(doc => {
-
+            chatRef.set({lastMessage: message}, {merge: true}).then(() => {
             }).catch(error => console.warn("Error updating last message:", error))
         })
         .catch(error => {
@@ -89,7 +97,7 @@ const ChatScreen = (props) => {
     }
 
     const fetchForumMessages = () => {
-            mainForumRef
+            return mainForumRef
             .collection('messages').orderBy('createdAt', 'desc')
             .onSnapshot( 
                 querySnapshot => {
@@ -98,7 +106,7 @@ const ChatScreen = (props) => {
                         newMessages.push({
                             ...doc.data(),
                             id: doc.id,
-                            isRight: doc.data().user.id === user.id,
+                            isRight: doc.data().user.id == user.id,
                             isSameUser: !isDefined(newMessages[newMessages.length - 1]) ? false : newMessages[newMessages.length - 1].user.id === user.id
                         });
                     });
@@ -144,6 +152,7 @@ const ChatScreen = (props) => {
 
     return (
         <View style={styles.container}>
+            <Spinner visible={loading} customIndicator={<SpinnerComponent />}/>
             <ChatHeader />
             <View style={{flex: 1}}>
             <MessageListComponent messages={messages}/>

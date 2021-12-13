@@ -31,7 +31,7 @@ const NewsDisplayScreen = (props) => {
                     <Text style={styles.newsTitle}>{newsDetails.title}</Text>
                     <WebView
                         originWhitelist={['*']}
-                        source={{ html: newsDetails.content }}
+                        source={{ html: '<head><meta name="viewport" content="width=device-width, initial-scale=1></head><body>' + newsDetails.content + '</body>'}}
                         textZoom={100}
                     />
                 </ScrollView>
