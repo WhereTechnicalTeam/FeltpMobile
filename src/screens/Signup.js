@@ -16,7 +16,7 @@ import HelperTextComponent from '@components/helper-text/HelperTextComponent';
 import SpinnerComponent from '@components/spinner/SpinnerComponent';
 import PickerComponent from '@components/picker/PickerComponent';
 import { titleList } from '@utils/constants';
-import { sendCode, verifyEmail } from '@api/authApi';
+import { sendCode, verifyEmail, verifyNewUserEmail } from '@api/authApi';
 
 const SignUpScreen = (props) => {
     
@@ -159,7 +159,9 @@ const SignUpScreen = (props) => {
                 const validationCodeErrors = isTextValid(validationCode);
                 setErrors({...errors, validationCodeErrors});
                 if(validationCodeErrors.length == 0) {
-                    let response = await verifyEmail(validationCode);
+                    let response;
+                    if(!showPassword) response = await verifyEmail(validationCode);
+                    else response = await verifyNewUserEmail(validationCode);
                     console.log("verification response:", response);
                     if(response.status == 200) {
                         ToastComponent.show("Account verified!", {timeOut: 3000, level: 'success'})

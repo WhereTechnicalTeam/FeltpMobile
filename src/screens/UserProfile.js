@@ -1,13 +1,13 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
 import IconButtonComponent from '@components/icon-button/IconButtonComponent';
 import ProfileTextComponent from '@components/profile-text/ProfileTextComponent';
 import { colors } from '@theme/colors';
-import { findUserByEmail } from 'src/api/userApi';
-import ToastComponent from 'src/components/toast/ToastComponent';
-import { safeConvertToString } from 'src/utils/helperFunctions';
-import { isDefined } from 'src/utils/validation';
+import { findUserByEmail } from '@api/userApi';
+import ToastComponent from '@components/toast/ToastComponent';
+import { safeConvertToString } from '@utils/helperFunctions';
+import { isDefined } from '@utils/validation';
 
 const UserProfileScreen = (props) => {
     const [user, setUser] = useState();
@@ -16,11 +16,12 @@ const UserProfileScreen = (props) => {
     useEffect(() => {
         (async () => {
             try {
-                const storedUser = await AsyncStorage.getItem('userDetails')
-                setUser(JSON.parse(storedUser));
-                console.log("parsed user", JSON.parse(storedUser));               
-            } catch(err) {
-                console.warn("Error retrieving user details:", err);
+                let storedUser = await AsyncStorage.getItem('userDetails');
+                console.log("stored user:", storedUser)
+                storedUser = JSON.parse(storedUser);
+                setUser(storedUser);
+            } catch (err) {
+                console.warn("Error fetching stored user:", err)
             }
         })();
     }, []);
@@ -38,6 +39,7 @@ const UserProfileScreen = (props) => {
     const fetchUserDetails = async() => {
         try {
             const response = await findUserByEmail(user.email);
+            console.log("email: ", user.email);
             if(response.status === 200) {
                 console.log("user details", response.alldata[0]);
                 const fetchedUser = {...response.alldata[0], job_to_user: [response.alldata[0].job_to_user]}

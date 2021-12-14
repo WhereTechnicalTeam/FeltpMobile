@@ -106,6 +106,26 @@ const verifyEmail = async(code) => {
     });
 }
 
+const verifyNewUserEmail = async(code) => {
+    return fetch(`${BASE_URL}/verifysignup`, {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({code})
+    })
+    .then((response) => response.json())
+    .then(json => {
+        console.log(json);
+        return json;
+    })
+    .catch((error) => {
+        console.error("Email verification error:", error);
+        return {status: 500};
+    });
+}
+
 const validateToken = async(token) => {
     return fetch(`${BASE_URL}/tokenvalidate`, {
         method: 'POST',
@@ -145,4 +165,4 @@ const sendCode = async(email) => {
     })
 }
 
-export {login, logout, registerUser, verifyEmail, changePassword, validateToken, sendCode}
+export {login, logout, registerUser, verifyEmail, changePassword, validateToken, sendCode, verifyNewUserEmail}
