@@ -42,12 +42,6 @@ const SettingsHeader = (props) => {
         })();
     }, []);
 
-    useEffect(() => {
-        (async() => {
-            await AsyncStorage.setItem("userDetails", JSON.stringify(user));
-        })();
-    }, [user?.main_user.photo])
-
     const handleCameraPicker = async() => {
         const permissionGranted = await checkCameraPermissions();
         if(permissionGranted) {
@@ -80,6 +74,9 @@ const SettingsHeader = (props) => {
         try {
             const response = await updateUserPhoto(data);
             if(response.status == 200) {
+                let userUpdate = user;
+                user.main_user.photo = response.image;
+                await AsyncStorage.setItem("userDetails", JSON.stringify(userUpdate));
                 ToastComponent.show("Profile photo updated!", {timeOut: 3500, level: "success"});
             } else ToastComponent.show("Profile photo update failed!", {timeOut: 3500, level: "failure"});
 
