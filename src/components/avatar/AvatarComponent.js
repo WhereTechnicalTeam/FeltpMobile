@@ -12,7 +12,7 @@ const AvatarComponent = (props) => {
     return (
         <View style={[styles.avatarContainer, avatarContainerStyle]}>
             <Pressable onPress={onPress}>
-                <Image source={isDefined(src) && !isEmpty(src) ? imagePrefix + src : require('@assets/man.jpg')} style={[styles.image, avatarImageStyle]}/>
+                <Image source={isDefined(src) && !isEmpty(src) ? src : require('@assets/man.jpg')} style={[styles.image, avatarImageStyle]}/>
                 {
                     icon && 
                     <View style={{backgroundColor: colors.primary, padding: 5, borderRadius: 50, ...styles.icon}}>

@@ -6,7 +6,12 @@ import BadgeComponent from '@components/badge/BadgeComponent';
 const MemberCardComponent = (props) => {
 
     const {name, memberImage, level, monthComp, yearComp, onPress} = props;
-    
+    const badgeColors = {
+        frontline: colors.lightPrimary,
+        intermediate: colors.warning,
+        advanced: colors.primaryGreen
+    };
+
     return (
             <Pressable onPress={onPress} style={[styles.memberCardView, styles.shadow]} android_ripple={{color: colors.pearl}}>
             <View style={styles.cardImageView}>
@@ -16,7 +21,7 @@ const MemberCardComponent = (props) => {
                 <Text style={styles.nameText}>{name}</Text>
             </View>
             <View style={styles.cardTextRow}>
-                <BadgeComponent text={level} />
+                <BadgeComponent text={level} badgeContainerStyle={{backgroundColor: badgeColors[level]}}/>
                 {/* <View style={styles.cardTextView}>
                     <Text>{`${monthComp}.`}</Text>
                     <Text>{yearComp}</Text>

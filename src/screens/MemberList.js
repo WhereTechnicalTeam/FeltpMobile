@@ -366,7 +366,8 @@ const styles = StyleSheet.create({
     searchBarView: {
         borderWidth: 0.5, 
         borderRadius: 5, 
-        borderColor: colors.secondaryBlack
+        borderColor: colors.secondaryBlack,
+        // width: '60%'
     },
     badgeView: {
         flexDirection: 'row',

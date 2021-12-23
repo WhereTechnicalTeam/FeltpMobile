@@ -112,12 +112,12 @@ const DashboardScreen = (props) => {
                 <Text style={styles.subtitle}>Registered Members</Text>
             </View>
             <View style={styles.summaryView}>
-                <SummaryCardComponent mainText={memberStats.numAlumni} subText="total members" summaryContainerStyle={{backgroundColor: colors.accents[0]}}/>
-                <SummaryCardComponent mainText={memberStats.numAdvanced} subText="advanced" summaryContainerStyle={{backgroundColor: colors.accents[1]}}/>
-            </View>
-            <View style={styles.summaryView}>
-                <SummaryCardComponent mainText={memberStats.numIntermediate} subText="intermediate" summaryContainerStyle={{backgroundColor: colors.accents[2]}}/>
-                <SummaryCardComponent mainText={memberStats.numFrontline} subText="frontline" summaryContainerStyle={{backgroundColor: colors.accents[3]}}/>
+                <SummaryCardComponent mainText={memberStats.numAlumni} subText="total members" summaryContainerStyle={[styles.summaryCard, {backgroundColor: colors.accents[0]}]}/>
+                <SummaryCardComponent mainText={memberStats.numAdvanced} subText="advanced" summaryContainerStyle={[styles.summaryCard, {backgroundColor: colors.accents[1]}]}/>
+            {/* </View>
+            <View style={styles.summaryView}> */}
+                <SummaryCardComponent mainText={memberStats.numIntermediate} subText="intermediate" summaryContainerStyle={[styles.summaryCard, {backgroundColor: colors.accents[2]}]}/>
+                <SummaryCardComponent mainText={memberStats.numFrontline} subText="frontline" summaryContainerStyle={[styles.summaryCard, {backgroundColor: colors.accents[3]}]}/>
             </View>
             <View style={styles.subtitleView}>
                 <Text style={[styles.subtitle]}>News Feed</Text>
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 25,
         paddingTop: 30,
         backgroundColor: colors.white,
-        position: 'relative'
+        position: 'relative',
     },
     headerView: {
         flexDirection: 'row',
@@ -147,12 +147,15 @@ const styles = StyleSheet.create({
     },
     screenTitle: {
         fontWeight: 'bold',
-        fontSize: 20
+        fontSize: 20,
     },
     userAvatar: {
         width: 40,
         height: 40,
         borderRadius: 20
+    },
+    subtitleView: {
+        marginBottom: 20
     },
     subtitle: {
         fontSize: 20,
@@ -160,10 +163,14 @@ const styles = StyleSheet.create({
         fontWeight: '600'
     },
     summaryView: {
-        justifyContent: 'space-between',
         flexDirection: 'row',
+        justifyContent: 'space-around',
         marginBottom: 20,
-        marginHorizontal: 20
+        marginHorizontal: 20,
+    },
+    summaryCard: {
+        width: '20%',
+        height: '50%',
     },
     newsView: {
         justifyContent: 'space-between'

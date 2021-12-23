@@ -212,7 +212,7 @@ const AuthLoadingWrapper = (props) => {
                 <AuthLoadingScreen 
                     onCreateAccountPress={navigateSignup} 
                     onRedirectTextPress={navigateSignin}
-                    appName="FELTP ALUMNI"
+                    appName="GFELTP Connect"
                     subTitle="Connect with your peers anywhere"
                />
                )

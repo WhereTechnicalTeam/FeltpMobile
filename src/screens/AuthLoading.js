@@ -35,16 +35,19 @@ export default AuthLoadingScreen;
 const styles = StyleSheet.create({
     authLoadingContainer: {
         flex: 1,
-        justifyContent: 'space-between',
+        // justifyContent: 'space-between',
         paddingBottom: 30
     },
-    authLoadingImageView: {
-        width: '100%',
-        height: '50%',
+    topSectionView: {
+        marginBottom: 30,
+    },
+    authloadingImageView: {
+        marginBottom: 20,
+        height: '80%',
     },
     authLoadingImage: {
         width: '100%',
-        height: 400,
+        height: '100%',
         resizeMode: 'cover',
     },
     appName: {
@@ -53,14 +56,14 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 25,
         color: colors.black,
-        marginTop: 30
+        // marginTop: 30
     }, 
     subTitle: {
         color: colors.secondaryBlack,
         fontSize: 14,
         textAlign: 'center',
         marginTop: 10
-    }   ,
+    },
     bottomSectionView: {
         alignItems: 'center',
     },
